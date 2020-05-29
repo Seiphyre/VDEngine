@@ -1,13 +1,14 @@
-#ifndef FILE_HANDLER_H
-#define FILE_HANDLER_H
+#ifndef VDENGINE_FILE_HANDLER_H_
+#define VDENGINE_FILE_HANDLER_H_
 
 #ifdef __APPLE__
-#    include <mach-o/dyld.h>
+#    include <mach-o/dyld.h> // Mac OS functions ( ex: _NSGetExecutablePath() )
 #endif
-#include "stb/stb_image.h"
 
 #include <fstream>
 #include <string>
+
+#include "stb/stb_image.h"
 
 #include "Singleton.h"
 
@@ -19,11 +20,11 @@ class FileHandler : public Singleton<FileHandler>
     friend class Singleton<FileHandler>;
 
   public:
-    const std::string     LoadFromTextFile(const std::string & path);
-    const unsigned char * LoadFromImageFile(const std::string & path, int & width, int & height, int & format);
+    const std::string     LoadFromTextFile(const std::string & path) const;
+    const unsigned char * LoadFromImageFile(const std::string & path, int & width, int & height, int & format) const ;
 
-    const std::string     LoadShader(const std::string & file_name);
-    const unsigned char * LoadTexture(const std::string & file_name, int & width, int & height, int & format);
+    const std::string     LoadShader(const std::string & file_name) const ;
+    const unsigned char * LoadTexture(const std::string & file_name, int & width, int & height, int & format) const;
 
     const std::string RootPath;
 
@@ -39,4 +40,4 @@ class FileHandler : public Singleton<FileHandler>
 
 } // namespace VDEngine
 
-#endif
+#endif /* VDENGINE_FILE_HANDLER_H_ */

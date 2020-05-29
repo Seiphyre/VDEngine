@@ -46,7 +46,7 @@ const std::string FileHandler::GetAppRootPath()
 #endif
 }
 
-const std::string FileHandler::LoadFromTextFile(const std::string & path)
+const std::string FileHandler::LoadFromTextFile(const std::string & path) const
 {
     std::ifstream file;
     file.open(path);
@@ -68,7 +68,7 @@ const std::string FileHandler::LoadFromTextFile(const std::string & path)
     return fileContent + "\0";
 }
 
-const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, int & width, int & height, int & format)
+const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, int & width, int & height, int & format) const
 {
     stbi_set_flip_vertically_on_load(true);
     unsigned char * data = stbi_load(path.c_str(), &width, &height, &format, 0);
@@ -76,14 +76,14 @@ const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, i
     return data;
 }
 
-const std::string FileHandler::LoadShader(const std::string & file_name)
+const std::string FileHandler::LoadShader(const std::string & file_name) const
 {
     std::string path = RootPath + RootToShaderPath + file_name;
 
     return (LoadFromTextFile(path));
 }
 
-const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height, int & format)
+const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height, int & format) const
 {
     std::string path = RootPath + RootToTexturePath + file_name;
 
