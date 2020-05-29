@@ -1,9 +1,11 @@
-#ifndef SHADER_MANAGER_H
-#define SHADER_MANAGER_H
+#ifndef VDENGINE_SHADER_MANAGER_H_
+#define VDENGINE_SHADER_MANAGER_H_
 
+// C++ Standard libs
 #include <list>
 #include <type_traits>
 
+// Internal headers
 #include "VDEngine/Core/Singleton.h"
 #include "VDEngine/Renderer/AShader.h"
 #include "VDEngine/Renderer/DefaultShader.h"
@@ -58,4 +60,4 @@ class ShaderManager : public Singleton<ShaderManager>
 
 }
 
-#endif
+#endif /* VDENGINE_SHADER_MANAGER_H_ */
