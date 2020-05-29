@@ -135,7 +135,7 @@ void AObject::AddTexture(const std::string & text_name)
 {
     m_textures.push_back(new Texture(text_name));
 }
-void AObject::AddTexture(Texture * texture)
+void AObject::AddTexture(const Texture * texture)
 {
     m_textures.push_back(texture);
 }

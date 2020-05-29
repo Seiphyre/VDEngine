@@ -27,9 +27,9 @@ class Texture
     Texture(const std::string text_name);
 
     void Create(const std::string text_name);
-    void Bind(AShader * shader, int textureActiveId = 0);
+    void Bind(AShader * shader, int textureActiveId = 0) const;
 };
 
-}
+} // namespace VDEngine
 
 #endif /* Texture_H_ */

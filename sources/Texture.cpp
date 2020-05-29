@@ -74,7 +74,7 @@ void Texture::Create(const std::string text_name)
     delete (textureImage);
 }
 
-void Texture::Bind(AShader * shader, int textureActiveId)
+void Texture::Bind(AShader * shader, int textureActiveId) const
 {
     glActiveTexture(GL_TEXTURE0 + textureActiveId);
     glBindTexture(GL_TEXTURE_2D, _textureId);
