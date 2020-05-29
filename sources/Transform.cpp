@@ -52,7 +52,7 @@ glm::vec3 Transform::GetForwardDir() const
 
     return (forward);
 }
-glm::vec3 Transform::GetUpDir()
+glm::vec3 Transform::GetUpDir() const
 {
     const glm::mat4 matrix = GetMatrix();
     const glm::vec3 up     = normalize(glm::vec3(matrix[1]));

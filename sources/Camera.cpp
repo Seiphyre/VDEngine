@@ -31,7 +31,7 @@ glm::mat4 Camera::GetViewMatrix() const
     glm::mat4 view;
     view =
         glm::lookAt(m_transform->position,
-                    m_transform->position + (m_transform->GetForwardDir() * glm::vec3(1.0f, 1.0f, -1.0f)), Y_3D_AXIS);
+                    m_transform->position + (m_transform->GetForwardDir() * glm::vec3(1.0f, 1.0f, -1.0f)), WORLD_UP);
 
     return view;
 }

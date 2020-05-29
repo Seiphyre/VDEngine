@@ -167,7 +167,7 @@ int main(int argc, char * argv[])
     floor->AddTexture("measurement_floor.png");
     // floor->AddTexture("measurement_floor.png");
 
-    floor->GetTransform()->Rotate(90.0f, X_3D_AXIS);
+    floor->GetTransform()->Rotate(90.0f, WORLD_RIGHT);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
     VDEngine::CubeObj * cube = new VDEngine::CubeObj();
@@ -186,7 +186,7 @@ int main(int argc, char * argv[])
     VDEngine::Camera * camera = new VDEngine::Camera();
 
     camera->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
-    camera->GetTransform()->Rotate(45.0f, Y_3D_AXIS);
+    camera->GetTransform()->Rotate(45.0f, WORLD_UP);
 
     FPSCameraController * camera_controller = new FPSCameraController(camera);
 

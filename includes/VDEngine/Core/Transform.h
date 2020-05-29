@@ -1,8 +1,10 @@
-#ifndef TRANSFORM_H_
-#define TRANSFORM_H_
+#ifndef VDENGINE_TRANSFORM_H_
+#define VDENGINE_TRANSFORM_H_
 
+// C++ Standard libs
 #include <iostream>
 
+// External libs
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -14,9 +16,9 @@
 namespace VDEngine
 {
 
-#define X_3D_AXIS glm::vec3(1.0f, 0.0f, 0.0f)
-#define Y_3D_AXIS glm::vec3(0.0f, 1.0f, 0.0f)
-#define Z_3D_AXIS glm::vec3(0.0f, 0.0f, 1.0f)
+#define WORLD_RIGHT glm::vec3(1.0f, 0.0f, 0.0f)
+#define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
+#define WORLD_FORWARD glm::vec3(0.0f, 0.0f, 1.0f)
 
 class Transform
 {
@@ -27,7 +29,7 @@ class Transform
     glm::mat4 GetMatrix() const;
 
     glm::vec3 GetForwardDir() const;
-    glm::vec3 GetUpDir();
+    glm::vec3 GetUpDir() const;
     glm::vec3 GetRightDir() const;
 
     glm::vec3 GetEulerRotation() const;
@@ -52,4 +54,4 @@ class Transform
 
 } // namespace VDEngine
 
-#endif /* TRANSFORM_H_ */
+#endif /* VDENGINE_TRANSFORM_H_ */
