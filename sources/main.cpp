@@ -86,11 +86,9 @@ int main(int argc, char * argv[])
     // cube->AddTexture("container.jpg");
     // cube->AddTexture("awesomeface.png");
 
-    cube->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
-    // cube->GetTransform()->Rotate(180.0f, X_3D_AXIS);
-    // cube->GetTransform()->Rotate(180.0f, Y_3D_AXIS);
-    // cube->GetTransform()->Rotate(45.0f, Z_3D_AXIS);
-    // cube->GetTransform()->Rotate(-135.0f, Z_3D_AXIS);
+    cube->GetTransform()->Translate(glm::vec3(2.0f, 0.5f, 2.0f));
+    // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+    // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
 
     // Camera ----------
 
