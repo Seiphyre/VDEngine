@@ -1,11 +1,14 @@
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#ifndef VDENGINE_IMAGE_H_
+#define VDENGINE_IMAGE_H_
 
-#include <GLFW/glfw3.h>
-
+// C++ Standard libs
 #include <string>
 
+// External libs
+#include <GLFW/glfw3.h>
 #include "stb/stb_image.h"
+
+// Internal headers
 #include "FileHandler.h"
 
 namespace VDEngine
@@ -22,14 +25,17 @@ enum e_imgFormat : int
 class Image
 {
   private:
-    int                   _width;
-    int                   _height;
-    e_imgFormat           _format;
-    const unsigned char * _data;
+    int                   m_width;
+    int                   m_height;
+    e_imgFormat           m_format;
+    const unsigned char * m_data;
 
   public:
-    Image(const std::string file_name);
+    Image(const std::string & file_name);
+    Image(const Image &) = default; 
     ~Image();
+
+    Image & operator=(const Image &) = default;
 
     int                   GetWidth() const;
     int                   GetHeight() const;
@@ -41,4 +47,4 @@ class Image
 
 } // namespace VDEngine
 
-#endif /* IMAGE_H_ */
+#endif /* VDENGINE_IMAGE_H_ */
