@@ -1,8 +1,10 @@
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#ifndef VDENGINE_CAMERA_H_
+#define VDENGINE_CAMERA_H_
 
+// External libs
 #include <GLFW/glfw3.h>
 
+// Internal headers
 #include "VDEngine/Core/Transform.h"
 
 namespace VDEngine
@@ -18,7 +20,10 @@ class Camera
 
   public:
     Camera();
+    Camera(const Camera &) = default;
     ~Camera();
+
+    Camera & operator=(const Camera &) = default;
 
     Transform * GetTransform() const;
     float       GetFOV() const;
@@ -31,4 +36,4 @@ class Camera
 
 } // namespace VDEngine
 
-#endif /* CAMERA_H_ */
+#endif /* VDENGINE_CAMERA_H_ */
