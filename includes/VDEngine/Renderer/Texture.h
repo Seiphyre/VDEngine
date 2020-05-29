@@ -1,11 +1,14 @@
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#ifndef VDENGINE_TEXTURE_H_
+#define VDENGINE_TEXTURE_H_
 
+// C++ Standard libs
+#include <string>
+
+// External libs
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <string>
-
+// Internal headers
 #include "VDEngine/Core/Image.h"
 #include "VDEngine/Renderer/AShader.h"
 
@@ -15,21 +18,21 @@ namespace VDEngine
 class Texture
 {
   private:
-    unsigned int _textureId;
+    unsigned int m_textureId;
 
-    GLint _texWrapSParam;
-    GLint _texWrapTParam;
-    GLint _texMinFilterParam;
-    GLint _texMagFilterParam;
+    GLint m_texWrapSParam;
+    GLint m_texWrapTParam;
+    GLint m_texMinFilterParam;
+    GLint m_texMagFilterParam;
 
   public:
     Texture();
-    Texture(const std::string text_name);
+    Texture(const std::string & text_name);
 
-    void Create(const std::string text_name);
-    void Bind(AShader * shader, int textureActiveId = 0) const;
+    void Create(const std::string & text_name);
+    void Bind(int textureActiveId = 0) const;
 };
 
 } // namespace VDEngine
 
-#endif /* Texture_H_ */
+#endif /* VDENGINE_TEXTURE_H_ */

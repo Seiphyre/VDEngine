@@ -84,7 +84,7 @@ void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum 
     // Bind Textures
     for (int i = 0; i < m_textures.size(); i++)
     {
-        m_textures[i]->Bind(m_shader, i);
+        m_textures[i]->Bind(i);
     }
 
     // GL_LINE

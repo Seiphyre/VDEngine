@@ -4,13 +4,13 @@ using namespace VDEngine;
 
 Texture::Texture()
 {
-    _texWrapSParam     = GL_REPEAT;
-    _texWrapTParam     = GL_REPEAT;
-    _texMinFilterParam = GL_LINEAR;
-    _texMagFilterParam = GL_LINEAR;
+    m_texWrapSParam     = GL_REPEAT;
+    m_texWrapTParam     = GL_REPEAT;
+    m_texMinFilterParam = GL_LINEAR;
+    m_texMagFilterParam = GL_LINEAR;
 }
 
-Texture::Texture(const std::string text_name)
+Texture::Texture(const std::string & text_name)
 {
     // Texture Wrapping
     // GL_REPEAT            : The default behavior for textures. Repeats the texture image.
@@ -36,24 +36,24 @@ Texture::Texture(const std::string text_name)
     // operations (when scaling up or downwards) so you could for example use nearest neighbor filtering when textures
     // are scaled downwards and linear filtering for upscaled textures.
 
-    _texWrapSParam     = GL_REPEAT;
-    _texWrapTParam     = GL_REPEAT;
-    _texMinFilterParam = GL_LINEAR;
-    _texMagFilterParam = GL_LINEAR;
+    m_texWrapSParam     = GL_REPEAT;
+    m_texWrapTParam     = GL_REPEAT;
+    m_texMinFilterParam = GL_LINEAR;
+    m_texMagFilterParam = GL_LINEAR;
 
     Create(text_name);
 }
 
-void Texture::Create(const std::string text_name)
+void Texture::Create(const std::string & text_name)
 {
-    glGenTextures(1, &_textureId);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glGenTextures(1, &m_textureId);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
 
     // Texture : Parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _texWrapSParam);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _texWrapTParam);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _texMinFilterParam);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _texMagFilterParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_texWrapSParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_texWrapTParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_texMinFilterParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_texMagFilterParam);
 
     // Texture : Data
     Image * textureImage = new Image(text_name);
@@ -74,8 +74,8 @@ void Texture::Create(const std::string text_name)
     delete (textureImage);
 }
 
-void Texture::Bind(AShader * shader, int textureActiveId) const
+void Texture::Bind(int textureActiveId) const
 {
     glActiveTexture(GL_TEXTURE0 + textureActiveId);
-    glBindTexture(GL_TEXTURE_2D, _textureId);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
 }
