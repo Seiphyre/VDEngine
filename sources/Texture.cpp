@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/Texture.h"
 
+using namespace VDEngine;
+
 Texture::Texture()
 {
     _texWrapSParam     = GL_REPEAT;

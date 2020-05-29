@@ -162,7 +162,7 @@ int main(int argc, char * argv[])
     // -- CREATE SCENE --------------------------------------------------
 
     // Create objects
-    PlaneObj * floor = new PlaneObj();
+    VDEngine::PlaneObj * floor = new VDEngine::PlaneObj();
     floor->Init();
     floor->AddTexture("measurement_floor.png");
     // floor->AddTexture("measurement_floor.png");
@@ -170,7 +170,7 @@ int main(int argc, char * argv[])
     floor->GetTransform()->Rotate(90.0f, X_3D_AXIS);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
-    CubeObj * cube = new CubeObj();
+    VDEngine::CubeObj * cube = new VDEngine::CubeObj();
     cube->Init();
     // cube->AddTexture("container.jpg");
     // cube->AddTexture("awesomeface.png");

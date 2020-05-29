@@ -3,11 +3,16 @@
 
 #include "AObject.h"
 
+namespace VDEngine
+{
+
 class CubeObj : public AObject
 {
   public:
     CubeObj();
     CubeObj(AShader * shader);
 };
+
+}
 
 #endif

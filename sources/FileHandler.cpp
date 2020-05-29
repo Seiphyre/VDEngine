@@ -1,5 +1,7 @@
 #include "VDEngine/Core/FileHandler.h"
 
+using namespace VDEngine;
+
 const std::string FileHandler::RootToResourcesPath = "resources/";
 const std::string FileHandler::RootToTexturePath   = "resources/textures/";
 const std::string FileHandler::RootToShaderPath    = "resources/shaders/";

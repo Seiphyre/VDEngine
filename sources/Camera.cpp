@@ -1,6 +1,8 @@
 #include "VDEngine/Renderer/Camera.h"
 
-VDEngine::Camera::Camera()
+using namespace VDEngine;
+
+Camera::Camera()
 {
     m_transform = new Transform();
 
@@ -9,22 +11,22 @@ VDEngine::Camera::Camera()
     m_far  = 100.0f;
 }
 
-VDEngine::Camera::~Camera()
+Camera::~Camera()
 {
     delete m_transform;
 }
 
-Transform * VDEngine::Camera::GetTransform() const
+Transform * Camera::GetTransform() const
 {
     return (m_transform);
 }
 
-float VDEngine::Camera::GetFOV() const
+float Camera::GetFOV() const
 {
     return (m_fov);
 }
 
-glm::mat4 VDEngine::Camera::GetViewMatrix() const
+glm::mat4 Camera::GetViewMatrix() const
 {
     glm::mat4 view;
     view =
@@ -34,7 +36,7 @@ glm::mat4 VDEngine::Camera::GetViewMatrix() const
     return view;
 }
 
-glm::mat4 VDEngine::Camera::GetProjectionMatrix() const
+glm::mat4 Camera::GetProjectionMatrix() const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
     int          width;
@@ -48,7 +50,7 @@ glm::mat4 VDEngine::Camera::GetProjectionMatrix() const
     return projection;
 }
 
-void VDEngine::Camera::SetFOV(float fov)
+void Camera::SetFOV(float fov)
 {
     m_fov = fov;
 }

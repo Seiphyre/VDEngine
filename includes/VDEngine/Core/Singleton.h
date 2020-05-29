@@ -3,16 +3,20 @@
 
 #include <iostream>
 
-template <typename T>
-class Singleton
+namespace VDEngine
 {
-protected:
-    static T *instance;
 
-    Singleton() {}
+template <typename T> class Singleton
+{
+  protected:
+    static T * instance;
 
-public:
-    static T *getInstance()
+    Singleton()
+    {
+    }
+
+  public:
+    static T * getInstance()
     {
         if (instance == 0)
         {
@@ -23,7 +27,8 @@ public:
     }
 };
 
-template <typename T>
-T *Singleton<T>::instance = 0;
+template <typename T> T * Singleton<T>::instance = 0;
+
+} // namespace VDEngine
 
 #endif

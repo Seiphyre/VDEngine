@@ -1,5 +1,7 @@
 #include "VDEngine/Core/Image.h"
 
+using namespace VDEngine;
+
 GLuint Image::ToGLFormat(e_imgFormat format)
 {
     GLuint gl_format;

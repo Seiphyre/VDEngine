@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/PlaneObject.h"
 
+using namespace VDEngine;
+
 PlaneObj::PlaneObj() : AObject()
 {
     float verticesArray[] = {

@@ -11,6 +11,9 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace VDEngine
+{
+
 #define X_3D_AXIS glm::vec3(1.0f, 0.0f, 0.0f)
 #define Y_3D_AXIS glm::vec3(0.0f, 1.0f, 0.0f)
 #define Z_3D_AXIS glm::vec3(0.0f, 0.0f, 1.0f)
@@ -46,5 +49,7 @@ class Transform
     glm::vec3 euler_angle;
     glm::mat4 rotation_matrix;
 };
+
+} // namespace VDEngine
 
 #endif /* TRANSFORM_H_ */

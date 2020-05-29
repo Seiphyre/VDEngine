@@ -11,6 +11,9 @@
 
 #include "Singleton.h"
 
+namespace VDEngine
+{
+
 class FileHandler : public Singleton<FileHandler>
 {
     friend class Singleton<FileHandler>;
@@ -33,5 +36,7 @@ class FileHandler : public Singleton<FileHandler>
 
     const std::string GetAppRootPath();
 };
+
+} // namespace VDEngine
 
 #endif

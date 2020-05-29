@@ -3,7 +3,11 @@
 
 #include <GLFW/glfw3.h>
 #include <iostream>
+
 #include "AShader.h"
+
+namespace VDEngine
+{
 
 class DefaultShader : public AShader
 {
@@ -11,5 +15,7 @@ class DefaultShader : public AShader
     void SetVertexShaderSource();
     void SetFragmentShaderSource();
 };
+
+}
 
 #endif

@@ -8,32 +8,37 @@
 #include "stb/stb_image.h"
 #include "FileHandler.h"
 
+namespace VDEngine
+{
+
 enum e_imgFormat : int
 {
-    GREY = 1,
+    GREY       = 1,
     GREY_ALPHA = 2,
-    RGB = 3,
-    RGBA = 4
+    RGB        = 3,
+    RGBA       = 4
 };
 
 class Image
 {
-private:
-    int _width;
-    int _height;
-    e_imgFormat _format;
-    const unsigned char *_data;
+  private:
+    int                   _width;
+    int                   _height;
+    e_imgFormat           _format;
+    const unsigned char * _data;
 
-public:
+  public:
     Image(const std::string file_name);
     ~Image();
 
-    int GetWidth() const;
-    int GetHeight() const;
-    e_imgFormat GetFormat() const;
-    const unsigned char *GetData() const;
+    int                   GetWidth() const;
+    int                   GetHeight() const;
+    e_imgFormat           GetFormat() const;
+    const unsigned char * GetData() const;
 
     static GLuint ToGLFormat(e_imgFormat format);
 };
+
+} // namespace VDEngine
 
 #endif /* IMAGE_H_ */

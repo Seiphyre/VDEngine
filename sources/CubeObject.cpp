@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/CubeObject.h"
 
+using namespace VDEngine;
+
 CubeObj::CubeObj() : AObject()
 {
     float verticesArray[] = {

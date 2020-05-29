@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/DefaultShader.h"
 
+using namespace VDEngine;
+
 void DefaultShader::SetVertexShaderSource()
 {
     if (!m_vert_shader_source.empty())

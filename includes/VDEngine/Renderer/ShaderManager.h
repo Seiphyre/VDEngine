@@ -8,6 +8,9 @@
 #include "VDEngine/Renderer/AShader.h"
 #include "VDEngine/Renderer/DefaultShader.h"
 
+namespace VDEngine
+{
+
 class ShaderManager : public Singleton<ShaderManager>
 {
     friend class Singleton<ShaderManager>;
@@ -52,5 +55,7 @@ class ShaderManager : public Singleton<ShaderManager>
         return LoadShader<T>();
     }
 };
+
+}
 
 #endif

@@ -9,6 +9,9 @@
 #include "VDEngine/Core/Image.h"
 #include "VDEngine/Renderer/AShader.h"
 
+namespace VDEngine
+{
+
 class Texture
 {
   private:
@@ -26,5 +29,7 @@ class Texture
     void Create(const std::string text_name);
     void Bind(AShader * shader, int textureActiveId = 0);
 };
+
+}
 
 #endif /* Texture_H_ */

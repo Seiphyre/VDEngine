@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/AObject.h"
 
+using namespace VDEngine;
+
 AObject::AObject()
 {
     m_shader    = ShaderManager::getInstance()->GetShader<DefaultShader>();

@@ -8,6 +8,9 @@
 
 #include "VDEngine/Core/FileHandler.h"
 
+namespace VDEngine
+{
+  
 class AShader
 {
   public:
@@ -55,5 +58,7 @@ class AShader
 
     unsigned int m_shader_program_id;
 };
+
+} // namespace VDEngine
 
 #endif /* ASHADER_H_ */

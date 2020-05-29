@@ -1,5 +1,7 @@
 #include "VDEngine/Core/Transform.h"
 
+using namespace VDEngine;
+
 Transform::Transform()
 {
     position = glm::vec3(0.0f, 0.0f, 0.0f);

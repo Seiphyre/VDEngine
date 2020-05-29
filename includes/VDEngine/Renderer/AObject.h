@@ -13,6 +13,9 @@
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/Texture.h"
 
+namespace VDEngine
+{
+
 class AObject
 {
   public:
@@ -23,9 +26,9 @@ class AObject
     void Init();
 
     Transform * GetTransform() const;
-    void        SetShader(AShader * shader);
-    void        AddTexture(const std::string & text_name);
-    void        AddTexture(Texture * texture);
+    void                  SetShader(AShader * shader);
+    void                  AddTexture(const std::string & text_name);
+    void                  AddTexture(Texture * texture);
 
     void Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode = GL_FILL) const;
 
@@ -41,7 +44,9 @@ class AObject
 
     AShader *              m_shader;
     std::vector<Texture *> m_textures;
-    Transform *            m_transform;
+    Transform *  m_transform;
 };
+
+} // namespace VDEngine
 
 #endif /* AOBJECT_H_ */

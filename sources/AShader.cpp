@@ -1,5 +1,7 @@
 #include "VDEngine/Renderer/AShader.h"
 
+using namespace VDEngine;
+
 AShader::AShader()
 {
     m_vert_shader_id = glCreateShader(GL_VERTEX_SHADER);
