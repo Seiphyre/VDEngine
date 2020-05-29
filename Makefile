@@ -20,7 +20,7 @@ SRC			=	sources/glad/glad.cpp \
 				sources/Time.cpp \
 				sources/Input.cpp \
 				sources/Camera.cpp \
-				sources/FPSCameraController.cpp
+				resources/scripts/FPSCameraController.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 

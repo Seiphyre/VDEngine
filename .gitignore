@@ -1,0 +1,11 @@
+// compiled object .o
+*.[o]
+
+// app binary
+bin/**
+
+// clang format
+.clang-format
+
+// Visual Studio C++ Debug files
+*.dSYM

@@ -14,7 +14,8 @@
 #include "VDEngine/Input.h"
 #include "VDEngine/GameEngine.h"
 #include "VDEngine/Camera.h"
-#include "FPSCameraController.h"
+
+#include "../resources/scripts/FPSCameraController.h"
 
 glm::mat4 CameraLookAt(glm::vec3 eyePos, glm::vec3 target)
 {
