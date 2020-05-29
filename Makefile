@@ -1,4 +1,4 @@
-NAME		=	bin/myopengl
+NAME		=	bin/vdengine
 
 CXX			=	clang++
 
