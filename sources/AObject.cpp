@@ -124,6 +124,13 @@ void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     glBindVertexArray(0);
+
+    // Unbind Textures
+    for (int i = 0; i < m_textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 }
 
 void AObject::Init()

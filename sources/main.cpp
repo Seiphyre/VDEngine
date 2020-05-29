@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 
     VDEngine::Texture * measurement = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
     VDEngine::Texture * wooden_container = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
-    // VDEngine::Texture * emoji            = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    VDEngine::Texture * emoji            = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
 
     // [...]
 
@@ -82,15 +82,14 @@ int main(int argc, char * argv[])
     VDEngine::PlaneObj * floor = new VDEngine::PlaneObj();
     floor->Init();
     floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
-    // floor->AddTexture("measurement_floor.png");
+    floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
-    floor->GetTransform()->Rotate(90.0f, WORLD_RIGHT);
+    floor->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
     VDEngine::CubeObj * cube = new VDEngine::CubeObj();
     cube->Init();
-    // cube->AddTexture("container.jpg");
-    // cube->AddTexture("awesomeface.png");
+    cube->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(wooden_container->GetUUID()));
 
     cube->GetTransform()->Translate(glm::vec3(2.0f, 0.5f, 2.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
