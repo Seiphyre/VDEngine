@@ -1,7 +1,5 @@
-#ifndef SINGLETON_H
-#define SINGLETON_H
-
-#include <iostream>
+#ifndef VDENGINE_SINGLETON_H_
+#define VDENGINE_SINGLETON_H_
 
 namespace VDEngine
 {
@@ -9,7 +7,7 @@ namespace VDEngine
 template <typename T> class Singleton
 {
   protected:
-    static T * instance;
+    static T * m_instance;
 
     Singleton()
     {
@@ -18,17 +16,17 @@ template <typename T> class Singleton
   public:
     static T * getInstance()
     {
-        if (instance == 0)
+        if (m_instance == nullptr)
         {
-            instance = new T();
+            m_instance = new T();
         }
 
-        return instance;
+        return m_instance;
     }
 };
 
-template <typename T> T * Singleton<T>::instance = 0;
+template <typename T> T * Singleton<T>::m_instance = nullptr;
 
 } // namespace VDEngine
 
-#endif
+#endif /* VDENGINE_SINGLETON_H_ */
