@@ -8,6 +8,7 @@
 #include "VDEngine/Renderer/Camera.h"
 #include "VDEngine/Renderer/DefaultShader.h"
 #include "VDEngine/Renderer/ShaderManager.h"
+#include "VDEngine/Renderer/TextureManager.h"
 #include "VDEngine/Renderer/CubeObject.h"
 #include "VDEngine/Renderer/PlaneObject.h"
 
@@ -68,6 +69,11 @@ int main(int argc, char * argv[])
     // [...]
 
     // Load Textures
+
+    VDEngine::Texture * measurement = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
+    VDEngine::Texture * wooden_container = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
+    // VDEngine::Texture * emoji            = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+
     // [...]
 
     // -- CREATE SCENE --------------------------------------------------
@@ -75,7 +81,7 @@ int main(int argc, char * argv[])
     // Create objects
     VDEngine::PlaneObj * floor = new VDEngine::PlaneObj();
     floor->Init();
-    floor->AddTexture("measurement_floor.png");
+    floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
     // floor->AddTexture("measurement_floor.png");
 
     floor->GetTransform()->Rotate(90.0f, WORLD_RIGHT);

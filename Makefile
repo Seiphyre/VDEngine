@@ -8,6 +8,7 @@ SRC			=	sources/glad/glad.cpp \
 				sources/stb/stb_image.cpp \
 				sources/GameEngine.cpp \
 				sources/main.cpp \
+				sources/TextureManager.cpp \
 				sources/AShader.cpp \
 				sources/DefaultShader.cpp \
 				sources/AObject.cpp \

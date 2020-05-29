@@ -8,6 +8,12 @@ Texture::Texture()
     m_texWrapTParam     = GL_REPEAT;
     m_texMinFilterParam = GL_LINEAR;
     m_texMagFilterParam = GL_LINEAR;
+
+    // UUID
+    m_uuid = uuids::uuid_system_generator{}();
+    // assert(!m_uuid.is_nil());
+    // assert(m_uuid.version() == uuids::uuid_version::random_number_based);
+    // assert(m_uuid.variant() == uuids::uuid_variant::rfc);
 }
 
 Texture::Texture(const std::string & text_name)
@@ -41,7 +47,20 @@ Texture::Texture(const std::string & text_name)
     m_texMinFilterParam = GL_LINEAR;
     m_texMagFilterParam = GL_LINEAR;
 
+    // UUID
+    m_uuid = uuids::uuid_system_generator{}();
+    // assert(!m_uuid.is_nil());
+    // assert(m_uuid.version() == uuids::uuid_version::random_number_based);
+    // assert(m_uuid.variant() == uuids::uuid_variant::rfc);
+
+    // uuids::uuid id2 = uuids::uuid::from_string("5c4f2287-f8d4-40a8-8398-2089dfb3a825").value();
+
     Create(text_name);
+}
+
+uuids::uuid Texture::GetUUID() const
+{
+    return (m_uuid);
 }
 
 void Texture::Create(const std::string & text_name)

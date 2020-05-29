@@ -15,6 +15,7 @@
 #include "VDEngine/Renderer/DefaultShader.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/Texture.h"
+#include "VDEngine/Renderer/TextureManager.h"
 
 namespace VDEngine
 {
@@ -33,7 +34,7 @@ class AObject
 
     Transform * GetTransform() const;
     void        SetShader(AShader * shader);
-    void        AddTexture(const std::string & text_name);
+    void        AddTexture(uuids::uuid texture_uuid);
     void        AddTexture(const Texture * texture);
 
     void Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode = GL_FILL) const;

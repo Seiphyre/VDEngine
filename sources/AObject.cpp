@@ -131,9 +131,16 @@ void AObject::Init()
     AttribShaderParams();
 }
 
-void AObject::AddTexture(const std::string & text_name)
+void AObject::AddTexture(uuids::uuid texture_uuid)
 {
-    m_textures.push_back(new Texture(text_name));
+    Texture * texture = TextureManager::getInstance()->GetTexture(texture_uuid);
+
+    if (texture != nullptr)
+        m_textures.push_back(texture);
+    else
+    {
+        std::cout << "[AObject] Could not add Texture to the object." << std::endl;
+    }
 }
 void AObject::AddTexture(const Texture * texture)
 {
