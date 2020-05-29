@@ -1,16 +1,19 @@
-#ifndef ASHADER_H_
-#define ASHADER_H_
+#ifndef VDENGINE_ASHADER_H_
+#define VDENGINE_ASHADER_H_
 
+// C++ Standard libs
+#include <iostream>
+
+// External libs
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <iostream>
-
+// Internal headers
 #include "VDEngine/Core/FileHandler.h"
 
 namespace VDEngine
 {
-  
+
 class AShader
 {
   public:
@@ -61,4 +64,4 @@ class AShader
 
 } // namespace VDEngine
 
-#endif /* ASHADER_H_ */
+#endif /* VDENGINE_ASHADER_H_ */
