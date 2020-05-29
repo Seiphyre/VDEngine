@@ -52,6 +52,8 @@ VDEngine::Input::Input()
     glfwSetScrollCallback(current_context, callback);
 }
 
+VDEngine::Input::~Input() {}
+
 void VDEngine::Input::Update()
 {
     glfwPollEvents();

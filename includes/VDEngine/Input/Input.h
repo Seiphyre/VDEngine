@@ -1,9 +1,11 @@
 #ifndef VDENGINE_INPUT_H_
 #define VDENGINE_INPUT_H_
 
+// External libs
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
 
+// Internal headers
 #include "VDEngine/Core/Singleton.h"
 
 namespace VDEngine
@@ -20,6 +22,9 @@ class Input : public Singleton<Input>
     friend class Singleton<Input>;
 
   public:
+
+  ~Input();
+
     void Update();
 
     bool GetKeyUp(int key_code) const;
@@ -38,8 +43,6 @@ class Input : public Singleton<Input>
 
   private:
     Input();
-
-    GLFWwindow * m_window;
 
     glm::vec2 m_mouse_position;
     glm::vec2 m_mouse_delta_position;
