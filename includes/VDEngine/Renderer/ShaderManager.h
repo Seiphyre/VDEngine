@@ -18,7 +18,7 @@ class ShaderManager : public Singleton<ShaderManager>
     friend class Singleton<ShaderManager>;
 
   private:
-    std::list<AShader *> _shaders;
+    std::list<AShader *> m_shaders;
 
     ShaderManager()
     {
@@ -33,7 +33,7 @@ class ShaderManager : public Singleton<ShaderManager>
         T * shader = new T();
         shader->Build();
 
-        _shaders.push_back(shader);
+        m_shaders.push_back(shader);
 
         return shader;
     }
@@ -43,8 +43,8 @@ class ShaderManager : public Singleton<ShaderManager>
         static_assert(std::is_base_of<AShader, T>::value,
                       "Error: T in ShaderManager::GetShader is not base of AShader.");
 
-        std::list<AShader *>::iterator it = _shaders.begin();
-        for (int i = 0; i < _shaders.size(); i++)
+        std::list<AShader *>::iterator it = m_shaders.begin();
+        for (int i = 0; i < m_shaders.size(); i++)
         {
             T * ptr = dynamic_cast<T *>(*it);
             if (ptr)
