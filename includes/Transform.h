@@ -11,8 +11,6 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "VDEngine/Quaternion.h"
-
 #define X_3D_AXIS glm::vec3(1.0f, 0.0f, 0.0f)
 #define Y_3D_AXIS glm::vec3(0.0f, 1.0f, 0.0f)
 #define Z_3D_AXIS glm::vec3(0.0f, 0.0f, 1.0f)
