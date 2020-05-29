@@ -6,12 +6,12 @@
 
 #include <string>
 
-#include "Image.h"
-#include "AShader.h"
+#include "VDEngine/Core/Image.h"
+#include "VDEngine/Renderer/AShader.h"
 
 class Texture
 {
-private:
+  private:
     unsigned int _textureId;
 
     GLint _texWrapSParam;
@@ -19,12 +19,12 @@ private:
     GLint _texMinFilterParam;
     GLint _texMagFilterParam;
 
-public:
+  public:
     Texture();
     Texture(const std::string text_name);
 
     void Create(const std::string text_name);
-    void Bind(AShader *shader, int textureActiveId = 0);
+    void Bind(AShader * shader, int textureActiveId = 0);
 };
 
 #endif /* Texture_H_ */

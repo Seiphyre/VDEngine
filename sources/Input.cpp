@@ -1,4 +1,4 @@
-#include "VDEngine/Input.h"
+#include "VDEngine/Input/Input.h"
 
 VDEngine::Input::Input()
 {

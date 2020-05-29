@@ -1,4 +1,4 @@
-#include "VDEngine/Camera.h"
+#include "VDEngine/Renderer/Camera.h"
 
 VDEngine::Camera::Camera()
 {

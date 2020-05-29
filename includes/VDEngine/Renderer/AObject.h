@@ -7,10 +7,11 @@
 
 #include <vector>
 
-#include "DefaultShader.h"
-#include "ShaderManager.h"
-#include "Texture.h"
-#include "Transform.h"
+#include "VDEngine/Core/Transform.h"
+
+#include "VDEngine/Renderer/DefaultShader.h"
+#include "VDEngine/Renderer/ShaderManager.h"
+#include "VDEngine/Renderer/Texture.h"
 
 class AObject
 {

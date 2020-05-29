@@ -5,15 +5,16 @@
 #include <unistd.h>
 #include <mach-o/dyld.h>
 
-#include "DefaultShader.h"
-#include "ShaderManager.h"
-#include "CubeObject.h"
-#include "PlaneObject.h"
-#include "FileHandler.h"
-#include "VDEngine/Time.h"
-#include "VDEngine/Input.h"
-#include "VDEngine/GameEngine.h"
-#include "VDEngine/Camera.h"
+#include "VDEngine/Renderer/Camera.h"
+#include "VDEngine/Renderer/DefaultShader.h"
+#include "VDEngine/Renderer/ShaderManager.h"
+#include "VDEngine/Renderer/CubeObject.h"
+#include "VDEngine/Renderer/PlaneObject.h"
+
+#include "VDEngine/Core/GameEngine.h"
+#include "VDEngine/Core/FileHandler.h"
+#include "VDEngine/Core/Time.h"
+#include "VDEngine/Input/Input.h"
 
 #include "../resources/scripts/FPSCameraController.h"
 

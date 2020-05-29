@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "VDEngine/Core/Image.h"
 
 GLuint Image::ToGLFormat(e_imgFormat format)
 {
@@ -6,16 +6,16 @@ GLuint Image::ToGLFormat(e_imgFormat format)
 
     switch (format)
     {
-    case RGB:
-        gl_format = GL_RGB;
-        break;
-    case RGBA:
-        gl_format = GL_RGBA;
-        break;
-    default:
-        gl_format = GL_RED;
-        std::cout << "[ToGLFormat] Format cannot be converted. It will be set to GL_RED." << std::endl;
-        break;
+        case RGB:
+            gl_format = GL_RGB;
+            break;
+        case RGBA:
+            gl_format = GL_RGBA;
+            break;
+        default:
+            gl_format = GL_RED;
+            std::cout << "[ToGLFormat] Format cannot be converted. It will be set to GL_RED." << std::endl;
+            break;
     }
 
     return gl_format;
@@ -51,7 +51,7 @@ e_imgFormat Image::GetFormat() const
     return (_format);
 }
 
-const unsigned char *Image::GetData() const
+const unsigned char * Image::GetData() const
 {
     return (_data);
 }

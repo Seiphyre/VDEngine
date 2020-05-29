@@ -1,4 +1,4 @@
-#include "VDEngine/GameEngine.h"
+#include "VDEngine/Core/GameEngine.h"
 
 VDEngine::GameEngine::GameEngine()
 {

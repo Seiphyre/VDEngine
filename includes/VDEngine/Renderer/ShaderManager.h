@@ -4,9 +4,9 @@
 #include <list>
 #include <type_traits>
 
-#include "Singleton.h"
-#include "AShader.h"
-#include "DefaultShader.h"
+#include "VDEngine/Core/Singleton.h"
+#include "VDEngine/Renderer/AShader.h"
+#include "VDEngine/Renderer/DefaultShader.h"
 
 class ShaderManager : public Singleton<ShaderManager>
 {

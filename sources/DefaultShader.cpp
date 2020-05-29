@@ -1,4 +1,4 @@
-#include "DefaultShader.h"
+#include "VDEngine/Renderer/DefaultShader.h"
 
 void DefaultShader::SetVertexShaderSource()
 {

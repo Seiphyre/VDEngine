@@ -3,9 +3,9 @@
 
 #include <cmath>
 
-#include "VDEngine/Time.h"
-#include "VDEngine/Input.h"
-#include "VDEngine/Camera.h"
+#include "VDEngine/Core/Time.h"
+#include "VDEngine/Input/Input.h"
+#include "VDEngine/Renderer/Camera.h"
 
 class FPSCameraController
 {

@@ -1,4 +1,4 @@
-#include "CubeObject.h"
+#include "VDEngine/Renderer/CubeObject.h"
 
 CubeObj::CubeObj() : AObject()
 {

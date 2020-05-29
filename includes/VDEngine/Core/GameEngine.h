@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "../Singleton.h"
+#include "Singleton.h"
 
 namespace VDEngine
 {
