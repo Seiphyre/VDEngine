@@ -6,13 +6,14 @@
 #endif
 
 // C++ Standard libs
+#include <iostream>
 #include <fstream>
 #include <string>
 
 // External libs
 #include "stb/stb_image.h"
 
-// Internal Headers
+// Internal headers
 #include "Singleton.h"
 
 namespace VDEngine
