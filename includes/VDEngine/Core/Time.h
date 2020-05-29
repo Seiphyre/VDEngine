@@ -1,6 +1,7 @@
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef VDENGINE_TIME_H_
+#define VDENGINE_TIME_H_
 
+// External libs
 #include <GLFW/glfw3.h>
 
 namespace VDEngine
@@ -24,4 +25,4 @@ class Time
 
 } // namespace VDEngine
 
-#endif /* TIME_H_ */
+#endif /* VDENGINE_TIME_H_ */
