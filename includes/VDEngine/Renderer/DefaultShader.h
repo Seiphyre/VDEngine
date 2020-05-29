@@ -1,9 +1,13 @@
-#ifndef DEFAULT_SHADER_H
-#define DEFAULT_SHADER_H
+#ifndef VDENGINE_DEFAULT_SHADER_H_
+#define VDENGINE_DEFAULT_SHADER_H_
 
-#include <GLFW/glfw3.h>
+// C++ Standard libs
 #include <iostream>
 
+// External libs
+#include <GLFW/glfw3.h>
+
+// Internal headers
 #include "AShader.h"
 
 namespace VDEngine
@@ -18,4 +22,4 @@ class DefaultShader : public AShader
 
 }
 
-#endif
+#endif /* VDENGINE_DEFAULT_SHADER_H_ */
