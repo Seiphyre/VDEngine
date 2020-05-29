@@ -9,3 +9,5 @@ bin/**
 
 // Visual Studio C++ Debug files
 *.dSYM
+
+.vscode
