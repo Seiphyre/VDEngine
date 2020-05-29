@@ -22,8 +22,7 @@ class Input : public Singleton<Input>
     friend class Singleton<Input>;
 
   public:
-
-  ~Input();
+    ~Input();
 
     void Update();
 
