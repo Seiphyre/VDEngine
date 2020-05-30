@@ -62,21 +62,11 @@ void AObject::AttribShaderParams()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(2);
 
-    // EBO - Bind the element array
-    unsigned int EBO;
-    glGenBuffers(1, &EBO);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_elem_indices.size() * sizeof(unsigned int), m_elem_indices.data(),
-                 GL_STATIC_DRAW);
-
     // Clean
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glDeleteBuffers(3, VBO);
-    glDeleteBuffers(1, &EBO);
 }
 
 void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode) const
@@ -116,10 +106,9 @@ void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum 
     glPolygonMode(GL_FRONT_AND_BACK, mode);
 
     int size;
-    glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-    // glDrawElements(GL_TRIANGLES, size / sizeof(GLushort), GL_UNSIGNED_SHORT, 0);
-    glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-    glDrawArrays(GL_TRIANGLES, 0, size / sizeof(GLfloat));
+    // glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+    size = m_vert_positions.size() / 3;
+    glDrawArrays(GL_TRIANGLES, 0, size);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

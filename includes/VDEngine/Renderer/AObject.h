@@ -44,10 +44,9 @@ class AObject
 
     unsigned int m_VAO;
 
-    std::vector<float>        m_vert_positions;
-    std::vector<float>        m_vert_colors;
-    std::vector<float>        m_vert_textCoords;
-    std::vector<unsigned int> m_elem_indices;
+    std::vector<float> m_vert_positions;
+    std::vector<float> m_vert_colors;
+    std::vector<float> m_vert_textCoords;
 
     AShader *                    m_shader;
     std::vector<const Texture *> m_textures;
