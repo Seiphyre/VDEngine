@@ -4,9 +4,6 @@
 // C++ Standard libs
 #include <iostream>
 
-// External libs
-#include <GLFW/glfw3.h>
-
 // Internal headers
 #include "AShader.h"
 
@@ -20,6 +17,6 @@ class DefaultShader : public AShader
     void SetFragmentShaderSource();
 };
 
-}
+} // namespace VDEngine
 
 #endif /* VDENGINE_DEFAULT_SHADER_H_ */

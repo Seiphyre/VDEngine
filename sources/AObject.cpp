@@ -16,8 +16,6 @@ AObject::AObject(AShader * shader)
 AObject::~AObject()
 {
     glDeleteVertexArrays(1, &m_VAO);
-
-    delete (m_shader);
 }
 
 Transform * AObject::GetTransform() const
@@ -33,40 +31,56 @@ void AObject::SetShader(AShader * shader)
 
 void AObject::AttribShaderParams()
 {
-    // VAO - Save the config
     glGenVertexArrays(1, &m_VAO);
+
+    SetVertexAttribVec3(0, m_vert_positions.data(), m_vert_positions.size());
+    SetVertexAttribVec3(1, m_vert_colors.data(), m_vert_colors.size());
+    SetVertexAttribVec2(2, m_vert_textCoords.data(), m_vert_textCoords.size());
+}
+
+void AObject::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
+{
+    // VAO - Save the config
     glBindVertexArray(m_VAO);
 
     // VBO - Bind vertex attributes
-    unsigned int VBO[3];
-    glGenBuffers(3, VBO);
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
 
     // [0] Vertex Positions
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
-    glBufferData(GL_ARRAY_BUFFER, m_vert_positions.size() * sizeof(float), m_vert_positions.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(float), data, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(0);
-
-    // [1] Vertex Colors
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, m_vert_colors.size() * sizeof(float), m_vert_colors.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(1);
-
-    // [2] Vertex Colors
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
-    glBufferData(GL_ARRAY_BUFFER, m_vert_textCoords.size() * sizeof(float), m_vert_textCoords.data(), GL_STATIC_DRAW);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(layout_index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(layout_index);
 
     // Clean
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glDeleteBuffers(3, VBO);
+    glDeleteBuffers(1, &VBO);
+}
+void AObject::SetVertexAttribVec2(int layout_index, const float * data, int data_size)
+{
+    // VAO - Save the config
+    glBindVertexArray(m_VAO);
+
+    // VBO - Bind vertex attributes
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+
+    // [2] Texels
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(float), data, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(layout_index, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    glEnableVertexAttribArray(layout_index);
+
+    // Clean
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDeleteBuffers(1, &VBO);
 }
 
 void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode) const

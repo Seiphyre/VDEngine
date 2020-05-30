@@ -41,6 +41,8 @@ class AObject
 
   protected:
     void AttribShaderParams();
+    void SetVertexAttribVec3(int layout_index, const float * data, int data_size);
+    void SetVertexAttribVec2(int layout_index, const float * data, int data_size);
 
     unsigned int m_VAO;
 
