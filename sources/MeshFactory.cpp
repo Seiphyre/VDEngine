@@ -1,8 +1,16 @@
-#include "VDEngine/Renderer/CubeObject.h"
+#include "VDEngine/Renderer/MeshFactory.h"
 
 using namespace VDEngine;
 
-CubeObj::CubeObj() : AObject()
+MeshFactory::MeshFactory()
+{
+}
+
+MeshFactory::~MeshFactory()
+{
+}
+
+Mesh * MeshFactory::CreateCube()
 {
     float verticesArray[] = {
         -0.5f, -0.5f, -0.5f, //
@@ -142,35 +150,50 @@ CubeObj::CubeObj() : AObject()
         0.0f, 1.0f  //
     };
 
-    m_vert_positions.insert(m_vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
-    m_vert_colors.insert(m_vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
-    m_vert_textCoords.insert(m_vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
+    Mesh * mesh = new Mesh();
+
+    mesh->vert_positions.insert(mesh->vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
+    mesh->vert_colors.insert(mesh->vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
+    mesh->vert_textCoords.insert(mesh->vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
+
+    return mesh;
 }
 
-CubeObj::CubeObj(AShader * shader) : AObject(shader)
+Mesh * MeshFactory::CreatePlane()
 {
     float verticesArray[] = {
-        0.5f,  0.5f,  0.0f, // top right
-        0.5f,  -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f,  0.0f  // top left
+        -0.5f, -0.5f, 0.0f, //
+        0.5f,  -0.5f, 0.0f, //
+        0.5f,  0.5f,  0.0f, //
+        0.5f,  0.5f,  0.0f, //
+        -0.5f, 0.5f,  0.0f, //
+        -0.5f, -0.5f, 0.0f, //
     };
 
     float vColorsArray[] = {
-        1.0f, 0.0f, 0.0f, // top right
-        0.0f, 1.0f, 0.0f, // bottom right
-        0.0f, 0.0f, 1.0f, // bottom left
-        1.0f, 1.0f, 0.0f  // top left
+        // Front face
+        1.0, 1.0, 1.0, //
+        1.0, 1.0, 1.0, //
+        1.0, 1.0, 1.0, //
+        1.0, 1.0, 1.0, //
+        1.0, 1.0, 1.0, //
+        1.0, 1.0, 1.0, //
     };
 
     float vTexCoordsArray[] = {
-        1.0f, 1.0f, // top right
-        1.0f, 0.0f, // bottom right
-        0.0f, 0.0f, // bottom left
-        0.0f, 1.0f, // top left
+        0.0f, 0.0f, //
+        1.0f, 0.0f, //
+        1.0f, 1.0f, //
+        1.0f, 1.0f, //
+        0.0f, 1.0f, //
+        0.0f, 0.0f, //
     };
 
-    m_vert_positions.insert(m_vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
-    m_vert_colors.insert(m_vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
-    m_vert_textCoords.insert(m_vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
+    Mesh * mesh = new Mesh();
+
+    mesh->vert_positions.insert(mesh->vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
+    mesh->vert_colors.insert(mesh->vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
+    mesh->vert_textCoords.insert(mesh->vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
+
+    return mesh;
 }

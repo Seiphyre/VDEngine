@@ -1,5 +1,5 @@
-#ifndef VDENGINE_AOBJECT_H_
-#define VDENGINE_AOBJECT_H_
+#ifndef VDENGINE_MESH_RENDERER_H_
+#define VDENGINE_MESH_RENDERER_H_
 
 // C++ Standard libs
 #include <math.h>
@@ -16,19 +16,20 @@
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/Texture.h"
 #include "VDEngine/Renderer/TextureManager.h"
+#include "VDEngine/Renderer/Mesh.h"
 
 namespace VDEngine
 {
 
-class AObject
+class MeshRender
 {
   public:
-    AObject();
-    AObject(AShader * shader);
-    AObject(const AObject &) = default;
-    ~AObject();
+    MeshRender(Mesh * mesh);
+    MeshRender(Mesh * mesh, AShader * shader);
+    MeshRender(const MeshRender &) = default;
+    ~MeshRender();
 
-    AObject & operator=(const AObject &) = default;
+    MeshRender & operator=(const MeshRender &) = default;
 
     void Init();
 
@@ -46,15 +47,17 @@ class AObject
 
     unsigned int m_VAO;
 
-    std::vector<float> m_vert_positions;
-    std::vector<float> m_vert_colors;
-    std::vector<float> m_vert_textCoords;
-
+    // Component : MATERIAL
     AShader *                    m_shader;
     std::vector<const Texture *> m_textures;
-    Transform *                  m_transform;
+
+    // Component : MESH
+    Mesh * m_mesh;
+
+    // Component : TRANSFORM
+    Transform * m_transform;
 };
 
 } // namespace VDEngine
 
-#endif /* VDENGINE_AOBJECT_H_ */
+#endif /* VDENGINE_MESH_RENDERER_H_ */

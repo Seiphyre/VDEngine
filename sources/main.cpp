@@ -9,8 +9,8 @@
 #include "VDEngine/Renderer/DefaultShader.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/TextureManager.h"
-#include "VDEngine/Renderer/CubeObject.h"
-#include "VDEngine/Renderer/PlaneObject.h"
+#include "VDEngine/Renderer/MeshRenderer.h"
+#include "VDEngine/Renderer/MeshFactory.h"
 
 #include "VDEngine/Core/GameEngine.h"
 #include "VDEngine/Core/FileHandler.h"
@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
     // -- CREATE SCENE --------------------------------------------------
 
     // Create objects
-    VDEngine::PlaneObj * floor = new VDEngine::PlaneObj();
+    VDEngine::MeshRender * floor = new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane());
     floor->Init();
     floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
     floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
@@ -87,7 +87,7 @@ int main(int argc, char * argv[])
     floor->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
-    VDEngine::CubeObj * cube = new VDEngine::CubeObj();
+    VDEngine::MeshRender * cube = new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube());
     cube->Init();
     cube->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(wooden_container->GetUUID()));
 

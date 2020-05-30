@@ -1,44 +1,46 @@
-#include "VDEngine/Renderer/AObject.h"
+#include "VDEngine/Renderer/MeshRenderer.h"
 
 using namespace VDEngine;
 
-AObject::AObject()
+MeshRender::MeshRender(Mesh * mesh)
 {
+    m_mesh      = mesh;
     m_shader    = ShaderManager::getInstance()->GetShader<DefaultShader>();
     m_transform = new Transform();
 }
 
-AObject::AObject(AShader * shader)
+MeshRender::MeshRender(Mesh * mesh, AShader * shader)
 {
+    m_mesh      = mesh;
     m_shader    = shader;
     m_transform = new Transform();
 }
-AObject::~AObject()
+MeshRender::~MeshRender()
 {
     glDeleteVertexArrays(1, &m_VAO);
 }
 
-Transform * AObject::GetTransform() const
+Transform * MeshRender::GetTransform() const
 {
     return m_transform;
 }
 
-void AObject::SetShader(AShader * shader)
+void MeshRender::SetShader(AShader * shader)
 {
     m_shader = shader;
     AttribShaderParams();
 }
 
-void AObject::AttribShaderParams()
+void MeshRender::AttribShaderParams()
 {
     glGenVertexArrays(1, &m_VAO);
 
-    SetVertexAttribVec3(0, m_vert_positions.data(), m_vert_positions.size());
-    SetVertexAttribVec3(1, m_vert_colors.data(), m_vert_colors.size());
-    SetVertexAttribVec2(2, m_vert_textCoords.data(), m_vert_textCoords.size());
+    SetVertexAttribVec3(0, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
+    SetVertexAttribVec3(1, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
+    SetVertexAttribVec2(2, m_mesh->vert_textCoords.data(), m_mesh->vert_textCoords.size());
 }
 
-void AObject::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
+void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -60,7 +62,7 @@ void AObject::SetVertexAttribVec3(int layout_index, const float * data, int data
 
     glDeleteBuffers(1, &VBO);
 }
-void AObject::SetVertexAttribVec2(int layout_index, const float * data, int data_size)
+void MeshRender::SetVertexAttribVec2(int layout_index, const float * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -83,7 +85,7 @@ void AObject::SetVertexAttribVec2(int layout_index, const float * data, int data
     glDeleteBuffers(1, &VBO);
 }
 
-void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode) const
+void MeshRender::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode) const
 {
     // Bind Textures
     for (int i = 0; i < m_textures.size(); i++)
@@ -121,7 +123,7 @@ void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum 
 
     int size;
     // glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-    size = m_vert_positions.size() / 3;
+    size = m_mesh->vert_positions.size() / 3;
     glDrawArrays(GL_TRIANGLES, 0, size);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -136,12 +138,12 @@ void AObject::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum 
     }
 }
 
-void AObject::Init()
+void MeshRender::Init()
 {
     AttribShaderParams();
 }
 
-void AObject::AddTexture(uuids::uuid texture_uuid)
+void MeshRender::AddTexture(uuids::uuid texture_uuid)
 {
     Texture * texture = TextureManager::getInstance()->GetTexture(texture_uuid);
 
@@ -152,7 +154,7 @@ void AObject::AddTexture(uuids::uuid texture_uuid)
         std::cout << "[AObject] Could not add Texture to the object." << std::endl;
     }
 }
-void AObject::AddTexture(const Texture * texture)
+void MeshRender::AddTexture(const Texture * texture)
 {
     m_textures.push_back(texture);
 }

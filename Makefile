@@ -9,13 +9,13 @@ SRC			=	sources/glad/glad.cpp \
 				sources/GameEngine.cpp \
 				sources/main.cpp \
 				sources/TextureManager.cpp \
+				sources/MeshFactory.cpp \
 				sources/AShader.cpp \
 				sources/DefaultShader.cpp \
-				sources/AObject.cpp \
-				sources/CubeObject.cpp \
-				sources/PlaneObject.cpp \
+				sources/MeshRenderer.cpp \
 				sources/FileHandler.cpp \
 				sources/Texture.cpp \
+				sources/Mesh.cpp \
 				sources/Image.cpp \
 				sources/Transform.cpp \
 				sources/Time.cpp \
