@@ -12,11 +12,13 @@
 // Internal headers
 #include "VDEngine/Core/Transform.h"
 
+#include "VDEngine/Renderer/MaterialManager.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/Texture.h"
 #include "VDEngine/Renderer/TextureManager.h"
 #include "VDEngine/Renderer/Mesh.h"
 #include "VDEngine/Renderer/Camera.h"
+#include "VDEngine/Renderer/Material.h"
 
 namespace VDEngine
 {
@@ -25,18 +27,16 @@ class MeshRender
 {
   public:
     MeshRender(Mesh * mesh);
-    MeshRender(Mesh * mesh, Shader * shader);
+    MeshRender(Mesh * mesh, Material * material);
     MeshRender(const MeshRender &) = default;
     ~MeshRender();
 
     MeshRender & operator=(const MeshRender &) = default;
 
-    void Init();
+    // void Init();
 
     Transform * GetTransform() const;
-    void        SetShader(Shader * shader);
-    void        AddTexture(uuids::uuid texture_uuid);
-    void        AddTexture(const Texture * texture);
+    void        SetMaterial(Material * material);
 
     void Draw(Camera * camera, GLenum mode = GL_FILL);
 
@@ -73,8 +73,9 @@ class MeshRender
     unsigned int m_VAO;
 
     // Component : MATERIAL
-    Shader *                     m_shader;
-    std::vector<const Texture *> m_textures;
+    Material * m_material;
+    // Shader *                     m_shader;
+    // std::vector<const Texture *> m_textures;
 
     // Component : MESH
     Mesh * m_mesh;

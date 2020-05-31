@@ -5,15 +5,17 @@ using namespace VDEngine;
 MeshRender::MeshRender(Mesh * mesh)
 {
     m_mesh      = mesh;
-    m_shader    = ShaderManager::getInstance()->GetShader();
     m_transform = new Transform();
+
+    SetMaterial(MaterialManager::getInstance()->GetMaterial());
 }
 
-MeshRender::MeshRender(Mesh * mesh, Shader * shader)
+MeshRender::MeshRender(Mesh * mesh, Material * material)
 {
     m_mesh      = mesh;
-    m_shader    = shader;
     m_transform = new Transform();
+
+    SetMaterial(material);
 }
 
 // MeshRender::MeshRender(const MeshRender & other)
@@ -35,9 +37,9 @@ Transform * MeshRender::GetTransform() const
     return m_transform;
 }
 
-void MeshRender::SetShader(Shader * shader)
+void MeshRender::SetMaterial(Material * material)
 {
-    m_shader = shader;
+    m_material = material;
     SetShaderParamsFromMesh();
 }
 
@@ -46,7 +48,7 @@ void MeshRender::SetShaderParamsFromMesh()
     glGenVertexArrays(1, &m_VAO);
 
     // Set Vertex attributes
-    std::vector<s_shaderParameter> vertex_attributes = m_shader->GetAttributes();
+    std::vector<s_shaderParameter> vertex_attributes = m_material->shader->GetAttributes();
     for (int i = 0; i < vertex_attributes.size(); i++)
     {
         // About vertex attributes : INDEX (from glGetActiveAttrib) = LOCATION (used by glVertexAttribPointer)
@@ -68,7 +70,7 @@ void MeshRender::SetShaderParamsFromMesh()
 void MeshRender::SetShaderParamsFromCamera(Camera * camera)
 {
     // Set Uniforms
-    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
         if (uniforms[i].name == "uView")
@@ -81,7 +83,7 @@ void MeshRender::SetShaderParamsFromCamera(Camera * camera)
 void MeshRender::SetShaderParamsFromTransform()
 {
     // Set Uniforms
-    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
@@ -93,14 +95,14 @@ void MeshRender::SetShaderParamsFromTransform()
 void MeshRender::SetShaderParamsFromMaterial()
 {
     // Set Uniforms
-    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "uTexture_2" && m_textures.size() > 0)
+        if (uniforms[i].name == "uTexture_2" && m_material->textures.size() > 0)
             SetInt(uniforms[i].name, 0); // 0 is a texture unit (texture unit == index of m_material->getTextures())
 
-        else if (uniforms[i].name == "uTexture_1" && m_textures.size() > 1)
+        else if (uniforms[i].name == "uTexture_1" && m_material->textures.size() > 1)
             SetInt(uniforms[i].name, 1);
     }
 }
@@ -154,82 +156,85 @@ void MeshRender::SetVertexAttribVec2(int layout_index, const float * data, int d
 // ------------------------------------------------------------------------
 void MeshRender::SetBool(const std::string & name, bool value) const
 {
-    glUniform1i(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), (int)value);
+    glUniform1i(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), (int)value);
     // glUniform1i(location, (int)value);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetInt(const std::string & name, int value) const
 {
-    glUniform1i(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), value);
+    glUniform1i(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), value);
     // glUniform1i(location, value);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetFloat(const std::string & name, float value) const
 {
-    glUniform1f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), value);
+    glUniform1f(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), value);
     // glUniform1f(location, value);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetVec2(const std::string & name, const glm::vec2 & value) const
 {
-    glUniform2fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    glUniform2fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform2fv(location, 1, &value[0]);
 }
 void MeshRender::SetVec2(const std::string & name, float x, float y) const
 {
-    glUniform2f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y);
+    glUniform2f(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), x, y);
     // glUniform2f(location, x, y);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetVec3(const std::string & name, const glm::vec3 & value) const
 {
-    glUniform3fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    glUniform3fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform3fv(location, 1, &value[0]);
 }
 void MeshRender::SetVec3(const std::string & name, float x, float y, float z) const
 {
-    glUniform3f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y, z);
+    glUniform3f(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), x, y, z);
     // glUniform3f(location, x, y, z);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetVec4(const std::string & name, const glm::vec4 & value) const
 {
-    glUniform4fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    glUniform4fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform4fv(location, 1, &value[0]);
 }
 void MeshRender::SetVec4(const std::string & name, float x, float y, float z, float w)
 {
-    glUniform4f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y, z, w);
+    glUniform4f(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), x, y, z, w);
     // glUniform4f(location, x, y, z, w);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetMat2(const std::string & name, const glm::mat2 & mat) const
 {
-    glUniformMatrix2fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix2fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
+                       &mat[0][0]);
     // glUniformMatrix2fv(location, 1, GL_FALSE, &mat[0][0]);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetMat3(const std::string & name, const glm::mat3 & mat) const
 {
-    glUniformMatrix3fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix3fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
+                       &mat[0][0]);
     // glUniformMatrix3fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
 }
 // ------------------------------------------------------------------------
 void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
 {
-    glUniformMatrix4fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
+                       &mat[0][0]);
     // glUniformMatrix4fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
 }
 
 void MeshRender::Draw(Camera * camera, GLenum mode)
 {
     // Bind Textures -----------
-    for (int i = 0; i < m_textures.size(); i++)
+    for (int i = 0; i < m_material->textures.size(); i++)
     {
-        m_textures[i]->Bind(i);
+        m_material->textures[i]->Bind(i);
     }
 
-    m_shader->Use();
+    m_material->shader->Use();
 
     // Bind Vertex Attributes --
     glBindVertexArray(m_VAO);
@@ -252,30 +257,14 @@ void MeshRender::Draw(Camera * camera, GLenum mode)
     glBindVertexArray(0);
 
     // Unbind Textures -----------
-    for (int i = 0; i < m_textures.size(); i++)
+    for (int i = 0; i < m_material->textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }
 
-void MeshRender::Init()
-{
-    SetShaderParamsFromMesh();
-}
-
-void MeshRender::AddTexture(uuids::uuid texture_uuid)
-{
-    Texture * texture = TextureManager::getInstance()->GetTexture(texture_uuid);
-
-    if (texture != nullptr)
-        m_textures.push_back(texture);
-    else
-    {
-        std::cout << "[AObject] Could not add Texture to the object." << std::endl;
-    }
-}
-void MeshRender::AddTexture(const Texture * texture)
-{
-    m_textures.push_back(texture);
-}
+// void MeshRender::Init()
+// {
+//     SetShaderParamsFromMesh();
+// }

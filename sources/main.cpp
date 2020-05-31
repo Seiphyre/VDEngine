@@ -8,6 +8,7 @@
 #include "VDEngine/Renderer/Camera.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/TextureManager.h"
+#include "VDEngine/Renderer/MaterialManager.h"
 #include "VDEngine/Renderer/MeshRenderer.h"
 #include "VDEngine/Renderer/MeshFactory.h"
 
@@ -74,8 +75,18 @@ int main(int argc, char * argv[])
     // Load Textures
 
     VDEngine::Texture * measurement = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    VDEngine::Texture * wooden_container = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
-    VDEngine::Texture * emoji            = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    VDEngine::Texture * emoji       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    // VDEngine::Texture * wooden_container = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
+
+    // [...]
+
+    // Load Materials
+
+    // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
+    // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
+
+    VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
+        multText, std::vector<VDEngine::Texture *>{measurement, emoji});
 
     // [...]
 
@@ -83,17 +94,12 @@ int main(int argc, char * argv[])
 
     // Create objects
     VDEngine::MeshRender * floor =
-        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane(), multText);
-    floor->Init();
-    floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
-    floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
+        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane(), floor_mat);
 
     floor->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
     VDEngine::MeshRender * cube = new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube());
-    cube->Init();
-    cube->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(wooden_container->GetUUID()));
 
     cube->GetTransform()->Translate(glm::vec3(2.0f, 0.5f, 2.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));

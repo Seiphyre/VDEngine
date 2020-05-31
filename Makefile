@@ -10,12 +10,14 @@ SRC			=	sources/glad/glad.cpp \
 				sources/main.cpp \
 				sources/TextureManager.cpp \
 				sources/ShaderManager.cpp \
+				sources/MaterialManager.cpp \
 				sources/MeshFactory.cpp \
 				sources/Shader.cpp \
 				sources/MeshRenderer.cpp \
 				sources/FileHandler.cpp \
 				sources/Texture.cpp \
 				sources/Mesh.cpp \
+				sources/Material.cpp \
 				sources/Image.cpp \
 				sources/Transform.cpp \
 				sources/Time.cpp \
