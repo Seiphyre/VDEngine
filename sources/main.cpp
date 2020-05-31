@@ -67,16 +67,16 @@ int main(int argc, char * argv[])
 
     // Load Shaders
 
-    VDEngine::Shader * multText =
+    VDEngine::Shader * multi_text_shader =
         VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
 
     // [...]
 
     // Load Textures
 
-    VDEngine::Texture * measurement = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    VDEngine::Texture * emoji       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
-    // VDEngine::Texture * wooden_container = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
+    VDEngine::Texture * measurement_tex = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
+    VDEngine::Texture * emoji_tex       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    VDEngine::Texture * wooden_container_tex = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
 
     // [...]
 
@@ -86,8 +86,9 @@ int main(int argc, char * argv[])
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
     VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        multText, std::vector<VDEngine::Texture *>{measurement, emoji});
-
+        multi_text_shader, std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
+    VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
+        multi_text_shader, std::vector<VDEngine::Texture *>{wooden_container_tex});
     // [...]
 
     // -- CREATE SCENE --------------------------------------------------
@@ -99,7 +100,8 @@ int main(int argc, char * argv[])
     floor->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
     floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
-    VDEngine::MeshRender * cube = new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube());
+    VDEngine::MeshRender * cube =
+        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), cube_mat);
 
     cube->GetTransform()->Translate(glm::vec3(2.0f, 0.5f, 2.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
