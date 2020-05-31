@@ -11,7 +11,6 @@
 
 // Internal headers
 #include "VDEngine/Core/Image.h"
-#include "VDEngine/Renderer/AShader.h"
 
 namespace VDEngine
 {

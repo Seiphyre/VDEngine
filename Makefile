@@ -9,9 +9,9 @@ SRC			=	sources/glad/glad.cpp \
 				sources/GameEngine.cpp \
 				sources/main.cpp \
 				sources/TextureManager.cpp \
+				sources/ShaderManager.cpp \
 				sources/MeshFactory.cpp \
-				sources/AShader.cpp \
-				sources/DefaultShader.cpp \
+				sources/Shader.cpp \
 				sources/MeshRenderer.cpp \
 				sources/FileHandler.cpp \
 				sources/Texture.cpp \

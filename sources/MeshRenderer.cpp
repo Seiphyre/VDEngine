@@ -5,16 +5,26 @@ using namespace VDEngine;
 MeshRender::MeshRender(Mesh * mesh)
 {
     m_mesh      = mesh;
-    m_shader    = ShaderManager::getInstance()->GetShader<DefaultShader>();
+    m_shader    = ShaderManager::getInstance()->GetShader();
     m_transform = new Transform();
 }
 
-MeshRender::MeshRender(Mesh * mesh, AShader * shader)
+MeshRender::MeshRender(Mesh * mesh, Shader * shader)
 {
     m_mesh      = mesh;
     m_shader    = shader;
     m_transform = new Transform();
 }
+
+// MeshRender::MeshRender(const MeshRender & other)
+// {
+//     m_mesh      = other.m_mesh;
+//     m_shader    = other.m_shader;
+//     m_transform = other.m_transform;
+//     m_VAO       = other.m_VAO;
+//     m_textures  = other.m_textures;
+// }
+
 MeshRender::~MeshRender()
 {
     glDeleteVertexArrays(1, &m_VAO);
@@ -25,7 +35,7 @@ Transform * MeshRender::GetTransform() const
     return m_transform;
 }
 
-void MeshRender::SetShader(AShader * shader)
+void MeshRender::SetShader(Shader * shader)
 {
     m_shader = shader;
     SetShaderParamsFromMesh();

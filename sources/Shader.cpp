@@ -1,37 +1,46 @@
-#include "VDEngine/Renderer/AShader.h"
+#include "VDEngine/Renderer/Shader.h"
 
 using namespace VDEngine;
 
-AShader::AShader()
+Shader::Shader(const std::string & vert_file_name, const std::string & frag_file_name)
 {
+    m_hasBeenBuild = false;
+
     m_vert_shader_id = glCreateShader(GL_VERTEX_SHADER);
     m_frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
 
+    m_vert_shader_source = FileHandler::getInstance()->LoadShader(vert_file_name);
+    m_frag_shader_source = FileHandler::getInstance()->LoadShader(frag_file_name);
+
     m_shader_program_id = glCreateProgram();
+    m_uuid              = uuids::uuid_system_generator{}();
 }
 
-AShader::~AShader()
+Shader::~Shader()
 {
 }
 
-std::vector<s_shaderParameter> AShader::GetAttributes() const
+std::vector<s_shaderParameter> Shader::GetAttributes() const
 {
     return (m_attributes);
 }
-std::vector<s_shaderParameter> AShader::GetUniforms() const
+std::vector<s_shaderParameter> Shader::GetUniforms() const
 {
     return (m_uniforms);
 }
 
-unsigned int AShader::GetShaderProgramId()
+unsigned int Shader::GetShaderProgramId()
 {
     return m_shader_program_id;
 }
 
-void AShader::CompileVertexShader()
+uuids::uuid Shader::GetUUID() const
 {
-    SetVertexShaderSource();
+    return (m_uuid);
+}
 
+void Shader::CompileVertexShader()
+{
     const char * c_str = m_vert_shader_source.c_str();
     glShaderSource(m_vert_shader_id, 1, &c_str, NULL);
     glCompileShader(m_vert_shader_id);
@@ -47,10 +56,8 @@ void AShader::CompileVertexShader()
     }
 }
 
-void AShader::CompileFragmentShader()
+void Shader::CompileFragmentShader()
 {
-    SetFragmentShaderSource();
-
     const char * c_str = m_frag_shader_source.c_str();
     glShaderSource(m_frag_shader_id, 1, &c_str, NULL);
     glCompileShader(m_frag_shader_id);
@@ -66,7 +73,7 @@ void AShader::CompileFragmentShader()
     }
 }
 
-void AShader::LinkProgram()
+void Shader::LinkProgram()
 {
     glAttachShader(m_shader_program_id, m_vert_shader_id);
     glAttachShader(m_shader_program_id, m_frag_shader_id);
@@ -131,9 +138,11 @@ void AShader::LinkProgram()
         glGetProgramInfoLog(m_shader_program_id, 512, NULL, infoLog);
         std::cout << "ERROR::PROGRAM::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
+
+    m_hasBeenBuild = true;
 }
 
-void AShader::Build()
+void Shader::Build()
 {
     CompileVertexShader();
     CompileFragmentShader();
@@ -144,7 +153,10 @@ void AShader::Build()
     glDeleteShader(m_frag_shader_id);
 }
 
-void AShader::Use() const
+void Shader::Use() const
 {
+    if (!m_hasBeenBuild)
+        std::cout << "[WARNING] Tried to use a shader that has not been built." << std::endl;
+
     glUseProgram(m_shader_program_id);
 }

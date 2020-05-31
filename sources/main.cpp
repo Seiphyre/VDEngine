@@ -6,7 +6,6 @@
 #include <mach-o/dyld.h>
 
 #include "VDEngine/Renderer/Camera.h"
-#include "VDEngine/Renderer/DefaultShader.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/TextureManager.h"
 #include "VDEngine/Renderer/MeshRenderer.h"
