@@ -65,6 +65,10 @@ int main(int argc, char * argv[])
     // -- LOAD RESOURCES -----------------------------------------------
 
     // Load Shaders
+
+    VDEngine::Shader * multText =
+        VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
+
     // [...]
 
     // Load Textures
@@ -78,7 +82,8 @@ int main(int argc, char * argv[])
     // -- CREATE SCENE --------------------------------------------------
 
     // Create objects
-    VDEngine::MeshRender * floor = new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane());
+    VDEngine::MeshRender * floor =
+        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane(), multText);
     floor->Init();
     floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
     floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
