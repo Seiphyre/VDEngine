@@ -3,6 +3,7 @@
 
 // C++ Standard libs
 #include <iostream>
+#include <vector>
 
 // External libs
 #include <glad/glad.h>
@@ -15,6 +16,59 @@
 namespace VDEngine
 {
 
+enum e_componantType
+{
+    MESH,
+    MATERIAL,
+    LIGHTS
+};
+
+enum e_meshData : int
+{
+    VERTEX_POSITIONS = 0,
+    VERTEX_COLORS    = 1,
+    VERTEX_TEXELS    = 2
+    // NORMALS
+};
+
+enum e_materialData : int
+{
+    TEXTURES = 0,
+    // AMBIANT COLOR
+    // DIFFUSE COLOR
+    // SPECULAR COLOR
+    // TEXTURE UV ?
+};
+
+// TRANSFORM ----
+// MODEL MATRIX
+
+// ENGINE ----
+// CAMERA (VIEW, PROJECTION)
+// LIGHTS
+// TIMER
+
+// struct s_vertexAttribData
+// {
+//     int             layout_index;
+//     e_componantType component_type;
+//     int             component_data_type;
+// };
+
+// struct s_uniformData
+// {
+//     const std::string name;
+//     e_componantType   component_type;
+//     int               component_data_type;
+// };
+
+struct s_shaderParameter
+{
+    int         index;
+    std::string name;
+    GLenum      type;
+};
+
 class AShader
 {
   public:
@@ -25,24 +79,8 @@ class AShader
 
     unsigned int GetShaderProgramId();
 
-    void SetBool(const std::string & name, bool value) const;
-
-    void SetInt(const std::string & name, int value) const;
-
-    void SetFloat(const std::string & name, float value) const;
-
-    void SetVec2(const std::string & name, const glm::vec2 & value) const;
-    void SetVec2(const std::string & name, float x, float y) const;
-
-    void SetVec3(const std::string & name, const glm::vec3 & value) const;
-    void SetVec3(const std::string & name, float x, float y, float z) const;
-
-    void SetVec4(const std::string & name, const glm::vec4 & value) const;
-    void SetVec4(const std::string & name, float x, float y, float z, float w);
-
-    void SetMat2(const std::string & name, const glm::mat2 & mat) const;
-    void SetMat3(const std::string & name, const glm::mat3 & mat) const;
-    void SetMat4(const std::string & name, const glm::mat4 & mat) const;
+    std::vector<s_shaderParameter> GetAttributes() const;
+    std::vector<s_shaderParameter> GetUniforms() const;
 
     virtual void Use() const;
 
@@ -52,7 +90,10 @@ class AShader
 
     virtual void CompileVertexShader();
     virtual void CompileFragmentShader();
-    virtual void LinkProgram() const;
+    virtual void LinkProgram();
+
+    std::vector<s_shaderParameter> m_attributes;
+    std::vector<s_shaderParameter> m_uniforms;
 
     unsigned int m_vert_shader_id;
     std::string  m_vert_shader_source;

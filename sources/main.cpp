@@ -143,8 +143,8 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        cube->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
-        floor->Draw(camera->GetViewMatrix(), camera->GetProjectionMatrix());
+        cube->Draw(camera);
+        floor->Draw(camera);
 
         // Display
         glfwSwapBuffers(s_window);

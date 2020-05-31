@@ -14,6 +14,15 @@ AShader::~AShader()
 {
 }
 
+std::vector<s_shaderParameter> AShader::GetAttributes() const
+{
+    return (m_attributes);
+}
+std::vector<s_shaderParameter> AShader::GetUniforms() const
+{
+    return (m_uniforms);
+}
+
 unsigned int AShader::GetShaderProgramId()
 {
     return m_shader_program_id;
@@ -57,11 +66,62 @@ void AShader::CompileFragmentShader()
     }
 }
 
-void AShader::LinkProgram() const
+void AShader::LinkProgram()
 {
     glAttachShader(m_shader_program_id, m_vert_shader_id);
     glAttachShader(m_shader_program_id, m_frag_shader_id);
     glLinkProgram(m_shader_program_id);
+
+    int bufsize;
+    glGetProgramiv(m_shader_program_id, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &bufsize);
+    // std::cout << "bufsize: " << bufsize << std::endl;
+
+    int nb_of_attributes;
+    glGetProgramiv(m_shader_program_id, GL_ACTIVE_ATTRIBUTES, &nb_of_attributes);
+    // std::cout << "nb of attributes : " << nb_of_attributes << std::endl;
+
+    for (int i = 0; i < nb_of_attributes; i++)
+    {
+        GLenum type;
+        GLchar name[bufsize];
+
+        glGetActiveAttrib(m_shader_program_id, i, bufsize, NULL, NULL, &type, name);
+
+        s_shaderParameter param = {
+            i,                 // index
+            std::string(name), // name
+            type,              // type
+        };
+
+        // std::cout << "[" << param.index << "] name: " << param.name << " type: " << param.type << std::endl;
+
+        m_attributes.push_back(param);
+    }
+
+    glGetProgramiv(m_shader_program_id, GL_ACTIVE_UNIFORM_MAX_LENGTH, &bufsize);
+    // std::cout << std::endl << "bufsize: " << bufsize << std::endl;
+
+    int nb_of_uniforms;
+    glGetProgramiv(m_shader_program_id, GL_ACTIVE_UNIFORMS, &nb_of_uniforms);
+    // std::cout << "nb of uniforms : " << nb_of_uniforms << std::endl;
+
+    for (int i = 0; i < nb_of_uniforms; i++)
+    {
+        GLenum type;
+        GLchar name[bufsize];
+
+        glGetActiveUniform(m_shader_program_id, i, bufsize, NULL, NULL, &type, name);
+
+        s_shaderParameter param = {
+            i,                 // index
+            std::string(name), // name
+            type,              // type
+        };
+
+        // std::cout << "[" << param.index << "] name: " << param.name << " type: " << param.type << std::endl;
+
+        m_uniforms.push_back(param);
+    }
 
     int  success;
     char infoLog[512];
@@ -87,63 +147,4 @@ void AShader::Build()
 void AShader::Use() const
 {
     glUseProgram(m_shader_program_id);
-}
-
-// utility uniform functions
-// ------------------------------------------------------------------------
-void AShader::SetBool(const std::string & name, bool value) const
-{
-    glUniform1i(glGetUniformLocation(m_shader_program_id, name.c_str()), (int)value);
-}
-// ------------------------------------------------------------------------
-void AShader::SetInt(const std::string & name, int value) const
-{
-    glUniform1i(glGetUniformLocation(m_shader_program_id, name.c_str()), value);
-}
-// ------------------------------------------------------------------------
-void AShader::SetFloat(const std::string & name, float value) const
-{
-    glUniform1f(glGetUniformLocation(m_shader_program_id, name.c_str()), value);
-}
-// ------------------------------------------------------------------------
-void AShader::SetVec2(const std::string & name, const glm::vec2 & value) const
-{
-    glUniform2fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, &value[0]);
-}
-void AShader::SetVec2(const std::string & name, float x, float y) const
-{
-    glUniform2f(glGetUniformLocation(m_shader_program_id, name.c_str()), x, y);
-}
-// ------------------------------------------------------------------------
-void AShader::SetVec3(const std::string & name, const glm::vec3 & value) const
-{
-    glUniform3fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, &value[0]);
-}
-void AShader::SetVec3(const std::string & name, float x, float y, float z) const
-{
-    glUniform3f(glGetUniformLocation(m_shader_program_id, name.c_str()), x, y, z);
-}
-// ------------------------------------------------------------------------
-void AShader::SetVec4(const std::string & name, const glm::vec4 & value) const
-{
-    glUniform4fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, &value[0]);
-}
-void AShader::SetVec4(const std::string & name, float x, float y, float z, float w)
-{
-    glUniform4f(glGetUniformLocation(m_shader_program_id, name.c_str()), x, y, z, w);
-}
-// ------------------------------------------------------------------------
-void AShader::SetMat2(const std::string & name, const glm::mat2 & mat) const
-{
-    glUniformMatrix2fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-}
-// ------------------------------------------------------------------------
-void AShader::SetMat3(const std::string & name, const glm::mat3 & mat) const
-{
-    glUniformMatrix3fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-}
-// ------------------------------------------------------------------------
-void AShader::SetMat4(const std::string & name, const glm::mat4 & mat) const
-{
-    glUniformMatrix4fv(glGetUniformLocation(m_shader_program_id, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }

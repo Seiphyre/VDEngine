@@ -28,16 +28,71 @@ Transform * MeshRender::GetTransform() const
 void MeshRender::SetShader(AShader * shader)
 {
     m_shader = shader;
-    AttribShaderParams();
+    SetShaderParamsFromMesh();
 }
 
-void MeshRender::AttribShaderParams()
+void MeshRender::SetShaderParamsFromMesh()
 {
     glGenVertexArrays(1, &m_VAO);
 
-    SetVertexAttribVec3(0, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
-    SetVertexAttribVec3(1, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
-    SetVertexAttribVec2(2, m_mesh->vert_textCoords.data(), m_mesh->vert_textCoords.size());
+    // Set Vertex attributes
+    std::vector<s_shaderParameter> vertex_attributes = m_shader->GetAttributes();
+    for (int i = 0; i < vertex_attributes.size(); i++)
+    {
+        // About vertex attributes : INDEX (from glGetActiveAttrib) = LOCATION (used by glVertexAttribPointer)
+        int index = vertex_attributes[i].index;
+
+        if (vertex_attributes[i].name == "aPosition")
+            SetVertexAttribVec3(index, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
+        else if (vertex_attributes[i].name == "aColor")
+            SetVertexAttribVec3(index, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
+        else if (vertex_attributes[i].name == "aTexCoord")
+            SetVertexAttribVec2(index, m_mesh->vert_textCoords.data(), m_mesh->vert_textCoords.size());
+    }
+
+    // SetVertexAttribVec3(0, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
+    // SetVertexAttribVec3(1, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
+    // SetVertexAttribVec2(2, m_mesh->vert_textCoords.data(), m_mesh->vert_textCoords.size());
+}
+
+void MeshRender::SetShaderParamsFromCamera(Camera * camera)
+{
+    // Set Uniforms
+    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    for (int i = 0; i < uniforms.size(); i++)
+    {
+        if (uniforms[i].name == "uView")
+            SetMat4(uniforms[i].name, camera->GetViewMatrix());
+
+        else if (uniforms[i].name == "uProjection")
+            SetMat4(uniforms[i].name, camera->GetProjectionMatrix());
+    }
+}
+void MeshRender::SetShaderParamsFromTransform()
+{
+    // Set Uniforms
+    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    for (int i = 0; i < uniforms.size(); i++)
+    {
+        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
+        if (uniforms[i].name == "uModel")
+            SetMat4(uniforms[i].name, m_transform->GetMatrix());
+    }
+}
+
+void MeshRender::SetShaderParamsFromMaterial()
+{
+    // Set Uniforms
+    std::vector<s_shaderParameter> uniforms = m_shader->GetUniforms();
+    for (int i = 0; i < uniforms.size(); i++)
+    {
+        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
+        if (uniforms[i].name == "uTexture_2" && m_textures.size() > 0)
+            SetInt(uniforms[i].name, 0); // 0 is a texture unit (texture unit == index of m_material->getTextures())
+
+        else if (uniforms[i].name == "uTexture_1" && m_textures.size() > 1)
+            SetInt(uniforms[i].name, 1);
+    }
 }
 
 void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
@@ -85,40 +140,96 @@ void MeshRender::SetVertexAttribVec2(int layout_index, const float * data, int d
     glDeleteBuffers(1, &VBO);
 }
 
-void MeshRender::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLenum mode) const
+// utility uniform functions
+// ------------------------------------------------------------------------
+void MeshRender::SetBool(const std::string & name, bool value) const
 {
-    // Bind Textures
+    glUniform1i(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), (int)value);
+    // glUniform1i(location, (int)value);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetInt(const std::string & name, int value) const
+{
+    glUniform1i(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), value);
+    // glUniform1i(location, value);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetFloat(const std::string & name, float value) const
+{
+    glUniform1f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), value);
+    // glUniform1f(location, value);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetVec2(const std::string & name, const glm::vec2 & value) const
+{
+    glUniform2fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    // glUniform2fv(location, 1, &value[0]);
+}
+void MeshRender::SetVec2(const std::string & name, float x, float y) const
+{
+    glUniform2f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y);
+    // glUniform2f(location, x, y);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetVec3(const std::string & name, const glm::vec3 & value) const
+{
+    glUniform3fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    // glUniform3fv(location, 1, &value[0]);
+}
+void MeshRender::SetVec3(const std::string & name, float x, float y, float z) const
+{
+    glUniform3f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y, z);
+    // glUniform3f(location, x, y, z);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetVec4(const std::string & name, const glm::vec4 & value) const
+{
+    glUniform4fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
+    // glUniform4fv(location, 1, &value[0]);
+}
+void MeshRender::SetVec4(const std::string & name, float x, float y, float z, float w)
+{
+    glUniform4f(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), x, y, z, w);
+    // glUniform4f(location, x, y, z, w);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetMat2(const std::string & name, const glm::mat2 & mat) const
+{
+    glUniformMatrix2fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    // glUniformMatrix2fv(location, 1, GL_FALSE, &mat[0][0]);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetMat3(const std::string & name, const glm::mat3 & mat) const
+{
+    glUniformMatrix3fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    // glUniformMatrix3fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
+}
+// ------------------------------------------------------------------------
+void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
+{
+    glUniformMatrix4fv(glGetUniformLocation(m_shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE, &mat[0][0]);
+    // glUniformMatrix4fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
+}
+
+void MeshRender::Draw(Camera * camera, GLenum mode)
+{
+    // Bind Textures -----------
     for (int i = 0; i < m_textures.size(); i++)
     {
         m_textures[i]->Bind(i);
     }
 
-    // GL_LINE
     m_shader->Use();
+
+    // Bind Vertex Attributes --
     glBindVertexArray(m_VAO);
 
-    // UNIFORMS
-    for (int i = 0; i < m_textures.size(); i++)
-    {
-        m_shader->SetInt("uTexture" + std::to_string(i + 1), i);
+    // Bind Uniforms -----------
+    SetShaderParamsFromMaterial();
+    SetShaderParamsFromTransform();
+    SetShaderParamsFromCamera(camera);
 
-        // std::string textName = "uTexture" + std::to_string(i + 1);
-        // glUniform1i(glGetUniformLocation(_shader->GetShaderProgramId(), textName.c_str()), i); // set it manually
-    }
-
-    // unsigned int transformLoc = glGetUniformLocation(_shader->GetShaderProgramId(), "uTransform");
-    // glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(_transform->GetMatrix()));
-
-    m_shader->SetMat4("uModel", m_transform->GetMatrix());
-    m_shader->SetMat4("uView", view);
-    m_shader->SetMat4("uProjection", projection);
-
-    // Uniforms (Need _shader->Use())
-    // float timeValue = glfwGetTime();
-    // float greenValue = sin(timeValue) / 2.0f + 0.5f;
-    // int vertexColorLocation = glGetUniformLocation(_shader->GetShaderProgramId(), "vertexColor");
-    // glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-
+    // Draw ---------------------
     glPolygonMode(GL_FRONT_AND_BACK, mode);
 
     int size;
@@ -130,7 +241,7 @@ void MeshRender::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLen
 
     glBindVertexArray(0);
 
-    // Unbind Textures
+    // Unbind Textures -----------
     for (int i = 0; i < m_textures.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
@@ -140,7 +251,7 @@ void MeshRender::Draw(const glm::mat4 & view, const glm::mat4 & projection, GLen
 
 void MeshRender::Init()
 {
-    AttribShaderParams();
+    SetShaderParamsFromMesh();
 }
 
 void MeshRender::AddTexture(uuids::uuid texture_uuid)
