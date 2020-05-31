@@ -1,0 +1,28 @@
+
+*------------------------------------------------*
+|                                                |
+|              VERTEX ATTRIBUTES                 | 
+|                                                |
+*------------------------------------------------*
+
+__________________________________________________
+|     name     |     type     |  related object  |
+
+  aPosition       vec3           Mesh
+  aColor          vec3           Mesh
+  aTexCoord       vec2           Mesh
+
+
+*------------------------------------------------*
+|                                                |
+|                   UNIFORMS                     | 
+|                                                |
+*------------------------------------------------*
+__________________________________________________
+|     name     |     type     |  related object  |
+
+  uModel          mat4           Transform
+  uView           mat4           Camera
+  uProjection     mat4           Camera
+  uTexture_0      sampler2D      Material
+  uTexture_1      sampler2D      Material
