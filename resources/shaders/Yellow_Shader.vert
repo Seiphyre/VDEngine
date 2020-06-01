@@ -1,12 +1,12 @@
 #version 330 core
 
-in vec3 aPosition;
+in vec3 v_Position;
 
-uniform mat4 uModel;
-uniform mat4 uView;
-uniform mat4 uProjection;
+uniform mat4 u_ModelMat;
+uniform mat4 u_ViewMat;
+uniform mat4 u_ProjMat;
 
 void main()
 {
-    gl_Position = uProjection * uView * uModel * vec4(aPosition, 1.0);
+    gl_Position = u_ProjMat * u_ViewMat * u_ModelMat * vec4(v_Position, 1.0);
 }

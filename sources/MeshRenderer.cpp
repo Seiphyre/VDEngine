@@ -54,13 +54,13 @@ void MeshRender::SetShaderParamsFromMesh()
         // About vertex attributes : INDEX (from glGetActiveAttrib) = LOCATION (used by glVertexAttribPointer)
         int index = vertex_attributes[i].index;
 
-        if (vertex_attributes[i].name == "aPosition")
+        if (vertex_attributes[i].name == "v_Position")
             SetVertexAttribVec3(index, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
-        else if (vertex_attributes[i].name == "aNormal")
+        else if (vertex_attributes[i].name == "v_Normal")
             SetVertexAttribVec3(index, m_mesh->vert_normals.data(), m_mesh->vert_normals.size());
-        else if (vertex_attributes[i].name == "aColor")
+        else if (vertex_attributes[i].name == "v_Color")
             SetVertexAttribVec3(index, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
-        else if (vertex_attributes[i].name == "aTexCoord")
+        else if (vertex_attributes[i].name == "v_TexCoord")
             SetVertexAttribVec2(index, m_mesh->vert_textCoords.data(), m_mesh->vert_textCoords.size());
     }
 
@@ -75,13 +75,13 @@ void MeshRender::SetShaderParamsFromCamera(Camera * camera)
     std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
-        if (uniforms[i].name == "uView")
+        if (uniforms[i].name == "u_ViewMat")
             SetMat4(uniforms[i].name, camera->GetViewMatrix());
 
-        else if (uniforms[i].name == "uProjection")
+        else if (uniforms[i].name == "u_ProjMat")
             SetMat4(uniforms[i].name, camera->GetProjectionMatrix());
 
-        else if (uniforms[i].name == "uCamera_position")
+        else if (uniforms[i].name == "u_Camera_Position")
             SetVec3(uniforms[i].name, camera->GetTransform()->position);
     }
 }
@@ -92,9 +92,9 @@ void MeshRender::SetShaderParamsFromTransform()
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "uModel")
+        if (uniforms[i].name == "u_ModelMat")
             SetMat4(uniforms[i].name, m_transform->GetMatrix());
-        if (uniforms[i].name == "uNormalMat")
+        if (uniforms[i].name == "u_NormalMat")
             SetMat4(uniforms[i].name, m_transform->GetNormalMatrix());
     }
 }
@@ -106,14 +106,14 @@ void MeshRender::SetShaderParamsFromMaterial()
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "uTexture_2" && m_material->textures.size() > 0)
+        if (uniforms[i].name == "u_Texture_0" && m_material->textures.size() > 0)
             SetInt(uniforms[i].name, 0); // 0 is a texture unit (texture unit == index of m_material->getTextures())
 
-        else if (uniforms[i].name == "uTexture_1" && m_material->textures.size() > 1)
+        else if (uniforms[i].name == "u_Texture_1" && m_material->textures.size() > 1)
             SetInt(uniforms[i].name, 1);
 
-        else if (uniforms[i].name == "uDiffuse_color")
-            SetVec3(uniforms[i].name, m_material->diffuse_color);
+        // else if (uniforms[i].name == "uDiffuse_color")
+        //     SetVec3(uniforms[i].name, m_material->diffuse_color);
     }
 }
 
@@ -124,9 +124,9 @@ void MeshRender::SetShaderParamsFromLight(Light * light)
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "uLight_color")
+        if (uniforms[i].name == "u_Light_Color")
             SetVec3(uniforms[i].name, light->color);
-        if (uniforms[i].name == "uLight_position")
+        if (uniforms[i].name == "u_Light_Position")
             SetVec3(uniforms[i].name, light->GetTransform()->position);
     }
 }

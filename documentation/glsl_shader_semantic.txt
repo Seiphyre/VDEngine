@@ -6,11 +6,12 @@
 *------------------------------------------------*
 
 __________________________________________________
-|     name     |     type     |  related object  |
+|        name       |     type     |  related object  |
 
-  aPosition       vec3           Mesh
-  aColor          vec3           Mesh
-  aTexCoord       vec2           Mesh
+  v_Position           vec3           Mesh
+  v_Color              vec3           Mesh
+  v_TexCoord           vec2           Mesh
+  v_Normal             vec3           Mesh
 
 
 *------------------------------------------------*
@@ -19,10 +20,14 @@ __________________________________________________
 |                                                |
 *------------------------------------------------*
 __________________________________________________
-|     name     |     type     |  related object  |
+|        name        |     type     |  related object  |
 
-  uModel          mat4           Transform
-  uView           mat4           Camera
-  uProjection     mat4           Camera
-  uTexture_0      sampler2D      Material
-  uTexture_1      sampler2D      Material
+  u_ModelMat            mat4           Transform
+  u_NormalMat           mat4           Transform
+  u_ViewMat             mat4           Camera
+  u_ProjMat             mat4           Camera
+  u_Texture_0           sampler2D      Material
+  u_Texture_1           sampler2D      Material
+  u_Camera_Position     vec3           Camera
+  u_Light_Position      vec3           Light
+  u_Light_Color         vec3           Light
