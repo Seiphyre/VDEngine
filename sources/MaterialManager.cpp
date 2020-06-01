@@ -8,14 +8,17 @@ MaterialManager::MaterialManager()
 }
 
 Material * MaterialManager::LoadMaterial(Shader * shader, float shininess, const glm::vec3 & diffuse_color,
-                                         Texture * diffuse_map)
+                                         const glm::vec3 & specular_color, Texture * diffuse_map,
+                                         Texture * specular_map)
 {
     Material * material = new Material();
 
-    material->shader        = shader;
-    material->diffuse_map   = diffuse_map;
-    material->diffuse_color = diffuse_color;
-    material->shininess     = shininess;
+    material->shader         = shader;
+    material->diffuse_map    = diffuse_map;
+    material->diffuse_color  = diffuse_color;
+    material->specular_map   = specular_map;
+    material->specular_color = specular_color;
+    material->shininess      = shininess;
 
     if (material != nullptr)
     {

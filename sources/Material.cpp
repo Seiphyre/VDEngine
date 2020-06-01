@@ -10,6 +10,9 @@ Material::Material()
     diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f);
     diffuse_map   = nullptr;
 
+    specular_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    specular_map   = nullptr;
+
     shininess = 64.0f;
 }
 

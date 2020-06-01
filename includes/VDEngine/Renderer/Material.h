@@ -34,6 +34,9 @@ class Material
     glm::vec3 diffuse_color;
     Texture * diffuse_map;
 
+    glm::vec3 specular_color;
+    Texture * specular_map;
+
     float shininess;
 
   private:

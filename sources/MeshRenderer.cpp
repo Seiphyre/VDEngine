@@ -118,6 +118,18 @@ void MeshRender::SetShaderParamsFromMaterial()
         else if (uniforms[i].name == "u_Diffuse_Color")
             SetVec3(uniforms[i].name, m_material->diffuse_color);
 
+        if (uniforms[i].name == "u_Specular_Map")
+        {
+            if (m_material->diffuse_map != nullptr)
+                SetInt(uniforms[i].name, SPECULAR_MAP_TEXT_UNIT);
+            // else
+            //     std::cout << "WARNING: u_Specular_Map requierd, but specular map is null in the material." <<
+            //     std::endl;
+        }
+
+        else if (uniforms[i].name == "u_Specular_Color")
+            SetVec3(uniforms[i].name, m_material->specular_color);
+
         else if (uniforms[i].name == "u_Shininess")
             SetFloat(uniforms[i].name, m_material->shininess);
     }
@@ -268,6 +280,11 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     else
         TextureManager::getInstance()->GetTexture()->Bind(DIFFUSE_MAP_TEXT_UNIT);
 
+    if (m_material->specular_map != nullptr) // && shader have this param ... OPTI
+        m_material->specular_map->Bind(SPECULAR_MAP_TEXT_UNIT);
+    else
+        TextureManager::getInstance()->GetTexture()->Bind(SPECULAR_MAP_TEXT_UNIT);
+
     m_material->shader->Use();
 
     // Bind Vertex Attributes --
@@ -299,6 +316,9 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     // }
 
     glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXT_UNIT);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glActiveTexture(GL_TEXTURE0 + SPECULAR_MAP_TEXT_UNIT);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 

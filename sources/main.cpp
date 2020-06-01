@@ -76,7 +76,9 @@ int main(int argc, char * argv[])
     // Load Textures
 
     VDEngine::Texture * measurement_tex = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    VDEngine::Texture * wooden_container_tex = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
+    VDEngine::Texture * wooden_container_tex = VDEngine::TextureManager::getInstance()->LoadTexture("container2.png");
+    VDEngine::Texture * wooden_container_spec =
+        VDEngine::TextureManager::getInstance()->LoadTexture("container2_specular.png");
     // VDEngine::Texture * emoji_tex       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
 
     // [...]
@@ -86,10 +88,15 @@ int main(int argc, char * argv[])
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
-    VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        lit_multi_text_shader, 128.0f, glm::vec3(1.0, 1.0, 1.0), measurement_tex);
-    VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        lit_multi_text_shader, 128.0f, glm::vec3(1.0, 1.0, 1.0), wooden_container_tex);
+    VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(lit_multi_text_shader);
+    floor_mat->shininess           = 128.0f;
+    floor_mat->diffuse_map         = measurement_tex;
+
+    VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(lit_multi_text_shader);
+    cube_mat->shininess           = 128.0f;
+    cube_mat->diffuse_map         = wooden_container_tex;
+    cube_mat->specular_map        = wooden_container_spec;
+
     VDEngine::Material * light_mat =
         VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
     light_mat->diffuse_color = glm::vec3(1.0, 1.0, 0.0);
