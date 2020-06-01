@@ -110,8 +110,9 @@ void MeshRender::SetShaderParamsFromMaterial()
         {
             if (m_material->diffuse_map != nullptr)
                 SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
-            else
-                std::cout << "u_Diffuse_Map requierd, but diffuse map is null in the material.";
+            // else
+            //     std::cout << "WARNING: u_Diffuse_Map requierd, but diffuse map is null in the material." <<
+            //     std::endl;
         }
 
         else if (uniforms[i].name == "u_Diffuse_Color")
@@ -262,8 +263,10 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     // {
     //     m_material->textures[i]->Bind(i);
     // }
-    if (m_material->diffuse_map != nullptr)
+    if (m_material->diffuse_map != nullptr) // && shader have this param ... OPTI
         m_material->diffuse_map->Bind(DIFFUSE_MAP_TEXT_UNIT);
+    else
+        TextureManager::getInstance()->GetTexture()->Bind(DIFFUSE_MAP_TEXT_UNIT);
 
     m_material->shader->Use();
 
@@ -294,11 +297,9 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     //     glActiveTexture(GL_TEXTURE0 + i);
     //     glBindTexture(GL_TEXTURE_2D, 0);
     // }
-    if (m_material->diffuse_map != nullptr)
-    {
-        glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXT_UNIT);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+
+    glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXT_UNIT);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 // void MeshRender::Init()

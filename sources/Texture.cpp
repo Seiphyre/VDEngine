@@ -14,6 +14,18 @@ Texture::Texture()
     // assert(!m_uuid.is_nil());
     // assert(m_uuid.version() == uuids::uuid_version::random_number_based);
     // assert(m_uuid.variant() == uuids::uuid_variant::rfc);
+
+    glGenTextures(1, &m_textureId);
+    glBindTexture(GL_TEXTURE_2D, m_textureId);
+
+    GLubyte data[] = {255, 255, 255, 255};
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_texWrapSParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_texWrapTParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_texMinFilterParam);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_texMagFilterParam);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
 Texture::Texture(const std::string & text_name)

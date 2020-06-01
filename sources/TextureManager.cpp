@@ -4,10 +4,12 @@ using namespace VDEngine;
 
 TextureManager::TextureManager()
 {
+    m_default_texture = new Texture();
 }
 
 TextureManager::~TextureManager()
 {
+    delete m_default_texture;
 }
 
 Texture * TextureManager::LoadTexture(const std::string & text_file_name)
@@ -35,4 +37,9 @@ Texture * TextureManager::GetTexture(uuids::uuid texture_uuid)
         return *result;
 
     return nullptr;
+}
+
+Texture * TextureManager::GetTexture()
+{
+    return (m_default_texture);
 }

@@ -68,9 +68,6 @@ int main(int argc, char * argv[])
 
     // Load Shaders
 
-    // VDEngine::Shader * unlit_multi_text_shader =
-    //     VDEngine::ShaderManager::getInstance()->LoadShader("Unlit_Text_Default.vert", "Unlit_Text_Default.frag");
-
     VDEngine::Shader * lit_multi_text_shader =
         VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Text_Default.vert", "Lit_Text_Default.frag");
 
@@ -95,7 +92,7 @@ int main(int argc, char * argv[])
         lit_multi_text_shader, 128.0f, glm::vec3(1.0, 1.0, 1.0), wooden_container_tex);
     VDEngine::Material * light_mat =
         VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
-    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
+    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 0.0);
 
     // [...]
 

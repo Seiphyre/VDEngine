@@ -4,7 +4,7 @@ using namespace VDEngine;
 
 ShaderManager::ShaderManager()
 {
-    m_default_shader = new Shader("Unlit_Color_Default.vert", "Unlit_Color_Default.frag");
+    m_default_shader = new Shader("Unlit_Default.vert", "Unlit_Default.frag");
     m_default_shader->Build();
 }
 

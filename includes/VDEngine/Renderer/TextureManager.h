@@ -17,6 +17,7 @@ class TextureManager : public Singleton<TextureManager>
 
   private:
     std::list<Texture *> m_textures;
+    Texture *            m_default_texture;
 
     TextureManager();
 
@@ -25,6 +26,7 @@ class TextureManager : public Singleton<TextureManager>
 
     Texture * LoadTexture(const std::string & text_file_name);
     Texture * GetTexture(uuids::uuid texture_uuid);
+    Texture * GetTexture();
 };
 
 } // namespace VDEngine
