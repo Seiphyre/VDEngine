@@ -4,6 +4,9 @@
 // C++ Standard libs
 #include <list>
 
+// External libs
+#include <glm/glm.hpp>
+
 // Internal headers
 #include "VDEngine/Core/Singleton.h"
 #include "VDEngine/Renderer/Material.h"
@@ -22,7 +25,8 @@ class MaterialManager : public Singleton<MaterialManager>
     MaterialManager();
 
   public:
-    Material * LoadMaterial(Shader * shader, std::vector<Texture *> textures = {});
+    Material * LoadMaterial(Shader * shader, const glm::vec3 & diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f),
+                            std::vector<Texture *> textures = {});
     Material * GetMaterial(uuids::uuid shader_uuid);
     Material * GetMaterial();
 };

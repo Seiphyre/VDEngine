@@ -29,6 +29,8 @@ class Material
     Shader *               shader;
     std::vector<Texture *> textures;
 
+    glm::vec3 diffuse_color;
+
   private:
     uuids::uuid m_uuid;
 };

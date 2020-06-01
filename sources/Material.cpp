@@ -6,6 +6,8 @@ Material::Material()
 {
     m_uuid = uuids::uuid_system_generator{}();
     shader = ShaderManager::getInstance()->GetShader();
+
+    diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 Material::~Material()

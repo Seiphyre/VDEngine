@@ -19,6 +19,7 @@
 #include "VDEngine/Renderer/Mesh.h"
 #include "VDEngine/Renderer/Camera.h"
 #include "VDEngine/Renderer/Material.h"
+#include "VDEngine/Renderer/Light.h"
 
 namespace VDEngine
 {
@@ -38,11 +39,12 @@ class MeshRender
     Transform * GetTransform() const;
     void        SetMaterial(Material * material);
 
-    void Draw(Camera * camera, GLenum mode = GL_FILL);
+    void Draw(Camera * camera, Light * light, GLenum mode = GL_FILL);
 
   protected:
     void SetShaderParamsFromMesh();
     void SetShaderParamsFromCamera(Camera * camera);
+    void SetShaderParamsFromLight(Light * light);
     void SetShaderParamsFromTransform();
     void SetShaderParamsFromMaterial();
 

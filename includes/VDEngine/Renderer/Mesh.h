@@ -11,10 +11,11 @@ class Mesh
 {
   public:
     Mesh();
-    Mesh(std::vector<float> vpos, std::vector<float> vcolor, std::vector<float> vtext);
+    Mesh(std::vector<float> vpos, std::vector<float> vnormal, std::vector<float> vcolor, std::vector<float> vtext);
     ~Mesh();
 
     std::vector<float> vert_positions;
+    std::vector<float> vert_normals;
     std::vector<float> vert_colors;
     std::vector<float> vert_textCoords;
 };

@@ -6,6 +6,7 @@
 #include <mach-o/dyld.h>
 
 #include "VDEngine/Renderer/Camera.h"
+#include "VDEngine/Renderer/Light.h"
 #include "VDEngine/Renderer/ShaderManager.h"
 #include "VDEngine/Renderer/TextureManager.h"
 #include "VDEngine/Renderer/MaterialManager.h"
@@ -70,6 +71,9 @@ int main(int argc, char * argv[])
     VDEngine::Shader * multi_text_shader =
         VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
 
+    VDEngine::Shader * yellow_shader =
+        VDEngine::ShaderManager::getInstance()->LoadShader("Yellow_Shader.vert", "Yellow_Shader.frag");
+
     // [...]
 
     // Load Textures
@@ -86,9 +90,11 @@ int main(int argc, char * argv[])
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
     VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        multi_text_shader, std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
+        multi_text_shader, glm::vec3(1.0f, 1.0f, 1.0f), std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
     VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        multi_text_shader, std::vector<VDEngine::Texture *>{wooden_container_tex});
+        multi_text_shader, glm::vec3(1.0f, 0.5f, 0.31f), std::vector<VDEngine::Texture *>{wooden_container_tex});
+    VDEngine::Material * light_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(yellow_shader);
+
     // [...]
 
     // -- CREATE SCENE --------------------------------------------------
@@ -103,9 +109,15 @@ int main(int argc, char * argv[])
     VDEngine::MeshRender * cube =
         new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), cube_mat);
 
-    cube->GetTransform()->Translate(glm::vec3(2.0f, 0.5f, 2.0f));
+    cube->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
+
+    VDEngine::MeshRender * light_gizmo =
+        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), light_mat);
+
+    light_gizmo->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 0.0f));
+    light_gizmo->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     // Camera ----------
 
@@ -115,6 +127,11 @@ int main(int argc, char * argv[])
     camera->GetTransform()->Rotate(45.0f, WORLD_UP);
 
     FPSCameraController * camera_controller = new FPSCameraController(camera);
+
+    // Light -----------
+
+    VDEngine::Light * light = new VDEngine::Light(glm::vec3(1.0f, 1.0f, 1.0f));
+    light->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 0.0f));
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -137,12 +154,13 @@ int main(int argc, char * argv[])
 
         // cube->GetTransform()->Rotate((float)VDEngine::Time::GetDeltaTime() * 50.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-        // const float radius = 5.0f;
-        // float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
-        // float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
+        const float radius = 3.0f;
+        float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
+        float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
-        // camera->GetTransform()->position = glm::vec3(camX, 1.0f, camZ);
-        // // OU rotane 180 sur Y ?
+        light_gizmo->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
+        light->GetTransform()->position       = glm::vec3(camX, 2.5f, camZ);
+        // OU rotane 180 sur Y ?
         // camera->GetTransform()->LookAt(
         //     camera->GetTransform()->position +
         //     ((glm::vec3(0.0f, 0.5f, 0.0f) - camera->GetTransform()->position) * glm::vec3(1.0f, 1.0f, -1.0f)));
@@ -155,8 +173,9 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        cube->Draw(camera);
-        floor->Draw(camera);
+        cube->Draw(camera, light);
+        floor->Draw(camera, light);
+        light_gizmo->Draw(camera, light);
 
         // Display
         glfwSwapBuffers(s_window);

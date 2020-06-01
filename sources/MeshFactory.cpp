@@ -56,6 +56,50 @@ Mesh * MeshFactory::CreateCube()
         -0.5f, 0.5f,  -0.5f, //
     };
 
+    float normalsArray[] = {
+        0.0f,  0.0f,  -1.0f, //
+        0.0f,  0.0f,  -1.0f, //
+        0.0f,  0.0f,  -1.0f, //
+        0.0f,  0.0f,  -1.0f, //
+        0.0f,  0.0f,  -1.0f, //
+        0.0f,  0.0f,  -1.0f, //
+
+        0.0f,  0.0f,  1.0f, //
+        0.0f,  0.0f,  1.0f, //
+        0.0f,  0.0f,  1.0f, //
+        0.0f,  0.0f,  1.0f, //
+        0.0f,  0.0f,  1.0f, //
+        0.0f,  0.0f,  1.0f, //
+
+        -1.0f, 0.0f,  0.0f, //
+        -1.0f, 0.0f,  0.0f, //
+        -1.0f, 0.0f,  0.0f, //
+        -1.0f, 0.0f,  0.0f, //
+        -1.0f, 0.0f,  0.0f, //
+        -1.0f, 0.0f,  0.0f, //
+
+        1.0f,  0.0f,  0.0f, //
+        1.0f,  0.0f,  0.0f, //
+        1.0f,  0.0f,  0.0f, //
+        1.0f,  0.0f,  0.0f, //
+        1.0f,  0.0f,  0.0f, //
+        1.0f,  0.0f,  0.0f, //
+
+        0.0f,  -1.0f, 0.0f, //
+        0.0f,  -1.0f, 0.0f, //
+        0.0f,  -1.0f, 0.0f, //
+        0.0f,  -1.0f, 0.0f, //
+        0.0f,  -1.0f, 0.0f, //
+        0.0f,  -1.0f, 0.0f, //
+
+        0.0f,  1.0f,  0.0f, //
+        0.0f,  1.0f,  0.0f, //
+        0.0f,  1.0f,  0.0f, //
+        0.0f,  1.0f,  0.0f, //
+        0.0f,  1.0f,  0.0f, //
+        0.0f,  1.0f,  0.0f, //
+    };
+
     float vColorsArray[] = {
         // Back
         0.0, 0.0, 1.0, //
@@ -153,6 +197,7 @@ Mesh * MeshFactory::CreateCube()
     Mesh * mesh = new Mesh();
 
     mesh->vert_positions.insert(mesh->vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
+    mesh->vert_normals.insert(mesh->vert_normals.begin(), std::begin(normalsArray), std::end(normalsArray));
     mesh->vert_colors.insert(mesh->vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
     mesh->vert_textCoords.insert(mesh->vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
 
@@ -168,6 +213,15 @@ Mesh * MeshFactory::CreatePlane()
         0.5f,  0.5f,  0.0f, //
         -0.5f, 0.5f,  0.0f, //
         -0.5f, -0.5f, 0.0f, //
+    };
+
+    float normalsArray[] = {
+        0.0f, 0.0f, 1.0f, //
+        0.0f, 0.0f, 1.0f, //
+        0.0f, 0.0f, 1.0f, //
+        0.0f, 0.0f, 1.0f, //
+        0.0f, 0.0f, 1.0f, //
+        0.0f, 0.0f, 1.0f, //
     };
 
     float vColorsArray[] = {
@@ -192,6 +246,7 @@ Mesh * MeshFactory::CreatePlane()
     Mesh * mesh = new Mesh();
 
     mesh->vert_positions.insert(mesh->vert_positions.begin(), std::begin(verticesArray), std::end(verticesArray));
+    mesh->vert_normals.insert(mesh->vert_normals.begin(), std::begin(normalsArray), std::end(normalsArray));
     mesh->vert_colors.insert(mesh->vert_colors.begin(), std::begin(vColorsArray), std::end(vColorsArray));
     mesh->vert_textCoords.insert(mesh->vert_textCoords.begin(), std::begin(vTexCoordsArray), std::end(vTexCoordsArray));
 

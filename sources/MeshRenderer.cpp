@@ -56,6 +56,8 @@ void MeshRender::SetShaderParamsFromMesh()
 
         if (vertex_attributes[i].name == "aPosition")
             SetVertexAttribVec3(index, m_mesh->vert_positions.data(), m_mesh->vert_positions.size());
+        else if (vertex_attributes[i].name == "aNormal")
+            SetVertexAttribVec3(index, m_mesh->vert_normals.data(), m_mesh->vert_normals.size());
         else if (vertex_attributes[i].name == "aColor")
             SetVertexAttribVec3(index, m_mesh->vert_colors.data(), m_mesh->vert_colors.size());
         else if (vertex_attributes[i].name == "aTexCoord")
@@ -78,6 +80,9 @@ void MeshRender::SetShaderParamsFromCamera(Camera * camera)
 
         else if (uniforms[i].name == "uProjection")
             SetMat4(uniforms[i].name, camera->GetProjectionMatrix());
+
+        else if (uniforms[i].name == "uCamera_position")
+            SetVec3(uniforms[i].name, camera->GetTransform()->position);
     }
 }
 void MeshRender::SetShaderParamsFromTransform()
@@ -104,6 +109,23 @@ void MeshRender::SetShaderParamsFromMaterial()
 
         else if (uniforms[i].name == "uTexture_1" && m_material->textures.size() > 1)
             SetInt(uniforms[i].name, 1);
+
+        else if (uniforms[i].name == "uDiffuse_color")
+            SetVec3(uniforms[i].name, m_material->diffuse_color);
+    }
+}
+
+void MeshRender::SetShaderParamsFromLight(Light * light)
+{
+    // Set Uniforms
+    std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
+    for (int i = 0; i < uniforms.size(); i++)
+    {
+        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
+        if (uniforms[i].name == "uLight_color")
+            SetVec3(uniforms[i].name, light->color);
+        if (uniforms[i].name == "uLight_position")
+            SetVec3(uniforms[i].name, light->GetTransform()->position);
     }
 }
 
@@ -226,7 +248,7 @@ void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
     // glUniformMatrix4fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
 }
 
-void MeshRender::Draw(Camera * camera, GLenum mode)
+void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
 {
     // Bind Textures -----------
     for (int i = 0; i < m_material->textures.size(); i++)
@@ -243,6 +265,7 @@ void MeshRender::Draw(Camera * camera, GLenum mode)
     SetShaderParamsFromMaterial();
     SetShaderParamsFromTransform();
     SetShaderParamsFromCamera(camera);
+    SetShaderParamsFromLight(light);
 
     // Draw ---------------------
     glPolygonMode(GL_FRONT_AND_BACK, mode);
