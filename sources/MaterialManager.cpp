@@ -7,16 +7,15 @@ MaterialManager::MaterialManager()
     m_default_material = new Material();
 }
 
-Material * MaterialManager::LoadMaterial(Shader * shader, const glm::vec3 & diffuse_color,
-                                         std::vector<Texture *> textures)
+Material * MaterialManager::LoadMaterial(Shader * shader, float shininess, const glm::vec3 & diffuse_color,
+                                         Texture * diffuse_map)
 {
     Material * material = new Material();
 
     material->shader        = shader;
-    material->textures      = textures;
+    material->diffuse_map   = diffuse_map;
     material->diffuse_color = diffuse_color;
-    // for (int i = 0; i < textures.size(); i++)
-    //     material->textures.push_back(textures[i]);
+    material->shininess     = shininess;
 
     if (material != nullptr)
     {

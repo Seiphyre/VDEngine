@@ -25,8 +25,9 @@ class MaterialManager : public Singleton<MaterialManager>
     MaterialManager();
 
   public:
-    Material * LoadMaterial(Shader * shader, const glm::vec3 & diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f),
-                            std::vector<Texture *> textures = {});
+    Material * LoadMaterial(Shader * shader, float shininess = 64.0f,
+                            const glm::vec3 & diffuse_color = glm::vec3(1.0, 1.0, 1.0),
+                            Texture *         diffuse_map   = nullptr);
     Material * GetMaterial(uuids::uuid shader_uuid);
     Material * GetMaterial();
 };

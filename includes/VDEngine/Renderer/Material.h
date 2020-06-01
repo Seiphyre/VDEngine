@@ -16,6 +16,9 @@
 namespace VDEngine
 {
 
+#define DIFFUSE_MAP_TEXT_UNIT 0
+#define SPECULAR_MAP_TEXT_UNIT 1
+
 class Material
 {
   public:
@@ -26,10 +29,12 @@ class Material
     // void AddTexture(uuids::uuid texture_uuid);
     // void AddTexture(const Texture * texture);
 
-    Shader *               shader;
-    std::vector<Texture *> textures;
+    Shader * shader;
 
     glm::vec3 diffuse_color;
+    Texture * diffuse_map;
+
+    float shininess;
 
   private:
     uuids::uuid m_uuid;

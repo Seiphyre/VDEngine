@@ -106,14 +106,19 @@ void MeshRender::SetShaderParamsFromMaterial()
     for (int i = 0; i < uniforms.size(); i++)
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "u_Texture_0" && m_material->textures.size() > 0)
-            SetInt(uniforms[i].name, 0); // 0 is a texture unit (texture unit == index of m_material->getTextures())
+        if (uniforms[i].name == "u_Diffuse_Map")
+        {
+            if (m_material->diffuse_map != nullptr)
+                SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
+            else
+                std::cout << "u_Diffuse_Map requierd, but diffuse map is null in the material.";
+        }
 
-        else if (uniforms[i].name == "u_Texture_1" && m_material->textures.size() > 1)
-            SetInt(uniforms[i].name, 1);
+        else if (uniforms[i].name == "u_Diffuse_Color")
+            SetVec3(uniforms[i].name, m_material->diffuse_color);
 
-        // else if (uniforms[i].name == "uDiffuse_color")
-        //     SetVec3(uniforms[i].name, m_material->diffuse_color);
+        else if (uniforms[i].name == "u_Shininess")
+            SetFloat(uniforms[i].name, m_material->shininess);
     }
 }
 
@@ -253,10 +258,12 @@ void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
 void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
 {
     // Bind Textures -----------
-    for (int i = 0; i < m_material->textures.size(); i++)
-    {
-        m_material->textures[i]->Bind(i);
-    }
+    // for (int i = 0; i < m_material->textures.size(); i++)
+    // {
+    //     m_material->textures[i]->Bind(i);
+    // }
+    if (m_material->diffuse_map != nullptr)
+        m_material->diffuse_map->Bind(DIFFUSE_MAP_TEXT_UNIT);
 
     m_material->shader->Use();
 
@@ -282,9 +289,14 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     glBindVertexArray(0);
 
     // Unbind Textures -----------
-    for (int i = 0; i < m_material->textures.size(); i++)
+    // for (int i = 0; i < m_material->textures.size(); i++)
+    // {
+    //     glActiveTexture(GL_TEXTURE0 + i);
+    //     glBindTexture(GL_TEXTURE_2D, 0);
+    // }
+    if (m_material->diffuse_map != nullptr)
     {
-        glActiveTexture(GL_TEXTURE0 + i);
+        glActiveTexture(GL_TEXTURE0 + DIFFUSE_MAP_TEXT_UNIT);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

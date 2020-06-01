@@ -69,21 +69,18 @@ int main(int argc, char * argv[])
     // Load Shaders
 
     // VDEngine::Shader * unlit_multi_text_shader =
-    //     VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
+    //     VDEngine::ShaderManager::getInstance()->LoadShader("Unlit_Text_Default.vert", "Unlit_Text_Default.frag");
 
     VDEngine::Shader * lit_multi_text_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("LitMultipleText.vert", "LitMultipleText.frag");
-
-    VDEngine::Shader * yellow_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("Yellow_Shader.vert", "Yellow_Shader.frag");
+        VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Text_Default.vert", "Lit_Text_Default.frag");
 
     // [...]
 
     // Load Textures
 
     VDEngine::Texture * measurement_tex = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    VDEngine::Texture * emoji_tex       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
     VDEngine::Texture * wooden_container_tex = VDEngine::TextureManager::getInstance()->LoadTexture("container.jpg");
+    // VDEngine::Texture * emoji_tex       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
 
     // [...]
 
@@ -93,11 +90,12 @@ int main(int argc, char * argv[])
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
     VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        lit_multi_text_shader, glm::vec3(1.0f, 1.0f, 1.0f),
-        std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
+        lit_multi_text_shader, 128.0f, glm::vec3(1.0, 1.0, 1.0), measurement_tex);
     VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        lit_multi_text_shader, glm::vec3(1.0f, 0.5f, 0.31f), std::vector<VDEngine::Texture *>{wooden_container_tex});
-    VDEngine::Material * light_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(yellow_shader);
+        lit_multi_text_shader, 128.0f, glm::vec3(1.0, 1.0, 1.0), wooden_container_tex);
+    VDEngine::Material * light_mat =
+        VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
+    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
 
     // [...]
 

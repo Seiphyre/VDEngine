@@ -8,6 +8,9 @@ Material::Material()
     shader = ShaderManager::getInstance()->GetShader();
 
     diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    diffuse_map   = nullptr;
+
+    shininess = 64.0f;
 }
 
 Material::~Material()
