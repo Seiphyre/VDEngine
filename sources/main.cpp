@@ -68,8 +68,11 @@ int main(int argc, char * argv[])
 
     // Load Shaders
 
-    VDEngine::Shader * multi_text_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
+    // VDEngine::Shader * unlit_multi_text_shader =
+    //     VDEngine::ShaderManager::getInstance()->LoadShader("UnlitMultipleText.vert", "UnlitMultipleText.frag");
+
+    VDEngine::Shader * lit_multi_text_shader =
+        VDEngine::ShaderManager::getInstance()->LoadShader("LitMultipleText.vert", "LitMultipleText.frag");
 
     VDEngine::Shader * yellow_shader =
         VDEngine::ShaderManager::getInstance()->LoadShader("Yellow_Shader.vert", "Yellow_Shader.frag");
@@ -90,9 +93,10 @@ int main(int argc, char * argv[])
     // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
 
     VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        multi_text_shader, glm::vec3(1.0f, 1.0f, 1.0f), std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
+        lit_multi_text_shader, glm::vec3(1.0f, 1.0f, 1.0f),
+        std::vector<VDEngine::Texture *>{measurement_tex, emoji_tex});
     VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(
-        multi_text_shader, glm::vec3(1.0f, 0.5f, 0.31f), std::vector<VDEngine::Texture *>{wooden_container_tex});
+        lit_multi_text_shader, glm::vec3(1.0f, 0.5f, 0.31f), std::vector<VDEngine::Texture *>{wooden_container_tex});
     VDEngine::Material * light_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(yellow_shader);
 
     // [...]
