@@ -38,6 +38,11 @@ glm::mat4 Transform::GetMatrix() const
     return final_matrix;
 }
 
+glm::mat4 Transform::GetNormalMatrix() const
+{
+    return (glm::transpose(glm::inverse(GetMatrix())));
+}
+
 glm::vec3 Transform::GetForwardDir() const
 {
     const glm::mat4 matrix  = GetMatrix();

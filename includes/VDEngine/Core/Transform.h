@@ -27,6 +27,7 @@ class Transform
     ~Transform();
 
     glm::mat4 GetMatrix() const;
+    glm::mat4 GetNormalMatrix() const;
 
     glm::vec3 GetForwardDir() const;
     glm::vec3 GetUpDir() const;

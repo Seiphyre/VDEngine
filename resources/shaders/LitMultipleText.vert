@@ -8,6 +8,7 @@ in vec2 aTexCoord;
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
+uniform mat4 uNormalMat;
 
 out vec4 Color;
 out vec2 TexCoord;
@@ -21,5 +22,5 @@ void main()
     Color         = vec4(aColor, 1.0f);
     TexCoord      = aTexCoord;
     WorldPosition = vec3(uModel * vec4(aPosition, 1.0));
-    Normal        = mat3(transpose(inverse(uModel))) * aNormal;
+    Normal        = mat3(uNormalMat) * aNormal;
 }
