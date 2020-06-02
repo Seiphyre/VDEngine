@@ -20,6 +20,8 @@
 
 #include "../resources/scripts/FPSCameraController.h"
 
+using namespace VDEngine;
+
 void framebuffer_size_callback(GLFWwindow * window, int width, int height)
 {
     glViewport(0, 0, width, height);
@@ -122,7 +124,8 @@ int main(int argc, char * argv[])
     VDEngine::MeshRender * light_gizmo =
         new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), light_mat);
 
-    light_gizmo->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 0.0f));
+    light_gizmo->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
+    light_gizmo->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
     light_gizmo->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     // Camera ----------
@@ -136,8 +139,15 @@ int main(int argc, char * argv[])
 
     // Light -----------
 
-    VDEngine::Light * light = new VDEngine::Light(glm::vec3(1.0f, 1.0f, 1.0f));
-    light->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 0.0f));
+    // VDEngine::Light * light = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
+    // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
+    VDEngine::Light * light = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
+    light->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
+    // VDEngine::Light * light = new Light(POINT, glm::vec3(1.0f, 1.0f, 1.0f));
+    light->att_linear    = 0.045f;
+    light->att_quadratic = 0.0075f;
+
+    light->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -158,14 +168,15 @@ int main(int argc, char * argv[])
 
         camera_controller->Update();
 
-        // cube->GetTransform()->Rotate((float)VDEngine::Time::GetDeltaTime() * 50.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
         const float radius = 3.0f;
         float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
         float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
         light_gizmo->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
         light->GetTransform()->position       = glm::vec3(camX, 2.5f, camZ);
+
+        light_gizmo->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+        light->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
         // OU rotane 180 sur Y ?
         // camera->GetTransform()->LookAt(
         //     camera->GetTransform()->position +

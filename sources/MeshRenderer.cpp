@@ -144,8 +144,25 @@ void MeshRender::SetShaderParamsFromLight(Light * light)
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
         if (uniforms[i].name == "u_Light_Color")
             SetVec3(uniforms[i].name, light->color);
-        if (uniforms[i].name == "u_Light_Position")
+        if (uniforms[i].name == "u_Light_Type")
+            SetInt(uniforms[i].name, (int)light->type);
+
+        if (uniforms[i].name == "u_Light_Position" && (light->type == POINT || light->type == SPOT))
             SetVec3(uniforms[i].name, light->GetTransform()->position);
+        if (uniforms[i].name == "u_Light_Direction" && (light->type == DIRECTIONAL || light->type == SPOT))
+            SetVec3(uniforms[i].name, light->GetTransform()->GetForwardDir());
+
+        if (uniforms[i].name == "u_Light_Attenuation_Const" && (light->type == POINT || light->type == SPOT))
+            SetFloat(uniforms[i].name, light->att_constant);
+        if (uniforms[i].name == "u_Light_Attenuation_Linear" && (light->type == POINT || light->type == SPOT))
+            SetFloat(uniforms[i].name, light->att_linear);
+        if (uniforms[i].name == "u_Light_Attenuation_Quad" && (light->type == POINT || light->type == SPOT))
+            SetFloat(uniforms[i].name, light->att_quadratic);
+
+        if (uniforms[i].name == "u_Light_Inner_CutOff" && light->type == SPOT)
+            SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
+        if (uniforms[i].name == "u_Light_Outer_CutOff" && light->type == SPOT)
+            SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
     }
 }
 
