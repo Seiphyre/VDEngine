@@ -71,7 +71,7 @@ int main(int argc, char * argv[])
     // Load Shaders
 
     VDEngine::Shader * lit_multi_text_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Text_Default.vert", "Lit_Text_Default.frag");
+        VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Default.vert", "Lit_Default.frag");
 
     // [...]
 

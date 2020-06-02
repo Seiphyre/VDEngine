@@ -13,8 +13,8 @@ uniform vec3 u_Light_Color;
 uniform vec3 u_Light_Position;
 uniform vec3 u_Light_Direction;
 
-uniform float u_Light_Inner_CutOff;
-uniform float u_Light_Outer_CutOff;
+uniform float u_Light_Inner_CutOff_Cos;
+uniform float u_Light_Outer_CutOff_Cos;
 
 uniform float u_Light_Attenuation_Const;
 uniform float u_Light_Attenuation_Linear;
@@ -168,8 +168,8 @@ vec3 calc_spot_light_color(vec3 object_ambient, vec3 object_diffuse, vec3 object
 
     // Soft Edges
     float theta     = dot(obj_to_light_dir, normalize(-u_Light_Direction));
-    float epsilon   = u_Light_Inner_CutOff - u_Light_Outer_CutOff;
-    float intensity = clamp((theta - u_Light_Outer_CutOff) / epsilon, 0.0, 1.0);
+    float epsilon   = u_Light_Inner_CutOff_Cos - u_Light_Outer_CutOff_Cos;
+    float intensity = clamp((theta - u_Light_Outer_CutOff_Cos) / epsilon, 0.0, 1.0);
 
     light_diffuse_color *= intensity;
     light_specular_color *= intensity;

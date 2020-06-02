@@ -159,9 +159,9 @@ void MeshRender::SetShaderParamsFromLight(Light * light)
         if (uniforms[i].name == "u_Light_Attenuation_Quad" && (light->type == POINT || light->type == SPOT))
             SetFloat(uniforms[i].name, light->att_quadratic);
 
-        if (uniforms[i].name == "u_Light_Inner_CutOff" && light->type == SPOT)
+        if (uniforms[i].name == "u_Light_Inner_CutOff_Cos" && light->type == SPOT)
             SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
-        if (uniforms[i].name == "u_Light_Outer_CutOff" && light->type == SPOT)
+        if (uniforms[i].name == "u_Light_Outer_CutOff_Cos" && light->type == SPOT)
             SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
     }
 }
