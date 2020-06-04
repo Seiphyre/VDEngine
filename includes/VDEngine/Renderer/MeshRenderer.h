@@ -49,6 +49,11 @@ class MeshRender
     void SetShaderParamsFromTransform();
     void SetShaderParamsFromMaterial();
 
+    bool GetShaderParamArrayNameAndIndex(const std::string & full_name, const std::string & array_name,
+                                         std::string & param_name, int & param_index);
+    bool GetShaderParamStructNameAndIndex(const std::string & full_name, const std::string & struct_name,
+                                          std::string & param_name);
+
     // Set Vertex Attrib
     void SetVertexAttribVec3(int layout_index, const float * data, int data_size);
     void SetVertexAttribVec2(int layout_index, const float * data, int data_size);

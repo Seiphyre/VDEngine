@@ -141,32 +141,19 @@ void MeshRender::SetShaderParamsFromLight(const std::vector<Light *> & lights)
     std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
-
+        // -- Check Basic Variables --
         if (uniforms[i].name == "u_Lights_Size")
             SetInt(uniforms[i].name, (int)lights.size());
 
-        std::regex  regex = std::regex("u_Lights\\[([0-9]+)\\]\\.([A-Za-z0-9_]+)");
-        std::smatch match;
-
-        if (std::regex_search(uniforms[i].name, match, regex) == true)
+        // -- Check Arrays Variable: u_Lights[] --
+        std::string param_name;
+        int         param_index;
+        if (GetShaderParamArrayNameAndIndex(uniforms[i].name, "u_Lights", param_name, param_index))
         {
-            if (match.size() != 3)
-            {
-                std::cout << "Light param has been found, but it failed to retrieve index and/or parameter name."
-                          << std::endl;
+            if (param_index >= lights.size())
                 continue;
-            }
 
-            int light_index = std::atoi(match.str(1).c_str());
-
-            if (light_index >= lights.size())
-            {
-                // std::cout << "[" << match.str(0) << "] Shader param index is out of light array." << std::endl;
-                continue;
-            }
-
-            std::string param_name = match.str(2);
-            Light *     light      = lights[light_index];
+            Light * light = lights[param_index];
 
             if (param_name == "color")
                 SetVec3(uniforms[i].name, light->color);
@@ -190,32 +177,53 @@ void MeshRender::SetShaderParamsFromLight(const std::vector<Light *> & lights)
             if (param_name == "outer_CutOff_Cos" && light->type == SPOT)
                 SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
         }
-
-        // ______________
-
-        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        // if (uniforms[i].name == "u_Light_Color")
-        //     SetVec3(uniforms[i].name, light->color);
-        // if (uniforms[i].name == "u_Light_Type")
-        //     SetInt(uniforms[i].name, (int)light->type);
-
-        // if (uniforms[i].name == "u_Light_Position" && (light->type == POINT || light->type == SPOT))
-        //     SetVec3(uniforms[i].name, light->GetTransform()->position);
-        // if (uniforms[i].name == "u_Light_Direction" && (light->type == DIRECTIONAL || light->type == SPOT))
-        //     SetVec3(uniforms[i].name, light->GetTransform()->GetForwardDir());
-
-        // if (uniforms[i].name == "u_Light_Attenuation_Const" && (light->type == POINT || light->type == SPOT))
-        //     SetFloat(uniforms[i].name, light->att_constant);
-        // if (uniforms[i].name == "u_Light_Attenuation_Linear" && (light->type == POINT || light->type == SPOT))
-        //     SetFloat(uniforms[i].name, light->att_linear);
-        // if (uniforms[i].name == "u_Light_Attenuation_Quad" && (light->type == POINT || light->type == SPOT))
-        //     SetFloat(uniforms[i].name, light->att_quadratic);
-
-        // if (uniforms[i].name == "u_Light_Inner_CutOff_Cos" && light->type == SPOT)
-        //     SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
-        // if (uniforms[i].name == "u_Light_Outer_CutOff_Cos" && light->type == SPOT)
-        //     SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
     }
+}
+
+bool MeshRender::GetShaderParamArrayNameAndIndex(const std::string & full_name, const std::string & array_name,
+                                                 std::string & param_name, int & param_index)
+{
+    std::regex  regex = std::regex(array_name + "\\[([0-9]+)\\]\\.([A-Za-z0-9_]+)");
+    std::smatch match;
+
+    if (std::regex_search(full_name, match, regex) == true)
+    {
+        if (match.size() != 3)
+        {
+            std::cout << "Light param has been found, but it failed to retrieve index and/or parameter name."
+                      << std::endl;
+            return (false);
+        }
+
+        param_index = std::atoi(match.str(1).c_str());
+        param_name  = match.str(2);
+
+        return (true);
+    }
+
+    return (false);
+}
+
+bool MeshRender::GetShaderParamStructNameAndIndex(const std::string & full_name, const std::string & struct_name,
+                                                  std::string & param_name)
+{
+    std::regex  regex = std::regex(struct_name + "\\.([A-Za-z0-9_]+)");
+    std::smatch match;
+
+    if (std::regex_search(full_name, match, regex) == true)
+    {
+        if (match.size() != 2)
+        {
+            std::cout << "Light param has been found, but it failed to retrieve parameter name." << std::endl;
+            return (false);
+        }
+
+        param_name = match.str(1);
+
+        return (true);
+    }
+
+    return (false);
 }
 
 void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
