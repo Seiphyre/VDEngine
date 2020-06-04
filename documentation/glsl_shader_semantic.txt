@@ -6,12 +6,12 @@
 *------------------------------------------------*
 
 __________________________________________________
-|            name           |     type     |  related object  |
+|              name             |     type     |  related object  |
 
-  v_Position                   vec3           Mesh
---  v_Color                      vec3           Mesh
-  v_TexCoord                   vec2           Mesh
-  v_Normal                     vec3           Mesh
+  v_Position                       vec3           Mesh
+--  v_Color                          vec3           Mesh
+  v_TexCoord                       vec2           Mesh
+  v_Normal                         vec3           Mesh
 
 
 *------------------------------------------------*
@@ -20,24 +20,26 @@ __________________________________________________
 |                                                |
 *------------------------------------------------*
 __________________________________________________
-|            name            |     type     |  related object  |
+|              name              |     type     |  related object  |
 
-  u_ModelMat                    mat4           Transform
-  u_NormalMat                   mat4           Transform
-  u_ViewMat                     mat4           Camera
-  u_ProjMat                     mat4           Camera
-  u_Camera_Position             vec3           Camera
-  u_Light_Type                  int            Light
-  u_Light_Color                 vec3           Light
-  u_Light_Position              vec3           Light
-  u_Light_Direction             vec3           Light
-  u_Light_Attenuation_Const     float          Light
-  u_Light_Attenuation_Linear    float          Light
-  u_Light_Attenuation_Quad      float          Light
-  u_Light_Inner_CutOff_Cos      float          Light
-  u_Light_Outer_CutOff_Cos      float          Light
-  u_Diffuse_Color               vec3           Material
-  u_Specular_Color              vec3           Material
-  u_Diffuse_Map                 sampler2D      Material
-  u_Specular_Map                sampler2D      Material
-  u_Shininess                   float          Material
+  u_ModelMat                        mat4           Transform
+  u_NormalMat                       mat4           Transform
+  u_ViewMat                         mat4           Camera
+  u_ProjMat                         mat4           Camera
+  u_Camera_Position                 vec3           Camera
+  u_Lights_Size                     int            Light
+  u_Lights                          Light[]        Light
+  u_Lights[].type                   int            Light
+  u_Lights[].color                  vec3           Light
+  u_Lights[].position               vec3           Light
+  u_Lights[].direction              vec3           Light
+  u_Lights[].attenuation_Const      float          Light
+  u_Lights[].attenuation_Linear     float          Light
+  u_Lights[].attenuation_Quad       float          Light
+  u_Lights[].inner_CutOff_Cos       float          Light
+  u_Lights[].outer_CutOff_Cos       float          Light
+  u_Diffuse_Color                   vec3           Material
+  u_Specular_Color                  vec3           Material
+  u_Diffuse_Map                     sampler2D      Material
+  u_Specular_Map                    sampler2D      Material
+  u_Shininess                       float          Material
