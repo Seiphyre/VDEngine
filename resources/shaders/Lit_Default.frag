@@ -16,12 +16,32 @@ struct Light
     float attenuation_Quad;
 };
 
+struct Material
+{
+    sampler2D diffuse_Map;
+    vec3      diffuse_Color;
+
+    sampler2D specular_Map;
+    vec3      specular_Color;
+
+    float shininess;
+};
+
+struct PhongComponent
+{
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 #define MAX_LIGHTS 16
 
+// Vertex
 in vec2 f_TexCoord;
 in vec3 f_Position_World;
 in vec3 f_Normal;
 
+// Camera
 uniform vec3 u_Camera_Position;
 
 // Lights
@@ -29,23 +49,20 @@ uniform Light u_Lights[MAX_LIGHTS];
 uniform int   u_Lights_Size;
 
 // Material
-uniform sampler2D u_Diffuse_Map;
-uniform vec3      u_Diffuse_Color;
-uniform sampler2D u_Specular_Map;
-uniform vec3      u_Specular_Color;
-uniform float     u_Shininess;
+uniform Material u_Material;
 
 out vec4 out_FragColor;
 
-vec3 calc_directional_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular);
-vec3 calc_point_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular);
-vec3 calc_spot_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular);
+vec3 calc_directional_light_color(Light light, PhongComponent obj_color);
+vec3 calc_point_light_color(Light light, PhongComponent obj_color);
+vec3 calc_spot_light_color(Light light, PhongComponent obj_color);
 
 void main()
 {
-    vec3 object_ambient  = vec3(texture(u_Diffuse_Map, f_TexCoord)) * u_Diffuse_Color;
-    vec3 object_diffuse  = vec3(texture(u_Diffuse_Map, f_TexCoord)) * u_Diffuse_Color;
-    vec3 object_specular = vec3(texture(u_Specular_Map, f_TexCoord)) * u_Specular_Color;
+    PhongComponent obj_color;
+    obj_color.ambient  = vec3(texture(u_Material.diffuse_Map, f_TexCoord)) * u_Material.diffuse_Color;
+    obj_color.diffuse  = vec3(texture(u_Material.diffuse_Map, f_TexCoord)) * u_Material.diffuse_Color;
+    obj_color.specular = vec3(texture(u_Material.specular_Map, f_TexCoord)) * u_Material.specular_Color;
 
     // -- Light Color Calculation --------
 
@@ -54,26 +71,24 @@ void main()
     for (int i = 0; i < u_Lights_Size; i++)
     {
         if (u_Lights[i].type == 0)
-            light_combined_color +=
-                calc_directional_light_color(u_Lights[i], object_ambient, object_diffuse, object_specular);
+            light_combined_color += calc_directional_light_color(u_Lights[i], obj_color);
         if (u_Lights[i].type == 1)
-            light_combined_color += calc_spot_light_color(u_Lights[i], object_ambient, object_diffuse, object_specular);
+            light_combined_color += calc_spot_light_color(u_Lights[i], obj_color);
         if (u_Lights[i].type == 2)
-            light_combined_color +=
-                calc_point_light_color(u_Lights[i], object_ambient, object_diffuse, object_specular);
+            light_combined_color += calc_point_light_color(u_Lights[i], obj_color);
     }
 
     // -- Result --------------------------
     out_FragColor = vec4(light_combined_color, 1.0);
 }
 
-vec3 calc_directional_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular)
+vec3 calc_directional_light_color(Light light, PhongComponent obj_color)
 {
     // Ambient Color
     float ambient_intensity   = 0.1;
     vec3  light_ambient_color = ambient_intensity * light.color;
 
-    light_ambient_color = light_ambient_color * vec3(object_ambient);
+    light_ambient_color = light_ambient_color * obj_color.ambient;
 
     // Diffuse Color
 
@@ -84,7 +99,7 @@ vec3 calc_directional_light_color(Light light, vec3 object_ambient, vec3 object_
     float diffuse_angle       = max(dot(normal, light_dir), 0.0);
     vec3  light_diffuse_color = diffuse_intensity * diffuse_angle * light.color;
 
-    light_diffuse_color = light_diffuse_color * vec3(object_diffuse);
+    light_diffuse_color = light_diffuse_color * obj_color.diffuse;
 
     // Specular Color
     float specular_intensity = 0.9;
@@ -92,15 +107,15 @@ vec3 calc_directional_light_color(Light light, vec3 object_ambient, vec3 object_
     vec3  reflect_dir        = reflect(-light_dir, normal);
 
     float view_reflect_angle   = max(dot(view_dir, reflect_dir), 0.0);
-    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Shininess) * light.color;
+    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Material.shininess) * light.color;
 
-    light_specular_color = light_specular_color * vec3(object_specular);
+    light_specular_color = light_specular_color * obj_color.specular;
 
     // Result
     return (light_ambient_color + light_diffuse_color + light_specular_color);
 }
 
-vec3 calc_point_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular)
+vec3 calc_point_light_color(Light light, PhongComponent obj_color)
 {
     // Attenuation
     float distance    = length(light.position - f_Position_World);
@@ -112,7 +127,7 @@ vec3 calc_point_light_color(Light light, vec3 object_ambient, vec3 object_diffus
     vec3  light_ambient_color = ambient_intensity * light.color;
 
     light_ambient_color *= attenuation;
-    light_ambient_color *= vec3(object_ambient);
+    light_ambient_color *= obj_color.ambient;
 
     // Diffuse Color
 
@@ -124,7 +139,7 @@ vec3 calc_point_light_color(Light light, vec3 object_ambient, vec3 object_diffus
     vec3  light_diffuse_color = diffuse_intensity * diffuse_angle * light.color;
 
     light_diffuse_color *= attenuation;
-    light_diffuse_color *= vec3(object_diffuse);
+    light_diffuse_color *= obj_color.diffuse;
 
     // Specular Color
     float specular_intensity = 0.9;
@@ -132,16 +147,16 @@ vec3 calc_point_light_color(Light light, vec3 object_ambient, vec3 object_diffus
     vec3  reflect_dir        = reflect(-light_dir, normal);
 
     float view_reflect_angle   = max(dot(view_dir, reflect_dir), 0.0);
-    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Shininess) * light.color;
+    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Material.shininess) * light.color;
 
     light_specular_color *= attenuation;
-    light_specular_color *= vec3(object_specular);
+    light_specular_color *= obj_color.specular;
 
     // Result
     return (light_ambient_color + light_diffuse_color + light_specular_color);
 }
 
-vec3 calc_spot_light_color(Light light, vec3 object_ambient, vec3 object_diffuse, vec3 object_specular)
+vec3 calc_spot_light_color(Light light, PhongComponent obj_color)
 {
     vec3 normal           = normalize(f_Normal);
     vec3 obj_to_light_dir = normalize(light.position - f_Position_World);
@@ -151,7 +166,7 @@ vec3 calc_spot_light_color(Light light, vec3 object_ambient, vec3 object_diffuse
     float ambient_intensity   = 0.1;
     vec3  light_ambient_color = ambient_intensity * light.color;
 
-    light_ambient_color *= vec3(object_ambient);
+    light_ambient_color *= obj_color.ambient;
 
     // Diffuse Color
     float diffuse_intensity = 0.7;
@@ -159,16 +174,16 @@ vec3 calc_spot_light_color(Light light, vec3 object_ambient, vec3 object_diffuse
     float diffuse_angle       = max(dot(normal, obj_to_light_dir), 0.0);
     vec3  light_diffuse_color = diffuse_intensity * diffuse_angle * light.color;
 
-    light_diffuse_color *= vec3(object_diffuse);
+    light_diffuse_color *= obj_color.diffuse;
 
     // Specular Color
     float specular_intensity = 0.9;
     vec3  reflect_dir        = reflect(-obj_to_light_dir, normal);
 
     float view_reflect_angle   = max(dot(obj_to_view_dir, reflect_dir), 0.0);
-    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Shininess) * light.color;
+    vec3  light_specular_color = specular_intensity * pow(view_reflect_angle, u_Material.shininess) * light.color;
 
-    light_specular_color *= vec3(object_specular);
+    light_specular_color *= obj_color.specular;
 
     // Attenuation
     float distance    = length(light.position - f_Position_World);

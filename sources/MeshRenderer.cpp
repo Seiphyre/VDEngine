@@ -105,33 +105,32 @@ void MeshRender::SetShaderParamsFromMaterial()
     std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
-        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "u_Diffuse_Map")
+        // -- Check Arrays Variable: u_Lights[] --
+        std::string param_name;
+        if (GetShaderParamStructNameAndIndex(uniforms[i].name, "u_Material", param_name))
         {
-            if (m_material->diffuse_map != nullptr)
-                SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
-            // else
-            //     std::cout << "WARNING: u_Diffuse_Map requierd, but diffuse map is null in the material." <<
-            //     std::endl;
+            // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
+            if (param_name == "diffuse_Map")
+            {
+                if (m_material->diffuse_map != nullptr)
+                    SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
+            }
+
+            else if (param_name == "diffuse_Color")
+                SetVec3(uniforms[i].name, m_material->diffuse_color);
+
+            if (param_name == "specular_Map")
+            {
+                if (m_material->diffuse_map != nullptr)
+                    SetInt(uniforms[i].name, SPECULAR_MAP_TEXT_UNIT);
+            }
+
+            else if (param_name == "specular_Color")
+                SetVec3(uniforms[i].name, m_material->specular_color);
+
+            else if (param_name == "shininess")
+                SetFloat(uniforms[i].name, m_material->shininess);
         }
-
-        else if (uniforms[i].name == "u_Diffuse_Color")
-            SetVec3(uniforms[i].name, m_material->diffuse_color);
-
-        if (uniforms[i].name == "u_Specular_Map")
-        {
-            if (m_material->diffuse_map != nullptr)
-                SetInt(uniforms[i].name, SPECULAR_MAP_TEXT_UNIT);
-            // else
-            //     std::cout << "WARNING: u_Specular_Map requierd, but specular map is null in the material." <<
-            //     std::endl;
-        }
-
-        else if (uniforms[i].name == "u_Specular_Color")
-            SetVec3(uniforms[i].name, m_material->specular_color);
-
-        else if (uniforms[i].name == "u_Shininess")
-            SetFloat(uniforms[i].name, m_material->shininess);
     }
 }
 
