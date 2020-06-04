@@ -2,6 +2,7 @@
 #define VDENGINE_MESH_RENDERER_H_
 
 // C++ Standard libs
+#include <regex>
 #include <math.h>
 #include <vector>
 
@@ -39,12 +40,12 @@ class MeshRender
     Transform * GetTransform() const;
     void        SetMaterial(Material * material);
 
-    void Draw(Camera * camera, Light * light, GLenum mode = GL_FILL);
+    void Draw(Camera * camera, const std::vector<Light *> & lights, GLenum mode = GL_FILL);
 
   protected:
     void SetShaderParamsFromMesh();
     void SetShaderParamsFromCamera(Camera * camera);
-    void SetShaderParamsFromLight(Light * light);
+    void SetShaderParamsFromLight(const std::vector<Light *> & light);
     void SetShaderParamsFromTransform();
     void SetShaderParamsFromMaterial();
 

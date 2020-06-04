@@ -101,7 +101,10 @@ int main(int argc, char * argv[])
 
     VDEngine::Material * light_mat =
         VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
-    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 0.0);
+    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
+    VDEngine::Material * light_mat2 =
+        VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
+    light_mat->diffuse_color = glm::vec3(0.0, 1.0, 0.0);
 
     // [...]
 
@@ -128,6 +131,12 @@ int main(int argc, char * argv[])
     light_gizmo->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
     light_gizmo->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
+    VDEngine::MeshRender * light_gizmo2 =
+        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), light_mat2);
+
+    light_gizmo2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    light_gizmo2->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
     // Camera ----------
 
     VDEngine::Camera * camera = new VDEngine::Camera();
@@ -141,13 +150,17 @@ int main(int argc, char * argv[])
 
     // VDEngine::Light * light = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
-    VDEngine::Light * light = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
-    light->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
-    // VDEngine::Light * light = new Light(POINT, glm::vec3(1.0f, 1.0f, 1.0f));
-    light->att_linear    = 0.045f;
-    light->att_quadratic = 0.0075f;
+    VDEngine::Light * light = new Light(POINT, glm::vec3(0.0f, 1.0f, 0.0f));
+    // light->att_linear       = 0.045f;
+    // light->att_quadratic    = 0.0075f;
 
-    light->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
+    VDEngine::Light * light2 = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
+    light2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    light2->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
+    light2->att_linear    = 0.045f;
+    light2->att_quadratic = 0.0075f;
+    light2->inner_cutOff  = 15;
+    light2->outer_cutOff  = 20;
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -190,9 +203,10 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        cube->Draw(camera, light);
-        floor->Draw(camera, light);
-        light_gizmo->Draw(camera, light);
+        cube->Draw(camera, {light, light2});
+        floor->Draw(camera, {light, light2});
+        light_gizmo->Draw(camera, {light, light2});
+        light_gizmo2->Draw(camera, {light, light2});
 
         // Display
         glfwSwapBuffers(s_window);

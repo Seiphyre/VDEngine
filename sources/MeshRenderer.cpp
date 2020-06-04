@@ -135,34 +135,86 @@ void MeshRender::SetShaderParamsFromMaterial()
     }
 }
 
-void MeshRender::SetShaderParamsFromLight(Light * light)
+void MeshRender::SetShaderParamsFromLight(const std::vector<Light *> & lights)
 {
     // Set Uniforms
     std::vector<s_shaderParameter> uniforms = m_material->shader->GetUniforms();
     for (int i = 0; i < uniforms.size(); i++)
     {
+
+        if (uniforms[i].name == "u_Lights_Size")
+            SetInt(uniforms[i].name, (int)lights.size());
+
+        std::regex  regex = std::regex("u_Lights\\[([0-9]+)\\]\\.([A-Za-z0-9_]+)");
+        std::smatch match;
+
+        if (std::regex_search(uniforms[i].name, match, regex) == true)
+        {
+            if (match.size() != 3)
+            {
+                std::cout << "Light param has been found, but it failed to retrieve index and/or parameter name."
+                          << std::endl;
+                continue;
+            }
+
+            int light_index = std::atoi(match.str(1).c_str());
+
+            if (light_index >= lights.size())
+            {
+                // std::cout << "[" << match.str(0) << "] Shader param index is out of light array." << std::endl;
+                continue;
+            }
+
+            std::string param_name = match.str(2);
+            Light *     light      = lights[light_index];
+
+            if (param_name == "color")
+                SetVec3(uniforms[i].name, light->color);
+            if (param_name == "type")
+                SetInt(uniforms[i].name, (int)light->type);
+
+            if (param_name == "position" && (light->type == POINT || light->type == SPOT))
+                SetVec3(uniforms[i].name, light->GetTransform()->position);
+            if (param_name == "direction" && (light->type == DIRECTIONAL || light->type == SPOT))
+                SetVec3(uniforms[i].name, light->GetTransform()->GetForwardDir());
+
+            if (param_name == "attenuation_Const" && (light->type == POINT || light->type == SPOT))
+                SetFloat(uniforms[i].name, light->att_constant);
+            if (param_name == "attenuation_Linear" && (light->type == POINT || light->type == SPOT))
+                SetFloat(uniforms[i].name, light->att_linear);
+            if (param_name == "attenuation_Quad" && (light->type == POINT || light->type == SPOT))
+                SetFloat(uniforms[i].name, light->att_quadratic);
+
+            if (param_name == "inner_CutOff_Cos" && light->type == SPOT)
+                SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
+            if (param_name == "outer_CutOff_Cos" && light->type == SPOT)
+                SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
+        }
+
+        // ______________
+
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-        if (uniforms[i].name == "u_Light_Color")
-            SetVec3(uniforms[i].name, light->color);
-        if (uniforms[i].name == "u_Light_Type")
-            SetInt(uniforms[i].name, (int)light->type);
+        // if (uniforms[i].name == "u_Light_Color")
+        //     SetVec3(uniforms[i].name, light->color);
+        // if (uniforms[i].name == "u_Light_Type")
+        //     SetInt(uniforms[i].name, (int)light->type);
 
-        if (uniforms[i].name == "u_Light_Position" && (light->type == POINT || light->type == SPOT))
-            SetVec3(uniforms[i].name, light->GetTransform()->position);
-        if (uniforms[i].name == "u_Light_Direction" && (light->type == DIRECTIONAL || light->type == SPOT))
-            SetVec3(uniforms[i].name, light->GetTransform()->GetForwardDir());
+        // if (uniforms[i].name == "u_Light_Position" && (light->type == POINT || light->type == SPOT))
+        //     SetVec3(uniforms[i].name, light->GetTransform()->position);
+        // if (uniforms[i].name == "u_Light_Direction" && (light->type == DIRECTIONAL || light->type == SPOT))
+        //     SetVec3(uniforms[i].name, light->GetTransform()->GetForwardDir());
 
-        if (uniforms[i].name == "u_Light_Attenuation_Const" && (light->type == POINT || light->type == SPOT))
-            SetFloat(uniforms[i].name, light->att_constant);
-        if (uniforms[i].name == "u_Light_Attenuation_Linear" && (light->type == POINT || light->type == SPOT))
-            SetFloat(uniforms[i].name, light->att_linear);
-        if (uniforms[i].name == "u_Light_Attenuation_Quad" && (light->type == POINT || light->type == SPOT))
-            SetFloat(uniforms[i].name, light->att_quadratic);
+        // if (uniforms[i].name == "u_Light_Attenuation_Const" && (light->type == POINT || light->type == SPOT))
+        //     SetFloat(uniforms[i].name, light->att_constant);
+        // if (uniforms[i].name == "u_Light_Attenuation_Linear" && (light->type == POINT || light->type == SPOT))
+        //     SetFloat(uniforms[i].name, light->att_linear);
+        // if (uniforms[i].name == "u_Light_Attenuation_Quad" && (light->type == POINT || light->type == SPOT))
+        //     SetFloat(uniforms[i].name, light->att_quadratic);
 
-        if (uniforms[i].name == "u_Light_Inner_CutOff_Cos" && light->type == SPOT)
-            SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
-        if (uniforms[i].name == "u_Light_Outer_CutOff_Cos" && light->type == SPOT)
-            SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
+        // if (uniforms[i].name == "u_Light_Inner_CutOff_Cos" && light->type == SPOT)
+        //     SetFloat(uniforms[i].name, glm::cos(glm::radians(light->inner_cutOff)));
+        // if (uniforms[i].name == "u_Light_Outer_CutOff_Cos" && light->type == SPOT)
+        //     SetFloat(uniforms[i].name, glm::cos(glm::radians(light->outer_cutOff)));
     }
 }
 
@@ -285,7 +337,7 @@ void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
     // glUniformMatrix4fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
 }
 
-void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
+void MeshRender::Draw(Camera * camera, const std::vector<Light *> & lights, GLenum mode)
 {
     // Bind Textures -----------
     // for (int i = 0; i < m_material->textures.size(); i++)
@@ -311,7 +363,7 @@ void MeshRender::Draw(Camera * camera, Light * light, GLenum mode)
     SetShaderParamsFromMaterial();
     SetShaderParamsFromTransform();
     SetShaderParamsFromCamera(camera);
-    SetShaderParamsFromLight(light);
+    SetShaderParamsFromLight(lights);
 
     // Draw ---------------------
     glPolygonMode(GL_FRONT_AND_BACK, mode);
