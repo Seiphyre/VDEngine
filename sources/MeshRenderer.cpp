@@ -225,7 +225,7 @@ bool MeshRender::GetShaderParamStructNameAndIndex(const std::string & full_name,
     return (false);
 }
 
-void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int data_size)
+void MeshRender::SetVertexAttribVec3(int layout_index, const glm::vec3 * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -236,7 +236,7 @@ void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int d
 
     // [0] Vertex Positions
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(float), data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(glm::vec3), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(layout_index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(layout_index);
@@ -247,7 +247,7 @@ void MeshRender::SetVertexAttribVec3(int layout_index, const float * data, int d
 
     glDeleteBuffers(1, &VBO);
 }
-void MeshRender::SetVertexAttribVec2(int layout_index, const float * data, int data_size)
+void MeshRender::SetVertexAttribVec2(int layout_index, const glm::vec2 * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -258,7 +258,7 @@ void MeshRender::SetVertexAttribVec2(int layout_index, const float * data, int d
 
     // [2] Texels
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(float), data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(glm::vec2), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(layout_index, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(layout_index);
@@ -377,7 +377,7 @@ void MeshRender::Draw(Camera * camera, const std::vector<Light *> & lights, GLen
 
     int size;
     // glGetBufferParameteriv(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
-    size = m_mesh->vert_positions.size() / 3;
+    size = m_mesh->vert_positions.size();
     glDrawArrays(GL_TRIANGLES, 0, size);
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

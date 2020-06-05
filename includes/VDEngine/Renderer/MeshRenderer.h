@@ -55,8 +55,8 @@ class MeshRender
                                           std::string & param_name);
 
     // Set Vertex Attrib
-    void SetVertexAttribVec3(int layout_index, const float * data, int data_size);
-    void SetVertexAttribVec2(int layout_index, const float * data, int data_size);
+    void SetVertexAttribVec3(int layout_index, const glm::vec3 * data, int data_size);
+    void SetVertexAttribVec2(int layout_index, const glm::vec2 * data, int data_size);
 
     // Set Uniforms
     void SetBool(const std::string & name, bool value) const;
