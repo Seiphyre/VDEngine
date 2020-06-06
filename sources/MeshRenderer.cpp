@@ -106,31 +106,28 @@ void MeshRender::SetShaderParamsFromMaterial()
     for (int i = 0; i < uniforms.size(); i++)
     {
         // -- Check Arrays Variable: u_Lights[] --
-        std::string param_name;
-        if (GetShaderParamStructNameAndIndex(uniforms[i].name, "u_Material", param_name))
+
+        // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
+        if (uniforms[i].name == "u_Material.diffuse_Map")
         {
-            // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
-            if (param_name == "diffuse_Map")
-            {
-                if (m_material->diffuse_map != nullptr)
-                    SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
-            }
-
-            else if (param_name == "diffuse_Color")
-                SetVec3(uniforms[i].name, m_material->diffuse_color);
-
-            if (param_name == "specular_Map")
-            {
-                if (m_material->diffuse_map != nullptr)
-                    SetInt(uniforms[i].name, SPECULAR_MAP_TEXT_UNIT);
-            }
-
-            else if (param_name == "specular_Color")
-                SetVec3(uniforms[i].name, m_material->specular_color);
-
-            else if (param_name == "shininess")
-                SetFloat(uniforms[i].name, m_material->shininess);
+            if (m_material->diffuse_map != nullptr)
+                SetInt(uniforms[i].name, DIFFUSE_MAP_TEXT_UNIT);
         }
+
+        else if (uniforms[i].name == "u_Material.diffuse_Color")
+            SetVec3(uniforms[i].name, m_material->diffuse_color);
+
+        if (uniforms[i].name == "u_Material.specular_Map")
+        {
+            if (m_material->diffuse_map != nullptr)
+                SetInt(uniforms[i].name, SPECULAR_MAP_TEXT_UNIT);
+        }
+
+        else if (uniforms[i].name == "u_Material.specular_Color")
+            SetVec3(uniforms[i].name, m_material->specular_color);
+
+        else if (uniforms[i].name == "u_Material.shininess")
+            SetFloat(uniforms[i].name, m_material->shininess);
     }
 }
 
@@ -182,23 +179,41 @@ void MeshRender::SetShaderParamsFromLight(const std::vector<Light *> & lights)
 bool MeshRender::GetShaderParamArrayNameAndIndex(const std::string & full_name, const std::string & array_name,
                                                  std::string & param_name, int & param_index)
 {
-    std::regex  regex = std::regex(array_name + "\\[([0-9]+)\\]\\.([A-Za-z0-9_]+)");
-    std::smatch match;
+    // std::regex  regex = std::regex(array_name + "\\[([0-9]+)\\]\\.([A-Za-z0-9_]+)");
+    // std::smatch match;
 
-    if (std::regex_search(full_name, match, regex) == true)
+    size_t left_bracket_pos  = full_name.find_first_of('[');
+    size_t right_bracket_pos = full_name.find_first_of(']');
+    size_t dot_pos           = full_name.find_first_of('.');
+
+    if (full_name.substr(0, left_bracket_pos) != array_name)
     {
-        if (match.size() != 3)
-        {
-            std::cout << "Light param has been found, but it failed to retrieve index and/or parameter name."
-                      << std::endl;
-            return (false);
-        }
-
-        param_index = std::atoi(match.str(1).c_str());
-        param_name  = match.str(2);
-
-        return (true);
+        return false;
     }
+
+    if (left_bracket_pos != std::string::npos && right_bracket_pos != std::string::npos && dot_pos != std::string::npos)
+    {
+        std::string param_index_str = full_name.substr(left_bracket_pos + 1, right_bracket_pos - left_bracket_pos - 1);
+        param_name                  = full_name.substr(dot_pos + 1);
+        param_index                 = std::atoi(param_index_str.c_str());
+
+        return true;
+    }
+
+    // if (std::regex_search(full_name, match, regex) == true)
+    // {
+    //     if (match.size() != 3)
+    //     {
+    //         std::cout << "Light param has been found, but it failed to retrieve index and/or parameter name."
+    //                   << std::endl;
+    //         return (false);
+    //     }
+
+    //     param_index = std::atoi(match.str(1).c_str());
+    //     param_name  = match.str(2);
+
+    //     return (true);
+    // }
 
     return (false);
 }

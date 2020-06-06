@@ -9,6 +9,8 @@ Texture::Texture()
     m_texMinFilterParam = GL_LINEAR;
     m_texMagFilterParam = GL_LINEAR;
 
+    m_file_name = "";
+
     // UUID
     m_uuid = uuids::uuid_system_generator{}();
     // assert(!m_uuid.is_nil());
@@ -75,6 +77,11 @@ uuids::uuid Texture::GetUUID() const
     return (m_uuid);
 }
 
+const std::string Texture::GetFileName() const
+{
+    return (m_file_name);
+}
+
 void Texture::Create(const std::string & text_name)
 {
     glGenTextures(1, &m_textureId);
@@ -85,6 +92,8 @@ void Texture::Create(const std::string & text_name)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_texWrapTParam);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_texMinFilterParam);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_texMagFilterParam);
+
+    m_file_name = text_name;
 
     // Texture : Data
     Image * textureImage = new Image(text_name);

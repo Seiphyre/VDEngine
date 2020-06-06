@@ -2,12 +2,14 @@ NAME		=	bin/vdengine
 
 CXX			=	clang++
 
-CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -g -fvisibility=hidden
+CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -fvisibility=hidden
 
 SRC			=	sources/glad/glad.cpp \
 				sources/stb/stb_image.cpp \
 				sources/GameEngine.cpp \
 				sources/main.cpp \
+				sources/ModelLoader.cpp \
+				sources/Model.cpp \
 				sources/TextureManager.cpp \
 				sources/ShaderManager.cpp \
 				sources/MaterialManager.cpp \

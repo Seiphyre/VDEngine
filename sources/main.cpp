@@ -18,6 +18,9 @@
 #include "VDEngine/Core/Time.h"
 #include "VDEngine/Input/Input.h"
 
+#include "VDEngine/Renderer/ModelLoader.h"
+#include "VDEngine/Renderer/Model.h"
+
 #include "../resources/scripts/FPSCameraController.h"
 
 using namespace VDEngine;
@@ -72,6 +75,8 @@ int main(int argc, char * argv[])
 
     VDEngine::Shader * lit_multi_text_shader =
         VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Default.vert", "Lit_Default.frag");
+    VDEngine::Shader * unlit_multi_text_shader =
+        VDEngine::ShaderManager::getInstance()->LoadShader("Unlit_Default.vert", "Unlit_Default.frag");
 
     // [...]
 
@@ -99,12 +104,10 @@ int main(int argc, char * argv[])
     cube_mat->diffuse_map         = wooden_container_tex;
     cube_mat->specular_map        = wooden_container_spec;
 
-    VDEngine::Material * light_mat =
-        VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
-    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
-    VDEngine::Material * light_mat2 =
-        VDEngine::MaterialManager::getInstance()->LoadMaterial(VDEngine::ShaderManager::getInstance()->GetShader());
-    light_mat->diffuse_color = glm::vec3(0.0, 1.0, 0.0);
+    VDEngine::Material * light_mat  = VDEngine::MaterialManager::getInstance()->LoadMaterial(unlit_multi_text_shader);
+    light_mat->diffuse_color        = glm::vec3(1.0, 1.0, 1.0);
+    VDEngine::Material * light_mat2 = VDEngine::MaterialManager::getInstance()->LoadMaterial(unlit_multi_text_shader);
+    light_mat->diffuse_color        = glm::vec3(1.0, 1.0, 1.0);
 
     // [...]
 
@@ -137,6 +140,8 @@ int main(int argc, char * argv[])
     light_gizmo2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
     light_gizmo2->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
+    Model * backpack = ModelLoader::getInstance()->LoadModel("backpack.obj");
+
     // Camera ----------
 
     VDEngine::Camera * camera = new VDEngine::Camera();
@@ -150,9 +155,9 @@ int main(int argc, char * argv[])
 
     // VDEngine::Light * light = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
-    VDEngine::Light * light = new Light(POINT, glm::vec3(0.0f, 1.0f, 0.0f));
-    // light->att_linear       = 0.045f;
-    // light->att_quadratic    = 0.0075f;
+    VDEngine::Light * light = new Light(POINT, glm::vec3(1.0f, 1.0f, 1.0f));
+    light->att_linear       = 0.045f;
+    light->att_quadratic    = 0.0075f;
 
     VDEngine::Light * light2 = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
     light2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
@@ -203,12 +208,14 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        cube->Draw(camera, {light, light2});
+        backpack->Draw(camera, {light, light2});
+        // cube->Draw(camera, {light, light2});
         floor->Draw(camera, {light, light2});
         light_gizmo->Draw(camera, {light, light2});
         light_gizmo2->Draw(camera, {light, light2});
 
         // Display
+        glFlush();
         glfwSwapBuffers(s_window);
 
         VDEngine::Time::Update();

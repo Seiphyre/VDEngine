@@ -39,6 +39,17 @@ Texture * TextureManager::GetTexture(uuids::uuid texture_uuid)
     return nullptr;
 }
 
+Texture * TextureManager::GetTextureByFileName(const std::string & file_name)
+{
+    std::list<Texture *>::iterator result = std::find_if(
+        m_textures.begin(), m_textures.end(), [file_name](Texture * t) { return (file_name == t->GetFileName()); });
+
+    if (result != m_textures.end())
+        return *result;
+
+    return nullptr;
+}
+
 Texture * TextureManager::GetTexture()
 {
     return (m_default_texture);

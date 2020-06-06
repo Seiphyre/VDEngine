@@ -26,11 +26,14 @@ class Texture
     GLint m_texMinFilterParam;
     GLint m_texMagFilterParam;
 
+    std::string m_file_name;
+
   public:
     Texture();
     Texture(const std::string & text_name);
 
-    uuids::uuid GetUUID() const;
+    uuids::uuid       GetUUID() const;
+    const std::string GetFileName() const;
 
     void Create(const std::string & text_name);
     void Bind(int textureActiveId = 0) const;

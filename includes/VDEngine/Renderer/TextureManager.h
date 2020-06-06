@@ -26,6 +26,7 @@ class TextureManager : public Singleton<TextureManager>
 
     Texture * LoadTexture(const std::string & text_file_name);
     Texture * GetTexture(uuids::uuid texture_uuid);
+    Texture * GetTextureByFileName(const std::string & file_name);
     Texture * GetTexture();
 };
 
