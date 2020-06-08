@@ -68,7 +68,8 @@ const std::string FileHandler::LoadFromTextFile(const std::string & path) const
     return fileContent + "\0";
 }
 
-const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, int & width, int & height, int & format) const
+const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, int & width, int & height,
+                                                     int & format) const
 {
     stbi_set_flip_vertically_on_load(true);
     unsigned char * data = stbi_load(path.c_str(), &width, &height, &format, 0);
@@ -83,7 +84,8 @@ const std::string FileHandler::LoadShader(const std::string & file_name) const
     return (LoadFromTextFile(path));
 }
 
-const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height, int & format) const
+const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height,
+                                               int & format) const
 {
     std::string path = RootPath + RootToTexturePath + file_name;
 

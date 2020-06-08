@@ -9,9 +9,11 @@ GLuint Image::ToGLFormat(e_imgFormat format)
     switch (format)
     {
         case GREY:
-            gl_format = GL_LUMINANCE;
+            gl_format = GL_RED;
+            break;
         case GREY_ALPHA:
-            gl_format = GL_LUMINANCE_ALPHA;
+            gl_format = GL_RG;
+            break;
         case RGB:
             gl_format = GL_RGB;
             break;

@@ -2,7 +2,7 @@ NAME		=	bin/vdengine
 
 CXX			=	clang++
 
-CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -fvisibility=hidden
+CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -g -fvisibility=hidden
 
 SRC			=	sources/glad/glad.cpp \
 				sources/stb/stb_image.cpp \

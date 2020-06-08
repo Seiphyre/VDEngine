@@ -5,6 +5,7 @@
 #include <string>
 
 // External libs
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "stb/stb_image.h"
 
@@ -32,7 +33,7 @@ class Image
 
   public:
     Image(const std::string & file_name);
-    Image(const Image &) = default; 
+    Image(const Image &) = default;
     ~Image();
 
     Image & operator=(const Image &) = default;

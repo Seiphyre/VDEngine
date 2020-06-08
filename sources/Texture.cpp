@@ -32,6 +32,7 @@ Texture::Texture()
 
 Texture::Texture(const std::string & text_name)
 {
+
     // Texture Wrapping
     // GL_REPEAT            : The default behavior for textures. Repeats the texture image.
     // GL_MIRRORED_REPEAT   : Same as GL_REPEAT but mirrors the image with each repeat.
@@ -102,8 +103,20 @@ void Texture::Create(const std::string & text_name)
     {
         GLuint format = Image::ToGLFormat(textureImage->GetFormat());
 
+        if (format == GL_RED)
+        {
+            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_ONE};
+            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+        }
+        else if (format == GL_RG)
+        {
+            GLint swizzleMask[] = {GL_RED, GL_RED, GL_RED, GL_GREEN};
+            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzleMask);
+        }
+
         glTexImage2D(GL_TEXTURE_2D, 0 /* Mipmap level */, format, textureImage->GetWidth(), textureImage->GetHeight(),
                      0, format, GL_UNSIGNED_BYTE, textureImage->GetData());
+
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else

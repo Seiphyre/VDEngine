@@ -27,8 +27,8 @@ Model * ModelLoader::LoadModel(const std::string & file_name)
 
     // aiProcess_GenNormals:
     // creates normal vectors for each vertex if the model doesn't contain normal vectors.
-    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeMeshes |
-                                             aiProcess_OptimizeGraph);
+    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeGraph |
+                                             aiProcess_OptimizeMeshes);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -48,9 +48,8 @@ Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene)
     {
         aiMesh * aiMesh = scene->mMeshes[node->mMeshes[i]];
 
-        model->mesh     = ProcessMesh(aiMesh, scene);
-        model->material = ProcessMaterial(aiMesh, scene);
-
+        model->mesh          = ProcessMesh(aiMesh, scene);
+        model->material      = ProcessMaterial(aiMesh, scene);
         model->mesh_renderer = new MeshRender(model->mesh, model->material);
     }
     // then do the same for each of its children
@@ -136,10 +135,15 @@ Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene)
             aiMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texture_name);
 
             Texture * texture = TextureManager::getInstance()->GetTextureByFileName(texture_name.C_Str());
+
             if (texture == nullptr)
+            {
                 material->specular_map = TextureManager::getInstance()->LoadTexture(texture_name.C_Str());
+            }
             else
+            {
                 material->specular_map = texture;
+            }
         }
 
         // mat->Get(AI_MATKEY_COLOR_DIFFUSE, color);
