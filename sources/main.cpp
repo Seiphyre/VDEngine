@@ -142,32 +142,34 @@ int main(int argc, char * argv[])
     // -- Game Objects ----------
 
     GameObject * floor_go = new GameObject({floor_renderer});
-    floor_renderer->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
-    floor_renderer->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
+    floor_go->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
+    floor_go->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
     GameObject * cube_go = new GameObject({cube_renderer});
-    cube_renderer->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
+    cube_go->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
 
-    GameObject * light_gizmo_go = new GameObject({light_gizmo_renderer});
-    light_gizmo_renderer->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
-    light_gizmo_renderer->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
-    light_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+    // GameObject * light_gizmo_go = new GameObject({light_gizmo_renderer});
+    // light_gizmo_renderer->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
+    // light_gizmo_renderer->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
+    // light_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
-    GameObject * light_gizmo2_go = new GameObject({light2_gizmo_renderer});
-    light2_gizmo_renderer->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
-    light2_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+    // GameObject * light_gizmo2_go = new GameObject({light2_gizmo_renderer});
+    // light2_gizmo_renderer->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    // light2_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     GameObject * Camera_go = new GameObject({camera});
-    camera->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
-    camera->GetTransform()->Rotate(45.0f, WORLD_UP);
+    Camera_go->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
+    Camera_go->GetTransform()->Rotate(45.0f, WORLD_UP);
 
-    GameObject * light_go = new GameObject({light});
+    GameObject * light_go           = new GameObject({light_gizmo_renderer, light});
+    light_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
-    GameObject * light2_go = new GameObject({light2});
-    light2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
-    light2->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
+    GameObject * light2_go = new GameObject({light2_gizmo_renderer, light2});
+    light2_go->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    light2_go->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
+    light2_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     // GameObject * light3_go = new GameObject ({light3});
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
@@ -195,15 +197,11 @@ int main(int argc, char * argv[])
         float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
         float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
-        light_gizmo_renderer->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
-        light->GetTransform()->position                = glm::vec3(camX, 2.5f, camZ);
+        // light_gizmo_renderer->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
+        light_go->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
 
-        light_gizmo_renderer->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
-        light->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
-        // OU rotane 180 sur Y ?
-        // camera->GetTransform()->LookAt(
-        //     camera->GetTransform()->position +
-        //     ((glm::vec3(0.0f, 0.5f, 0.0f) - camera->GetTransform()->position) * glm::vec3(1.0f, 1.0f, -1.0f)));
+        // light_gizmo_renderer->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+        light_go->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
 
         // Renderer ------------------------------
 
@@ -214,10 +212,10 @@ int main(int argc, char * argv[])
         // Draw
 
         // backpack->Draw(camera, {light, light2});
-        cube_renderer->Draw(camera, {light, light2});
-        floor_renderer->Draw(camera, {light, light2});
-        light_gizmo_renderer->Draw(camera, {light, light2});
-        light2_gizmo_renderer->Draw(camera, {light, light2});
+        cube_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
+        floor_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
+        light_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
+        light2_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
 
         // Display
         glFlush();

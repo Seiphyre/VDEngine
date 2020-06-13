@@ -16,7 +16,7 @@ class Component
 
   public:
     Component();
-    ~Component();
+    virtual ~Component() = 0;
 
     GameObject * GetGameObject() const;
     Transform *  GetTransform() const;
