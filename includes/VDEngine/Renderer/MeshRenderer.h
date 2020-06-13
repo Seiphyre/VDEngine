@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 
 // Internal headers
-#include "VDEngine/Core/Transform.h"
+#include "VDEngine/Core/Component.h"
 
 #include "VDEngine/Renderer/MaterialManager.h"
 #include "VDEngine/Renderer/ShaderManager.h"
@@ -25,7 +25,7 @@
 namespace VDEngine
 {
 
-class MeshRender
+class MeshRender : public Component
 {
   public:
     MeshRender(Mesh * mesh);
@@ -37,8 +37,7 @@ class MeshRender
 
     // void Init();
 
-    Transform * GetTransform() const;
-    void        SetMaterial(Material * material);
+    void SetMaterial(Material * material);
 
     void Draw(Camera * camera, const std::vector<Light *> & lights, GLenum mode = GL_FILL);
 
@@ -82,14 +81,9 @@ class MeshRender
 
     // Component : MATERIAL
     Material * m_material;
-    // Shader *                     m_shader;
-    // std::vector<const Texture *> m_textures;
 
     // Component : MESH
     Mesh * m_mesh;
-
-    // Component : TRANSFORM
-    Transform * m_transform;
 };
 
 } // namespace VDEngine

@@ -13,6 +13,7 @@
 #include "VDEngine/Renderer/MeshRenderer.h"
 #include "VDEngine/Renderer/MeshFactory.h"
 
+#include "VDEngine/Core/GameObject.h"
 #include "VDEngine/Core/GameEngine.h"
 #include "VDEngine/Core/FileHandler.h"
 #include "VDEngine/Core/Time.h"
@@ -71,101 +72,105 @@ int main(int argc, char * argv[])
 
     // -- LOAD RESOURCES -----------------------------------------------
 
-    // Load Shaders
+    // Load Shaders --
 
-    VDEngine::Shader * lit_multi_text_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("Lit_Default.vert", "Lit_Default.frag");
-    VDEngine::Shader * unlit_multi_text_shader =
-        VDEngine::ShaderManager::getInstance()->LoadShader("Unlit_Default.vert", "Unlit_Default.frag");
+    ShaderManager * shader_manager = ShaderManager::getInstance();
 
-    // [...]
+    Shader * lit_default_shader   = shader_manager->LoadShader("Lit_Default.vert", "Lit_Default.frag");
+    Shader * unlit_default_shader = shader_manager->LoadShader("Unlit_Default.vert", "Unlit_Default.frag");
 
-    // Load Textures
+    // Load Textures --
 
-    VDEngine::Texture * measurement_tex = VDEngine::TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    VDEngine::Texture * wooden_container_tex = VDEngine::TextureManager::getInstance()->LoadTexture("container2.png");
-    VDEngine::Texture * wooden_container_spec =
-        VDEngine::TextureManager::getInstance()->LoadTexture("container2_specular.png");
-    // VDEngine::Texture * emoji_tex       = VDEngine::TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    Texture * measurement_diff      = TextureManager::getInstance()->LoadTexture("measurement_floor.png");
+    Texture * wooden_container_diff = TextureManager::getInstance()->LoadTexture("container2.png");
+    Texture * wooden_container_spec = TextureManager::getInstance()->LoadTexture("container2_specular.png");
+    // Texture * emoji_tex       = TextureManager::getInstance()->LoadTexture("awesomeface.png");
 
-    // [...]
+    // Load Materials --
+    MaterialManager * material_manager = MaterialManager::getInstance();
 
-    // Load Materials
+    Material * floor_mat   = material_manager->LoadMaterial(lit_default_shader);
+    floor_mat->shininess   = 128.0f;
+    floor_mat->diffuse_map = measurement_diff;
 
-    // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(measurement->GetUUID()));
-    // floor->AddTexture(VDEngine::TextureManager::getInstance()->GetTexture(emoji->GetUUID()));
+    Material * cube_mat    = material_manager->LoadMaterial(lit_default_shader);
+    cube_mat->shininess    = 128.0f;
+    cube_mat->diffuse_map  = wooden_container_diff;
+    cube_mat->specular_map = wooden_container_spec;
 
-    VDEngine::Material * floor_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(lit_multi_text_shader);
-    floor_mat->shininess           = 128.0f;
-    floor_mat->diffuse_map         = measurement_tex;
+    Material * light_mat     = material_manager->LoadMaterial(unlit_default_shader);
+    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
 
-    VDEngine::Material * cube_mat = VDEngine::MaterialManager::getInstance()->LoadMaterial(lit_multi_text_shader);
-    cube_mat->shininess           = 128.0f;
-    cube_mat->diffuse_map         = wooden_container_tex;
-    cube_mat->specular_map        = wooden_container_spec;
+    Material * light2_mat    = material_manager->LoadMaterial(unlit_default_shader);
+    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
 
-    VDEngine::Material * light_mat  = VDEngine::MaterialManager::getInstance()->LoadMaterial(unlit_multi_text_shader);
-    light_mat->diffuse_color        = glm::vec3(1.0, 1.0, 1.0);
-    VDEngine::Material * light_mat2 = VDEngine::MaterialManager::getInstance()->LoadMaterial(unlit_multi_text_shader);
-    light_mat->diffuse_color        = glm::vec3(1.0, 1.0, 1.0);
+    // Meshes --
 
-    // [...]
+    Mesh * plane_mesh = MeshFactory::getInstance()->CreatePlane();
+    Mesh * cube_mesh  = MeshFactory::getInstance()->CreateCube();
 
     // -- CREATE SCENE --------------------------------------------------
 
-    // Create objects
-    VDEngine::MeshRender * floor =
-        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreatePlane(), floor_mat);
+    // mesh renderers
 
-    floor->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
-    floor->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
-
-    VDEngine::MeshRender * cube =
-        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), cube_mat);
-
-    cube->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
-    // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
-    // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
-
-    VDEngine::MeshRender * light_gizmo =
-        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), light_mat);
-
-    light_gizmo->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
-    light_gizmo->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
-    light_gizmo->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
-
-    VDEngine::MeshRender * light_gizmo2 =
-        new VDEngine::MeshRender(VDEngine::MeshFactory::getInstance()->CreateCube(), light_mat2);
-
-    light_gizmo2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
-    light_gizmo2->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+    MeshRender * floor_renderer        = new MeshRender(plane_mesh, floor_mat);
+    MeshRender * cube_renderer         = new MeshRender(cube_mesh, cube_mat);
+    MeshRender * light_gizmo_renderer  = new MeshRender(cube_mesh, light_mat);
+    MeshRender * light2_gizmo_renderer = new MeshRender(cube_mesh, light2_mat);
 
     Model * backpack = ModelLoader::getInstance()->LoadModel("backpack.obj");
 
     // Camera ----------
-
     VDEngine::Camera * camera = new VDEngine::Camera();
 
-    camera->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
-    camera->GetTransform()->Rotate(45.0f, WORLD_UP);
-
-    FPSCameraController * camera_controller = new FPSCameraController(camera);
-
     // Light -----------
-
-    // VDEngine::Light * light = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
-    // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
     VDEngine::Light * light = new Light(POINT, glm::vec3(1.0f, 1.0f, 1.0f));
     light->att_linear       = 0.045f;
     light->att_quadratic    = 0.0075f;
 
     VDEngine::Light * light2 = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
+    light2->att_linear       = 0.045f;
+    light2->att_quadratic    = 0.0075f;
+    light2->inner_cutOff     = 15;
+    light2->outer_cutOff     = 20;
+
+    // VDEngine::Light * light3 = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
+
+    // Behaviours ---
+    FPSCameraController * camera_controller = new FPSCameraController(camera);
+
+    // -- Game Objects ----------
+
+    GameObject * floor_go = new GameObject({floor_renderer});
+    floor_renderer->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
+    floor_renderer->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
+
+    GameObject * cube_go = new GameObject({cube_renderer});
+    cube_renderer->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
+    // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+    // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
+
+    GameObject * light_gizmo_go = new GameObject({light_gizmo_renderer});
+    light_gizmo_renderer->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
+    light_gizmo_renderer->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
+    light_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+    GameObject * light_gizmo2_go = new GameObject({light2_gizmo_renderer});
+    light2_gizmo_renderer->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
+    light2_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+    GameObject * Camera_go = new GameObject({camera});
+    camera->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
+    camera->GetTransform()->Rotate(45.0f, WORLD_UP);
+
+    GameObject * light_go = new GameObject({light});
+
+    GameObject * light2_go = new GameObject({light2});
     light2->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
     light2->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
-    light2->att_linear    = 0.045f;
-    light2->att_quadratic = 0.0075f;
-    light2->inner_cutOff  = 15;
-    light2->outer_cutOff  = 20;
+
+    // GameObject * light3_go = new GameObject ({light3});
+    // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -190,10 +195,10 @@ int main(int argc, char * argv[])
         float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
         float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
-        light_gizmo->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
-        light->GetTransform()->position       = glm::vec3(camX, 2.5f, camZ);
+        light_gizmo_renderer->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
+        light->GetTransform()->position                = glm::vec3(camX, 2.5f, camZ);
 
-        light_gizmo->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+        light_gizmo_renderer->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
         light->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
         // OU rotane 180 sur Y ?
         // camera->GetTransform()->LookAt(
@@ -208,11 +213,11 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        backpack->Draw(camera, {light, light2});
-        // cube->Draw(camera, {light, light2});
-        floor->Draw(camera, {light, light2});
-        light_gizmo->Draw(camera, {light, light2});
-        light_gizmo2->Draw(camera, {light, light2});
+        // backpack->Draw(camera, {light, light2});
+        cube_renderer->Draw(camera, {light, light2});
+        floor_renderer->Draw(camera, {light, light2});
+        light_gizmo_renderer->Draw(camera, {light, light2});
+        light2_gizmo_renderer->Draw(camera, {light, light2});
 
         // Display
         glFlush();

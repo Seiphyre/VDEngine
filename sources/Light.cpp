@@ -4,8 +4,7 @@ using namespace VDEngine;
 
 Light::Light()
 {
-    m_transform = new Transform();
-    color       = glm::vec3(1.0f, 1.0f, 1.0f);
+    color = glm::vec3(1.0f, 1.0f, 1.0f);
 
     type = DIRECTIONAL;
 
@@ -20,8 +19,7 @@ Light::Light()
 
 Light::Light(e_LightType light_type, const glm::vec3 & light_color)
 {
-    m_transform = new Transform();
-    color       = light_color;
+    color = light_color;
 
     type = light_type;
 
@@ -36,10 +34,4 @@ Light::Light(e_LightType light_type, const glm::vec3 & light_color)
 
 Light::~Light()
 {
-    delete m_transform;
-}
-
-Transform * Light::GetTransform() const
-{
-    return (m_transform);
 }

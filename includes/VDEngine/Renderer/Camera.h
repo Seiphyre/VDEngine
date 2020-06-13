@@ -6,17 +6,17 @@
 
 // Internal headers
 #include "VDEngine/Core/Transform.h"
+#include "VDEngine/Core/Component.h"
 
 namespace VDEngine
 {
 
-class Camera
+class Camera : public Component
 {
   private:
-    Transform * m_transform;
-    float       m_fov;
-    float       m_near;
-    float       m_far;
+    float m_fov;
+    float m_near;
+    float m_far;
 
   public:
     Camera();
@@ -25,8 +25,7 @@ class Camera
 
     Camera & operator=(const Camera &) = default;
 
-    Transform * GetTransform() const;
-    float       GetFOV() const;
+    float GetFOV() const;
 
     glm::mat4 GetViewMatrix() const;
     glm::mat4 GetProjectionMatrix() const;

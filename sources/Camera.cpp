@@ -4,8 +4,6 @@ using namespace VDEngine;
 
 Camera::Camera()
 {
-    m_transform = new Transform();
-
     m_fov  = 45.0f;
     m_near = 0.1f;
     m_far  = 100.0f;
@@ -13,12 +11,6 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-    delete m_transform;
-}
-
-Transform * Camera::GetTransform() const
-{
-    return (m_transform);
 }
 
 float Camera::GetFOV() const
@@ -29,9 +21,8 @@ float Camera::GetFOV() const
 glm::mat4 Camera::GetViewMatrix() const
 {
     glm::mat4 view;
-    view =
-        glm::lookAt(m_transform->position,
-                    m_transform->position + (m_transform->GetForwardDir() * glm::vec3(1.0f, 1.0f, -1.0f)), WORLD_UP);
+    view = glm::lookAt(m_transform->position,
+                       m_transform->position + (m_transform->GetForwardDir() * glm::vec3(1.0f, 1.0f, -1.0f)), WORLD_UP);
 
     return view;
 }

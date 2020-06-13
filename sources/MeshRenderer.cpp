@@ -4,16 +4,14 @@ using namespace VDEngine;
 
 MeshRender::MeshRender(Mesh * mesh)
 {
-    m_mesh      = mesh;
-    m_transform = new Transform();
+    m_mesh = mesh;
 
     SetMaterial(MaterialManager::getInstance()->GetMaterial());
 }
 
 MeshRender::MeshRender(Mesh * mesh, Material * material)
 {
-    m_mesh      = mesh;
-    m_transform = new Transform();
+    m_mesh = mesh;
 
     SetMaterial(material);
 }
@@ -30,11 +28,6 @@ MeshRender::MeshRender(Mesh * mesh, Material * material)
 MeshRender::~MeshRender()
 {
     glDeleteVertexArrays(1, &m_VAO);
-}
-
-Transform * MeshRender::GetTransform() const
-{
-    return m_transform;
 }
 
 void MeshRender::SetMaterial(Material * material)

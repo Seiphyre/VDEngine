@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 // Internal headers
-#include "VDEngine/Core/Transform.h"
+#include "VDEngine/Core/Component.h"
 
 namespace VDEngine
 {
@@ -17,14 +17,12 @@ enum e_LightType : int
     POINT       = 2
 };
 
-class Light
+class Light : public Component
 {
   public:
     Light();
     Light(e_LightType light_type, const glm::vec3 & light_color);
     ~Light();
-
-    Transform * GetTransform() const;
 
     glm::vec3 color;
 
@@ -38,9 +36,6 @@ class Light
     // Spot
     float inner_cutOff;
     float outer_cutOff;
-
-  private:
-    Transform * m_transform;
 };
 
 } // namespace VDEngine

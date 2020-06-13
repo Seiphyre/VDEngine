@@ -15,10 +15,13 @@ class GameObject
 {
   public:
     GameObject();
+    GameObject(std::vector<Component *> components);
     ~GameObject();
 
     void AddComponent(Component * component);
     void RemoveComponent(Component * component);
+    void AttachParent(GameObject * parent);
+    void DetachParent();
 
     Transform *            GetTransform() const;
     template <class T> T * GetComponent()
@@ -42,10 +45,12 @@ class GameObject
         return nullptr;
     }
 
-    std::string  name;
-    GameObject * parent;
+    std::string name;
 
   private:
+    void RemoveChild(GameObject * child);
+
+    GameObject *              m_parent;
     Transform *               m_transform;
     std::vector<GameObject *> m_children;
     std::vector<Component *>  m_components;
