@@ -7,6 +7,8 @@ CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -g -fvisibility=hidden
 SRC			=	sources/glad/glad.cpp \
 				sources/stb/stb_image.cpp \
 				sources/GameEngine.cpp \
+				sources/GameObject.cpp \
+				sources/Component.cpp \
 				sources/main.cpp \
 				sources/ModelLoader.cpp \
 				sources/Model.cpp \
