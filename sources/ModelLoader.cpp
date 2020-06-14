@@ -27,8 +27,8 @@ Model * ModelLoader::LoadModel(const std::string & file_name)
 
     // aiProcess_GenNormals:
     // creates normal vectors for each vertex if the model doesn't contain normal vectors.
-    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeGraph |
-                                             aiProcess_OptimizeMeshes);
+    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs /*| aiProcess_OptimizeGraph |
+                                             aiProcess_OptimizeMeshes*/);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -46,8 +46,8 @@ Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene)
     // process all the node's meshes (if any)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-        aiMesh * aiMesh = scene->mMeshes[node->mMeshes[i]];
-
+        aiMesh * aiMesh      = scene->mMeshes[node->mMeshes[i]];
+        model->name          = aiMesh->mName.C_Str();
         model->mesh          = ProcessMesh(aiMesh, scene);
         model->material      = ProcessMaterial(aiMesh, scene);
         model->mesh_renderer = new MeshRender(model->mesh, model->material);

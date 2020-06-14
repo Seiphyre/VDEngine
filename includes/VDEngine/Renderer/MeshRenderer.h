@@ -37,7 +37,8 @@ class MeshRender : public Component
 
     // void Init();
 
-    void SetMaterial(Material * material);
+    Mesh * GetMesh() const;
+    void   SetMaterial(Material * material);
 
     void Draw(Camera * camera, const std::vector<Light *> & lights, GLenum mode = GL_FILL);
 

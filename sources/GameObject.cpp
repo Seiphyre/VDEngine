@@ -75,9 +75,20 @@ void GameObject::DetachParent()
     }
 }
 
+GameObject * GameObject::GetParent() const
+{
+    return m_parent;
+}
+
 Transform * GameObject::GetTransform() const
 {
     return (m_transform);
+}
+
+void GameObject::AddChild(GameObject * child)
+{
+    child->m_parent = this;
+    m_children.push_back(child);
 }
 
 void GameObject::RemoveChild(GameObject * child)

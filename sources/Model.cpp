@@ -13,14 +13,34 @@ Model::~Model()
 {
 }
 
-void Model::Draw(Camera * camera, std::vector<Light *> lights)
+GameObject * Model::CreateGameObjectFromModel()
 {
-    if (children.size() > 0)
+    return ProcessGameObject(this);
+}
+
+GameObject * Model::ProcessGameObject(Model * model_node)
+{
+    GameObject * go_node = new GameObject();
+
+    // Set game object
+    if (model_node->mesh_renderer != nullptr)
     {
-        for (int i = 0; i < children.size(); i++)
-            children[i]->Draw(camera, lights);
+        // Deep copy
+        MeshRender * mesh_renderer = new MeshRender(*model_node->mesh_renderer);
+        go_node->AddComponent(mesh_renderer);
     }
 
-    if (mesh_renderer != nullptr)
-        mesh_renderer->Draw(camera, lights);
+    if (model_node->name != "")
+    {
+        go_node->name = model_node->name;
+    }
+
+    // Set children (if any)
+    for (int i = 0; i < model_node->children.size(); i++)
+    {
+        GameObject * go_child_node = ProcessGameObject(model_node->children[i]);
+        go_child_node->AttachParent(go_node);
+    }
+
+    return go_node;
 }

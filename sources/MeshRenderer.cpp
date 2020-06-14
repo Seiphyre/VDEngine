@@ -29,6 +29,10 @@ MeshRender::~MeshRender()
 {
     glDeleteVertexArrays(1, &m_VAO);
 }
+Mesh * MeshRender::GetMesh() const
+{
+    return m_mesh;
+}
 
 void MeshRender::SetMaterial(Material * material)
 {

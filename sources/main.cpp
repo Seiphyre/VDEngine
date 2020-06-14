@@ -104,7 +104,9 @@ int main(int argc, char * argv[])
     Material * light2_mat    = material_manager->LoadMaterial(unlit_default_shader);
     light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
 
-    // Meshes --
+    // Models / Meshes --
+
+    Model * backpack_model = ModelLoader::getInstance()->LoadModel("backpack.obj");
 
     Mesh * plane_mesh = MeshFactory::getInstance()->CreatePlane();
     Mesh * cube_mesh  = MeshFactory::getInstance()->CreateCube();
@@ -117,8 +119,6 @@ int main(int argc, char * argv[])
     MeshRender * cube_renderer         = new MeshRender(cube_mesh, cube_mat);
     MeshRender * light_gizmo_renderer  = new MeshRender(cube_mesh, light_mat);
     MeshRender * light2_gizmo_renderer = new MeshRender(cube_mesh, light2_mat);
-
-    Model * backpack = ModelLoader::getInstance()->LoadModel("backpack.obj");
 
     // Camera ----------
     VDEngine::Camera * camera = new VDEngine::Camera();
@@ -141,38 +141,40 @@ int main(int argc, char * argv[])
 
     // -- Game Objects ----------
 
+    GameObject * backpack_go = backpack_model->CreateGameObjectFromModel();
+    // backpack_go->GetTransform()->position = glm::vec3(0.0, 3.0, 0.0);
+    backpack_go->name = "backpack_root";
+
     GameObject * floor_go = new GameObject({floor_renderer});
+    floor_go->name        = "floor";
     floor_go->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
     floor_go->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
 
     GameObject * cube_go = new GameObject({cube_renderer});
+    cube_go->name        = "cube";
     cube_go->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
 
-    // GameObject * light_gizmo_go = new GameObject({light_gizmo_renderer});
-    // light_gizmo_renderer->GetTransform()->Translate(glm::vec3(-3.0f, 3.0f, 0.0f));
-    // light_gizmo_renderer->GetTransform()->Rotate(glm::vec3(90.0f, 0.0f, 0.0f));
-    // light_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
-
-    // GameObject * light_gizmo2_go = new GameObject({light2_gizmo_renderer});
-    // light2_gizmo_renderer->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
-    // light2_gizmo_renderer->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
-
     GameObject * Camera_go = new GameObject({camera});
+    Camera_go->name        = "main_camera";
     Camera_go->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
     Camera_go->GetTransform()->Rotate(45.0f, WORLD_UP);
 
     GameObject * light_go           = new GameObject({light_gizmo_renderer, light});
+    light_go->name                  = "light1";
     light_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     GameObject * light2_go = new GameObject({light2_gizmo_renderer, light2});
+    light2_go->name        = "light2";
     light2_go->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
     light2_go->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
     light2_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
     // GameObject * light3_go = new GameObject ({light3});
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
+
+    std::vector<MeshRender *> backpack_renderers = backpack_go->GetComponentsInChildren<MeshRender>();
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -197,10 +199,7 @@ int main(int argc, char * argv[])
         float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
         float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
-        // light_gizmo_renderer->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
         light_go->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
-
-        // light_gizmo_renderer->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
         light_go->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
 
         // Renderer ------------------------------
@@ -211,8 +210,16 @@ int main(int argc, char * argv[])
 
         // Draw
 
-        // backpack->Draw(camera, {light, light2});
-        cube_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
+        for (int i = 0; i < backpack_renderers.size(); i++)
+        {
+            // std::cout << "Draw [" << i << "]." << std::endl;
+            // // std::cout << "name :" << backpack_renderers[i]->GetGameObject()->name << "." << std::endl;
+            // // if (backpack_renderers[i]->GetGameObject()->GetParent() != nullptr)
+            // //     std::cout << "Parent_name :" << backpack_renderers[i]->GetGameObject()->GetParent()->name << "."
+            // //               << std::endl;
+            backpack_renderers[i]->Draw(camera, {light, light2});
+        }
+        // cube_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         floor_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         light_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         light2_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
