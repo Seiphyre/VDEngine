@@ -141,8 +141,10 @@ int main(int argc, char * argv[])
 
     // -- Game Objects ----------
 
-    GameObject * backpack_go = backpack_model->CreateGameObjectFromModel();
-    // backpack_go->GetTransform()->position = glm::vec3(0.0, 3.0, 0.0);
+    GameObject * backpack_go              = backpack_model->CreateGameObjectFromModel();
+    backpack_go->GetTransform()->position = glm::vec3(0.0, 1.0, 1.0);
+    backpack_go->GetTransform()->scale    = glm::vec3(0.5, 0.5, 0.5);
+    backpack_go->GetTransform()->Rotate(-30.0, 0.0, 0.0);
     backpack_go->name = "backpack_root";
 
     GameObject * floor_go = new GameObject({floor_renderer});
@@ -219,7 +221,7 @@ int main(int argc, char * argv[])
             // //               << std::endl;
             backpack_renderers[i]->Draw(camera, {light, light2});
         }
-        // cube_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
+        cube_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         floor_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         light_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});
         light2_go->GetComponent<MeshRender>()->Draw(camera, {light, light2});

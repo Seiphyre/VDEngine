@@ -3,6 +3,8 @@
 
 // C++ Standard libs
 #include <vector>
+#include <string>
+#include <iostream>
 
 // Internal headers
 // #include "VDEngine/Renderer/Model.h"

@@ -7,6 +7,8 @@ GameObject::GameObject()
     name        = "";
     m_parent    = nullptr;
     m_transform = new Transform();
+
+    AddComponent(m_transform);
 }
 
 GameObject::GameObject(std::vector<Component *> components)
@@ -15,6 +17,7 @@ GameObject::GameObject(std::vector<Component *> components)
     m_parent    = nullptr;
     m_transform = new Transform();
 
+    AddComponent(m_transform);
     for (int i = 0; i < components.size(); i++)
         AddComponent(components[i]);
 }

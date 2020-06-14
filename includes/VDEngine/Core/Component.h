@@ -1,13 +1,11 @@
 #ifndef VDENGINE_COMPONENT_H_
 #define VDENGINE_COMPONENT_H_
 
-// Internal headers
-#include "VDEngine/Core/Transform.h"
-
 namespace VDEngine
 {
 
 class GameObject;
+class Transform;
 
 class Component
 {

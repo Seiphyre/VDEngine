@@ -90,7 +90,7 @@ void MeshRender::SetShaderParamsFromTransform()
     {
         // About uniforms : INDEX (from glGetActiveAttrib) != LOCATION (used by glVertexAttribPointer)
         if (uniforms[i].name == "u_ModelMat")
-            SetMat4(uniforms[i].name, m_transform->GetMatrix());
+            SetMat4(uniforms[i].name, m_transform->GetLocalMatrix());
         if (uniforms[i].name == "u_NormalMat")
             SetMat4(uniforms[i].name, m_transform->GetNormalMatrix());
     }

@@ -13,6 +13,9 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// Internal headers
+#include "VDEngine/Core/GameObject.h"
+
 namespace VDEngine
 {
 
@@ -20,13 +23,14 @@ namespace VDEngine
 #define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
 #define WORLD_FORWARD glm::vec3(0.0f, 0.0f, 1.0f)
 
-class Transform
+class Transform : public Component
 {
   public:
     Transform();
     ~Transform();
 
     glm::mat4 GetMatrix() const;
+    glm::mat4 GetLocalMatrix() const;
     glm::mat4 GetNormalMatrix() const;
 
     glm::vec3 GetForwardDir() const;

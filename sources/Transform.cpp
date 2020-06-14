@@ -38,6 +38,17 @@ glm::mat4 Transform::GetMatrix() const
     return final_matrix;
 }
 
+glm::mat4 Transform::GetLocalMatrix() const
+{
+    if (m_game_object->GetParent() != nullptr)
+    {
+        glm::mat4 parent_matrix = m_game_object->GetParent()->GetTransform()->GetLocalMatrix();
+        return (GetMatrix() * parent_matrix);
+    }
+
+    return GetMatrix();
+}
+
 glm::mat4 Transform::GetNormalMatrix() const
 {
     return (glm::transpose(glm::inverse(GetMatrix())));

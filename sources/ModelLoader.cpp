@@ -27,8 +27,8 @@ Model * ModelLoader::LoadModel(const std::string & file_name)
 
     // aiProcess_GenNormals:
     // creates normal vectors for each vertex if the model doesn't contain normal vectors.
-    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs /*| aiProcess_OptimizeGraph |
-                                             aiProcess_OptimizeMeshes*/);
+    scene = importer.ReadFile(file_path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_OptimizeGraph |
+                                             aiProcess_OptimizeMeshes);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
