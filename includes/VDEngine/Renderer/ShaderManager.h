@@ -27,7 +27,7 @@ class ShaderManager : public Singleton<ShaderManager>
     ShaderManager();
 
   public:
-    Shader * LoadShader(const std::string & vert_file_name, const std::string & frag_file_name);
+    Shader * LoadShader(const std::string & vert_file_path, const std::string & frag_file_path);
     Shader * GetShader(uuids::uuid shader_uuid);
     Shader * GetShader();
 

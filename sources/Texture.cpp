@@ -10,6 +10,7 @@ Texture::Texture()
     m_texMagFilterParam = GL_LINEAR;
 
     m_file_name = "";
+    m_file_path = "";
 
     // UUID
     m_uuid = uuids::uuid_system_generator{}();
@@ -30,7 +31,7 @@ Texture::Texture()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
-Texture::Texture(const std::string & text_name)
+Texture::Texture(const std::string & file_path)
 {
 
     // Texture Wrapping
@@ -70,7 +71,7 @@ Texture::Texture(const std::string & text_name)
 
     // uuids::uuid id2 = uuids::uuid::from_string("5c4f2287-f8d4-40a8-8398-2089dfb3a825").value();
 
-    Create(text_name);
+    Create(file_path);
 }
 
 uuids::uuid Texture::GetUUID() const
@@ -83,7 +84,7 @@ const std::string Texture::GetFileName() const
     return (m_file_name);
 }
 
-void Texture::Create(const std::string & text_name)
+void Texture::Create(const std::string & file_path)
 {
     glGenTextures(1, &m_textureId);
     glBindTexture(GL_TEXTURE_2D, m_textureId);
@@ -94,10 +95,16 @@ void Texture::Create(const std::string & text_name)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_texMinFilterParam);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_texMagFilterParam);
 
-    m_file_name = text_name;
+    std::size_t found = file_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        m_file_name = file_path.substr(found + 1);
+    else
+        m_file_name = file_path;
+
+    m_file_path = file_path;
 
     // Texture : Data
-    Image * textureImage = new Image(text_name);
+    Image * textureImage = new Image(file_path);
 
     if (textureImage->GetData() != NULL)
     {

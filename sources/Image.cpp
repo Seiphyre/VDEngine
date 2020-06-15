@@ -29,7 +29,7 @@ GLuint Image::ToGLFormat(e_imgFormat format)
     return gl_format;
 }
 
-Image::Image(const std::string & file_name)
+Image::Image(const std::string & file_path)
 {
     // Format
     //       1           grey
@@ -37,7 +37,7 @@ Image::Image(const std::string & file_name)
     //       3           red, green, blue
     //       4           red, green, blue, alpha
 
-    m_data = FileHandler::getInstance()->LoadTexture(file_name, m_width, m_height, (int &)m_format);
+    m_data = FileHandler::getInstance()->LoadFromImageFile(file_path, m_width, m_height, (int &)m_format);
 }
 
 Image::~Image()

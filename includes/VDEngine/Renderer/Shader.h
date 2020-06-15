@@ -48,7 +48,8 @@ struct s_shaderParameter
 class Shader
 {
   public:
-    Shader(const std::string & vert_file_name, const std::string & frag_file_name);
+    Shader();
+    Shader(const std::string & vert_file_path, const std::string & frag_file_path);
     ~Shader();
 
     void Build();
@@ -72,9 +73,13 @@ class Shader
 
     unsigned int m_vert_shader_id;
     std::string  m_vert_shader_source;
+    std::string  m_vert_shader_name;
+    std::string  m_vert_shader_path;
 
     unsigned int m_frag_shader_id;
     std::string  m_frag_shader_source;
+    std::string  m_frag_shader_name;
+    std::string  m_frag_shader_path;
 
     unsigned int m_shader_program_id;
     uuids::uuid  m_uuid;

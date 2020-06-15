@@ -32,7 +32,7 @@ class Image
     const unsigned char * m_data;
 
   public:
-    Image(const std::string & file_name);
+    Image(const std::string & file_path);
     Image(const Image &) = default;
     ~Image();
 

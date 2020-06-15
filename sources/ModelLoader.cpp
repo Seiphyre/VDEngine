@@ -10,13 +10,10 @@ ModelLoader::~ModelLoader()
 {
 }
 
-Model * ModelLoader::LoadModel(const std::string & file_name)
+Model * ModelLoader::LoadModel(const std::string & file_path)
 {
     Assimp::Importer importer;
-    std::string      file_path;
     const aiScene *  scene;
-
-    file_path = FileHandler::RootToResourcesPath + "models/" + file_name;
 
     // aiProcess_Triangulate :
     // if the model does not (entirely) consist of triangles, it should transform all the model's primitive shapes to
@@ -36,10 +33,17 @@ Model * ModelLoader::LoadModel(const std::string & file_name)
         return nullptr;
     }
 
-    return ProcessNode(scene->mRootNode, scene);
+    std::string path;
+    std::size_t found = file_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        path = file_path.substr(0, found + 1);
+    else
+        path = file_path;
+
+    return ProcessNode(scene->mRootNode, scene, path);
 }
 
-Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene)
+Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene, const std::string & model_path)
 {
     Model * model = new Model();
 
@@ -49,14 +53,14 @@ Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene)
         aiMesh * aiMesh      = scene->mMeshes[node->mMeshes[i]];
         model->name          = aiMesh->mName.C_Str();
         model->mesh          = ProcessMesh(aiMesh, scene);
-        model->material      = ProcessMaterial(aiMesh, scene);
+        model->material      = ProcessMaterial(aiMesh, scene, model_path);
         model->mesh_renderer = new MeshRender(model->mesh, model->material);
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
         // std::cout << "Go to Child" << std::endl;
-        model->children.push_back(ProcessNode(node->mChildren[i], scene));
+        model->children.push_back(ProcessNode(node->mChildren[i], scene, model_path));
     }
 
     return model;
@@ -109,7 +113,7 @@ Mesh * ModelLoader::ProcessMesh(aiMesh * mesh, const aiScene * scene)
     return new Mesh(v_positions, v_normals, v_colors, v_texCoords, indices);
 }
 
-Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene)
+Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene, const std::string & model_path)
 {
     Material * material = MaterialManager::getInstance()->LoadMaterial(ShaderManager::getInstance()->GetShader());
 
@@ -119,26 +123,30 @@ Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene)
 
         if (aiMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0)
         {
-            aiString texture_name;
-            aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texture_name);
+            aiString texture_relative_path;
+            aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texture_relative_path);
+            std::string full_path = model_path + texture_relative_path.C_Str();
+            std::cout << full_path << std::endl;
 
-            Texture * texture = TextureManager::getInstance()->GetTextureByFileName(texture_name.C_Str());
+            Texture * texture = TextureManager::getInstance()->GetTextureByFileName(full_path);
             if (texture == nullptr)
-                material->diffuse_map = TextureManager::getInstance()->LoadTexture(texture_name.C_Str());
+                material->diffuse_map = TextureManager::getInstance()->LoadTexture(full_path);
             else
                 material->diffuse_map = texture;
         }
 
         if (aiMaterial->GetTextureCount(aiTextureType_SPECULAR) > 0)
         {
-            aiString texture_name;
-            aiMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texture_name);
+            aiString texture_relative_path;
+            aiMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texture_relative_path);
+            std::string full_path = model_path + texture_relative_path.C_Str();
+            std::cout << full_path << std::endl;
 
-            Texture * texture = TextureManager::getInstance()->GetTextureByFileName(texture_name.C_Str());
+            Texture * texture = TextureManager::getInstance()->GetTextureByFileName(full_path);
 
             if (texture == nullptr)
             {
-                material->specular_map = TextureManager::getInstance()->LoadTexture(texture_name.C_Str());
+                material->specular_map = TextureManager::getInstance()->LoadTexture(full_path);
             }
             else
             {

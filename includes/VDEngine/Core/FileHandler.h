@@ -24,25 +24,23 @@ class FileHandler : public Singleton<FileHandler>
     friend class Singleton<FileHandler>;
 
   public:
-
     // -- Public Methodes --
 
     const std::string     LoadFromTextFile(const std::string & path) const;
-    const unsigned char * LoadFromImageFile(const std::string & path, int & width, int & height, int & format) const ;
+    const unsigned char * LoadFromImageFile(const std::string & path, int & width, int & height, int & format) const;
 
-    const std::string     LoadShader(const std::string & file_name) const ;
-    const unsigned char * LoadTexture(const std::string & file_name, int & width, int & height, int & format) const;
+    // const std::string     LoadShader(const std::string & file_name) const ;
+    // const unsigned char * LoadTexture(const std::string & file_name, int & width, int & height, int & format) const;
 
     // -- Public Attributes --
 
-    const std::string RootPath;
+    const std::string app_path;
 
-    static const std::string RootToResourcesPath;
-    static const std::string RootToShaderPath;
-    static const std::string RootToTexturePath;
+    const std::string resources_path;
+    // static const std::string RootToShaderPath;
+    // static const std::string RootToTexturePath;
 
   private:
-
     // -- Privates Methodes --
 
     FileHandler();

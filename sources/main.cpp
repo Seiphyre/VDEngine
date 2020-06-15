@@ -72,19 +72,28 @@ int main(int argc, char * argv[])
 
     // -- LOAD RESOURCES -----------------------------------------------
 
+    std::string resources_path = FileHandler::getInstance()->resources_path;
+    std::string text_path      = resources_path + "textures/";
+    std::string shad_path      = resources_path + "shaders/";
+    std::string model_path     = resources_path + "models/";
+
     // Load Shaders --
 
     ShaderManager * shader_manager = ShaderManager::getInstance();
 
-    Shader * lit_default_shader   = shader_manager->LoadShader("Lit_Default.vert", "Lit_Default.frag");
-    Shader * unlit_default_shader = shader_manager->LoadShader("Unlit_Default.vert", "Unlit_Default.frag");
+    Shader * lit_default_shader =
+        shader_manager->LoadShader(shad_path + "Lit_Default.vert", shad_path + "Lit_Default.frag");
+    Shader * unlit_default_shader =
+        shader_manager->LoadShader(shad_path + "Unlit_Default.vert", shad_path + "Unlit_Default.frag");
 
     // Load Textures --
 
-    Texture * measurement_diff      = TextureManager::getInstance()->LoadTexture("measurement_floor.png");
-    Texture * wooden_container_diff = TextureManager::getInstance()->LoadTexture("container2.png");
-    Texture * wooden_container_spec = TextureManager::getInstance()->LoadTexture("container2_specular.png");
-    // Texture * emoji_tex       = TextureManager::getInstance()->LoadTexture("awesomeface.png");
+    TextureManager * texture_manager = TextureManager::getInstance();
+
+    Texture * measurement_diff      = texture_manager->LoadTexture(text_path + "measurement_floor.png");
+    Texture * wooden_container_diff = texture_manager->LoadTexture(text_path + "container2.png");
+    Texture * wooden_container_spec = texture_manager->LoadTexture(text_path + "container2_specular.png");
+    // Texture * emoji_tex       = texture_manager->LoadTexture(text_path + "awesomeface.png");
 
     // Load Materials --
     MaterialManager * material_manager = MaterialManager::getInstance();
@@ -106,7 +115,7 @@ int main(int argc, char * argv[])
 
     // Models / Meshes --
 
-    Model * backpack_model = ModelLoader::getInstance()->LoadModel("backpack.obj");
+    Model * backpack_model = ModelLoader::getInstance()->LoadModel(model_path + "backpack.obj");
 
     Mesh * plane_mesh = MeshFactory::getInstance()->CreatePlane();
     Mesh * cube_mesh  = MeshFactory::getInstance()->CreateCube();

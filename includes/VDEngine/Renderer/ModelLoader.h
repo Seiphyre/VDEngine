@@ -27,13 +27,13 @@ class ModelLoader : public Singleton<ModelLoader>
     ModelLoader();
     ~ModelLoader();
 
-    Model * LoadModel(const std::string & file_name);
+    Model * LoadModel(const std::string & file_path);
 
   private:
-    Model * ProcessNode(aiNode * node, const aiScene * scene);
+    Model * ProcessNode(aiNode * node, const aiScene * scene, const std::string & model_path);
 
     Mesh *     ProcessMesh(aiMesh * mesh, const aiScene * scene);
-    Material * ProcessMaterial(aiMesh * mesh, const aiScene * scene);
+    Material * ProcessMaterial(aiMesh * mesh, const aiScene * scene, const std::string & model_path);
 };
 
 } // namespace VDEngine

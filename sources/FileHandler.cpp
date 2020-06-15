@@ -2,11 +2,11 @@
 
 using namespace VDEngine;
 
-const std::string FileHandler::RootToResourcesPath = "resources/";
-const std::string FileHandler::RootToTexturePath   = "resources/textures/";
-const std::string FileHandler::RootToShaderPath    = "resources/shaders/";
+// const std::string FileHandler::resources_path = "resources/";
+// const std::string FileHandler::RootToTexturePath   = "resources/textures/";
+// const std::string FileHandler::RootToShaderPath    = "resources/shaders/";
 
-FileHandler::FileHandler() : RootPath(GetAppRootPath())
+FileHandler::FileHandler() : app_path(GetAppRootPath()), resources_path(app_path + "resources/")
 {
 }
 
@@ -77,17 +77,17 @@ const unsigned char * FileHandler::LoadFromImageFile(const std::string & path, i
     return data;
 }
 
-const std::string FileHandler::LoadShader(const std::string & file_name) const
-{
-    std::string path = RootPath + RootToShaderPath + file_name;
+// const std::string FileHandler::LoadShader(const std::string & file_name) const
+// {
+//     std::string path = RootPath + RootToShaderPath + file_name;
 
-    return (LoadFromTextFile(path));
-}
+//     return (LoadFromTextFile(path));
+// }
 
-const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height,
-                                               int & format) const
-{
-    std::string path = RootPath + RootToTexturePath + file_name;
+// const unsigned char * FileHandler::LoadTexture(const std::string & file_name, int & width, int & height,
+//                                                int & format) const
+// {
+//     std::string path = RootPath + RootToTexturePath + file_name;
 
-    return (LoadFromImageFile(path, width, height, format));
-}
+//     return (LoadFromImageFile(path, width, height, format));
+// }

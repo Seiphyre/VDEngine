@@ -2,15 +2,60 @@
 
 using namespace VDEngine;
 
-Shader::Shader(const std::string & vert_file_name, const std::string & frag_file_name)
+Shader::Shader()
 {
     m_hasBeenBuild = false;
 
     m_vert_shader_id = glCreateShader(GL_VERTEX_SHADER);
     m_frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
 
-    m_vert_shader_source = FileHandler::getInstance()->LoadShader(vert_file_name);
-    m_frag_shader_source = FileHandler::getInstance()->LoadShader(frag_file_name);
+    std::string shad_default_path = FileHandler::getInstance()->resources_path + "shaders/";
+    m_vert_shader_path            = shad_default_path + "Lit_Default.vert";
+    m_frag_shader_path            = shad_default_path + "Lit_Default.frag";
+
+    std::size_t found = m_vert_shader_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        m_vert_shader_name = m_vert_shader_path.substr(found + 1);
+    else
+        m_vert_shader_name = m_vert_shader_path;
+
+    found = m_frag_shader_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        m_frag_shader_name = m_frag_shader_path.substr(found + 1);
+    else
+        m_frag_shader_name = m_frag_shader_path;
+
+    m_vert_shader_source = FileHandler::getInstance()->LoadFromTextFile(m_vert_shader_path);
+    m_frag_shader_source = FileHandler::getInstance()->LoadFromTextFile(m_frag_shader_path);
+
+    m_shader_program_id = glCreateProgram();
+    m_uuid              = uuids::uuid_system_generator{}();
+}
+
+Shader::Shader(const std::string & vert_file_path, const std::string & frag_file_path)
+{
+    m_hasBeenBuild = false;
+
+    m_vert_shader_id = glCreateShader(GL_VERTEX_SHADER);
+    m_frag_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+
+    m_vert_shader_path = vert_file_path;
+    m_frag_shader_path = frag_file_path;
+
+    std::size_t found = m_vert_shader_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        m_vert_shader_name = m_vert_shader_path.substr(found + 1);
+    else
+        m_vert_shader_name = m_vert_shader_path;
+
+    found = m_frag_shader_path.find_last_of("/\\");
+    if (found != std::string::npos)
+        m_frag_shader_name = m_frag_shader_path.substr(found + 1);
+    else
+        m_frag_shader_name = m_frag_shader_path;
+
+    m_vert_shader_source = FileHandler::getInstance()->LoadFromTextFile(vert_file_path);
+    m_frag_shader_source = FileHandler::getInstance()->LoadFromTextFile(frag_file_path);
 
     m_shader_program_id = glCreateProgram();
     m_uuid              = uuids::uuid_system_generator{}();

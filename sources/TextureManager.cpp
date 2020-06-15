@@ -12,9 +12,9 @@ TextureManager::~TextureManager()
     delete m_default_texture;
 }
 
-Texture * TextureManager::LoadTexture(const std::string & text_file_name)
+Texture * TextureManager::LoadTexture(const std::string & file_path)
 {
-    Texture * texture = new Texture(text_file_name);
+    Texture * texture = new Texture(file_path);
 
     if (texture != nullptr)
     {

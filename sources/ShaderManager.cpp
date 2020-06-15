@@ -4,13 +4,13 @@ using namespace VDEngine;
 
 ShaderManager::ShaderManager()
 {
-    m_default_shader = new Shader("Lit_Default.vert", "Lit_Default.frag");
+    m_default_shader = new Shader();
     m_default_shader->Build();
 }
 
-Shader * ShaderManager::LoadShader(const std::string & vert_file_name, const std::string & frag_file_name)
+Shader * ShaderManager::LoadShader(const std::string & vert_file_path, const std::string & frag_file_path)
 {
-    Shader * shader = new Shader(vert_file_name, frag_file_name);
+    Shader * shader = new Shader(vert_file_path, frag_file_path);
     shader->Build();
 
     if (shader != nullptr)
