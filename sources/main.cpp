@@ -141,9 +141,9 @@ int main(int argc, char * argv[])
 
     // -- Game Objects ----------
 
-    GameObject * backpack_go              = backpack_model->CreateGameObjectFromModel();
-    backpack_go->GetTransform()->position = glm::vec3(0.0, 1.0, 1.0);
-    backpack_go->GetTransform()->scale    = glm::vec3(0.5, 0.5, 0.5);
+    GameObject * backpack_go                         = backpack_model->CreateGameObjectFromModel();
+    backpack_go->GetComponent<Transform>()->position = glm::vec3(0.0, 1.0, 1.0);
+    backpack_go->GetTransform()->scale               = glm::vec3(0.5, 0.5, 0.5);
     backpack_go->GetTransform()->Rotate(-30.0, 0.0, 0.0);
     backpack_go->name = "backpack_root";
 
@@ -172,6 +172,12 @@ int main(int argc, char * argv[])
     light2_go->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
     light2_go->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
     light2_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+    GameObject * empty_go = new GameObject();
+    cube_go->AttachParent(empty_go);
+    backpack_go->AttachParent(empty_go);
+    empty_go->GetTransform()->position += glm::vec3(4.0, 0.0, 0.0);
+    empty_go->GetTransform()->Rotate(glm::vec3(0.0, 0.0, 45.0));
 
     // GameObject * light3_go = new GameObject ({light3});
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));

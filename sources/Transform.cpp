@@ -43,7 +43,7 @@ glm::mat4 Transform::GetLocalMatrix() const
     if (m_game_object->GetParent() != nullptr)
     {
         glm::mat4 parent_matrix = m_game_object->GetParent()->GetTransform()->GetLocalMatrix();
-        return (GetMatrix() * parent_matrix);
+        return (parent_matrix * GetMatrix());
     }
 
     return GetMatrix();
