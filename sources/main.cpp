@@ -24,6 +24,22 @@
 
 #include "../resources/scripts/FPSCameraController.h"
 
+// --
+
+#include <rttr/registration>
+static void f()
+{
+    std::cout << "Hello World" << std::endl;
+}
+using namespace rttr;
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    registration::method("f", &f);
+}
+
+// --
+
 using namespace VDEngine;
 
 void framebuffer_size_callback(GLFWwindow * window, int width, int height)
@@ -194,6 +210,8 @@ int main(int argc, char * argv[])
     std::vector<MeshRender *> backpack_renderers = backpack_go->GetComponentsInChildren<MeshRender>();
 
     // -- GAME LOOP ------------------------------------------------------
+
+    type::invoke("f", {});
 
     VDEngine::Time::Update();
 

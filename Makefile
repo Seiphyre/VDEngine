@@ -2,7 +2,7 @@ NAME		=	bin/vdengine
 
 CXX			=	clang++
 
-CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -g -fvisibility=hidden
+CXXFLAGS	=	-std=c++17 -I includes -Wall -Wno-deprecated -g
 
 SRC			=	sources/glad/glad.cpp \
 				sources/stb/stb_image.cpp \
@@ -32,7 +32,7 @@ SRC			=	sources/glad/glad.cpp \
 
 OBJ			=	$(SRC:.cpp=.o)
 
-LIBS		=	-Llibs -lglfw3 -lz -lIrrXML -lassimp -framework Cocoa -framework IOKit -framework OpenGL
+LIBS		=	-Llibs -lglfw3 -lz -lIrrXML -lassimp -lrttr_core -framework Cocoa -framework IOKit -framework OpenGL
 
 all:		$(NAME)
 
