@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 
+#include "metaStuff/Meta.h"
+
 // Internal headers
 // #include "VDEngine/Renderer/Model.h"
 #include "VDEngine/Core/Component.h"
@@ -16,6 +18,8 @@ namespace VDEngine
 
 class GameObject
 {
+    friend auto meta::registerMembers<GameObject>();
+
   public:
     GameObject();
     GameObject(std::vector<Component *> components);
@@ -87,5 +91,19 @@ class GameObject
 };
 
 } // namespace VDEngine
+
+namespace meta
+{
+
+template <> inline auto registerMembers<VDEngine::GameObject>()
+{
+    return members(member("name", &VDEngine::GameObject::name),               //
+                   member("m_parent", &VDEngine::GameObject::m_parent),       //
+                   member("m_transform", &VDEngine::GameObject::m_transform), //
+                   member("m_children", &VDEngine::GameObject::m_children),   //
+                   member("m_components", &VDEngine::GameObject::m_components));
+}
+
+} // namespace meta
 
 #endif /* VDENGINE_GAME_OBJECT_H_ */

@@ -24,21 +24,9 @@
 
 #include "../resources/scripts/FPSCameraController.h"
 
-// --
-
-#include <rttr/registration>
-static void f()
-{
-    std::cout << "Hello World" << std::endl;
-}
-using namespace rttr;
-RTTR_REGISTRATION
-{
-    using namespace rttr;
-    registration::method("f", &f);
-}
-
-// --
+#include "metaStuff/Meta.h"
+#include "nlohmann/json.hpp"
+#include "VDEngine/Serialization/JsonCast.h"
 
 using namespace VDEngine;
 
@@ -211,7 +199,34 @@ int main(int argc, char * argv[])
 
     // -- GAME LOOP ------------------------------------------------------
 
-    type::invoke("f", {});
+    // GameObject * go = new GameObject();
+
+    // std::cout << "Members of class GameObject:\n";
+    // meta::doForAllMembers<GameObject>([](const auto & member) { std::cout << "* " << member.getName() << '\n'; });
+
+    // // if (meta::hasMember<GameObject>("name"))
+    // // {
+    // //     std::cout << "GameObject has member named 'name'\n";
+    // //     meta::
+    // // }
+    // std::cout << &(go->name) << std::endl;
+    // meta::doForAllMembers<GameObject>([&go](const auto & member) {
+    //     using MemberT = meta::get_member_type<decltype(member)>;
+
+    //     auto name = meta::getMemberValue<std::string>(light2_go, "name");
+
+    //     // if (dynamic_cast<Transform *>(meta::getMemberValue<MemberT>(light2_go, member.getName())))
+    //     //     std::cout << "Transform" << std::endl;
+
+    //     std::cout << "* " << member.getName() << &(member.get(*go)) << ", type = " << typeid(MemberT).name() << '\n';
+    // });
+
+    // auto name = meta::getMemberValue<std::string>(light2_go, "name");
+    // std::cout << "Got GameObject's name: " << name << '\n';
+
+    std::cout << "Serializing GameObject:" << '\n';
+    json root = light2_go->GetTransform()->position;
+    std::cout << std::setw(4) << root << std::endl;
 
     VDEngine::Time::Update();
 
