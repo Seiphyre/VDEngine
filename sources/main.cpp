@@ -27,6 +27,7 @@
 #include "metaStuff/Meta.h"
 #include "nlohmann/json.hpp"
 #include "VDEngine/Serialization/JsonCast.h"
+#include "VDEngine/Math/Vectors.hpp"
 
 using namespace VDEngine;
 
@@ -224,9 +225,9 @@ int main(int argc, char * argv[])
     // auto name = meta::getMemberValue<std::string>(light2_go, "name");
     // std::cout << "Got GameObject's name: " << name << '\n';
 
-    std::cout << "Serializing GameObject:" << '\n';
-    json root = light2_go->GetTransform()->position;
-    std::cout << std::setw(4) << root << std::endl;
+    // std::cout << "Serializing GameObject:" << '\n';
+    // json root = light2_go->GetTransform()->position;
+    // std::cout << std::setw(4) << root << std::endl;
 
     VDEngine::Time::Update();
 

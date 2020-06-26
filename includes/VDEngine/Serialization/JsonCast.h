@@ -9,8 +9,6 @@
 #include "metaStuff/Meta.h"
 #include "StringCast.h"
 
-#include "VDEngine/Serialization/GLMRegistration.h"
-
 using json = nlohmann::json;
 
 namespace VDEngine
