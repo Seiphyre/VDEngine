@@ -61,7 +61,7 @@ Vector4 Vector4::operator*(float rhs) const
     return Vector4(x * rhs, y * rhs, z * rhs, w * rhs);
 }
 
-Vector4 operator*(float lhs, const Vector4 & rhs)
+Vector4 VDEngine::operator*(float lhs, const Vector4 & rhs)
 {
     return Vector4(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs, rhs.w * lhs);
 }
@@ -76,7 +76,7 @@ Vector4 Vector4::operator/(float rhs) const
     return Vector4(x / rhs, y / rhs, z / rhs, w / rhs);
 }
 
-Vector4 operator/(float lhs, const Vector4 & rhs)
+Vector4 VDEngine::operator/(float lhs, const Vector4 & rhs)
 {
     return Vector4(rhs.x / lhs, rhs.y / lhs, rhs.z / lhs, rhs.w / lhs);
 }

@@ -84,7 +84,7 @@ Vector2 Vector2::operator*(float rhs) const
 //     return res;
 // }
 
-Vector2 operator*(float lhs, const Vector2 & rhs)
+Vector2 VDEngine::operator*(float lhs, const Vector2 & rhs)
 {
     Vector2 res(rhs.x * lhs, rhs.y * lhs);
     return res;
@@ -101,7 +101,7 @@ Vector2 Vector2::operator/(float rhs) const
 //     return res;
 // }
 
-Vector2 operator/(float lhs, const Vector2 & rhs)
+Vector2 VDEngine::operator/(float lhs, const Vector2 & rhs)
 {
     Vector2 res(rhs.x * lhs, rhs.y * lhs);
     return res;

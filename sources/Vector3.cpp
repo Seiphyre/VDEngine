@@ -99,7 +99,7 @@ Vector3 Vector3::operator*(float rhs) const
 //     return res;
 // }
 
-Vector3 operator*(float lhs, const Vector3 & rhs)
+Vector3 VDEngine::operator*(float lhs, const Vector3 & rhs)
 {
     Vector3 res(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs);
     return res;
@@ -117,7 +117,7 @@ Vector3 Vector3::operator/(float rhs) const
 //     return res;
 // }
 
-Vector3 operator/(float lhs, const Vector3 & rhs)
+Vector3 VDEngine::operator/(float lhs, const Vector3 & rhs)
 {
     Vector3 res(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs);
     return res;
