@@ -2,66 +2,71 @@
 
 using namespace VDEngine;
 
+/********************************************************
+ *               -- Constructors --                     *
+ ********************************************************/
+
 Vector2::Vector2()
 {
     x = 0.0f;
     y = 0.0f;
 }
 
-Vector2::Vector2(float x, float y)
+Vector2::Vector2(float p_x, float p_y)
 {
-    this->x = x;
-    this->y = y;
+    x = p_x;
+    y = p_y;
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- static constructors ---------------------------------
 
-Vector2 Vector2::CreateVecZero()
+Vector2 Vector2::VecNan()
+{
+    return Vector2(NAN_FLOAT, NAN_FLOAT);
+}
+
+Vector2 Vector2::VecZero()
 {
     return Vector2(0.0f, 0.0f);
 }
 
-Vector2 Vector2::CreateVecOne()
+Vector2 Vector2::VecOne()
 {
     return Vector2(1.0f, 1.0f);
 }
 
-Vector2 Vector2::CreateVecUp()
+Vector2 Vector2::VecUp()
 {
     return Vector2(0.0f, 1.0f);
 }
 
-Vector2 Vector2::CreateVecDown()
+Vector2 Vector2::VecDown()
 {
     return Vector2(0.0f, -1.0f);
 }
 
-Vector2 Vector2::CreateVecLeft()
+Vector2 Vector2::VecLeft()
 {
     return Vector2(-1.0f, 0.0f);
 }
 
-Vector2 Vector2::CreateVecRight()
+Vector2 Vector2::VecRight()
 {
     return Vector2(1.0f, 0.0f);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *                 -- Operators --                      *
+ ********************************************************/
 
-// Vector2::operator Vector4() const
-// {
-//     return Vector4(x, y, 0.0f, 0.0f);
-// }
+// -- unary minus operator --------------------------------
 
-// Vector2::operator Vector3() const
-// {
-//     return Vector3(x, y, 0.0f);
-// }
+Vector2 Vector2::operator-() const
+{
+    return (*this * -1.0f);
+}
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- arithmetic operators --------------------------------
 
 Vector2 Vector2::operator+(const Vector2 & rhs) const
 {
@@ -78,11 +83,10 @@ Vector2 Vector2::operator*(float rhs) const
     return Vector2(x * rhs, y * rhs);
 }
 
-// Vector2 operator*(const Vector2 & vector, float scalar)
-// {
-//     Vector2 res(vector.x * scalar, vector.y * scalar);
-//     return res;
-// }
+Vector2 Vector2::operator/(float rhs) const
+{
+    return Vector2(x / rhs, y / rhs);
+}
 
 Vector2 VDEngine::operator*(float lhs, const Vector2 & rhs)
 {
@@ -90,29 +94,51 @@ Vector2 VDEngine::operator*(float lhs, const Vector2 & rhs)
     return res;
 }
 
-Vector2 Vector2::operator/(float rhs) const
-{
-    return Vector2(x / rhs, y / rhs);
-}
-
-// Vector2 operator/(const Vector2 & vector, float scalar)
-// {
-//     Vector2 res(vector.x * scalar, vector.y * scalar);
-//     return res;
-// }
-
 Vector2 VDEngine::operator/(float lhs, const Vector2 & rhs)
 {
-    Vector2 res(rhs.x * lhs, rhs.y * lhs);
+    Vector2 res(rhs.x / lhs, rhs.y / lhs);
     return res;
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- compound assignment ---------------------------------
+
+Vector2 & Vector2::operator+=(const Vector2 & rhs)
+{
+    x += rhs.x;
+    y += rhs.y;
+
+    return *this;
+}
+
+Vector2 & Vector2::operator-=(const Vector2 & rhs)
+{
+    x -= rhs.x;
+    y -= rhs.y;
+
+    return *this;
+}
+
+Vector2 & Vector2::operator*=(float rhs)
+{
+    x *= rhs;
+    y *= rhs;
+
+    return *this;
+}
+
+Vector2 & Vector2::operator/=(float rhs)
+{
+    x /= rhs;
+    y /= rhs;
+
+    return *this;
+}
+
+// -- comparison operators ---------------------------------
 
 bool Vector2::operator==(const Vector2 & rhs) const
 {
-    return (double)Vector2::Distance(*this, rhs) < EPSILON_DOUBLE;
+    return ((double)Vector2::Distance(*this, rhs)) < EPSILON_DOUBLE;
 }
 
 bool Vector2::operator!=(const Vector2 & rhs) const
@@ -120,27 +146,26 @@ bool Vector2::operator!=(const Vector2 & rhs) const
     return !(*this == rhs);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- insertion operators ---------------------------------
 
-// glm::vec2 Vector2::glm_vec2() const
-// {
-//     return glm::vec2(x, y);
-// }
-
-// void Vector2::Set(const glm::vec2 & vec2)
-// {
-//     x = vec2.x;
-//     y = vec2.y;
-// }
-
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-
-void Vector2::Set(float new_x, float new_y)
+std::ostream & VDEngine::operator<<(std::ostream & os, const Vector2 & v)
 {
-    x = new_x;
-    y = new_y;
+    os << std::fixed << std::setprecision(5);
+
+    os << "Vec2( " << v.x << "  " << v.y << " )";
+
+    os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+    return os;
+}
+
+/********************************************************
+ *                  -- Setters --                       *
+ ********************************************************/
+
+void Vector2::Set(float p_x, float p_y)
+{
+    x = p_x;
+    y = p_y;
 }
 
 void Vector2::Scale(const Vector2 & scale)
@@ -165,8 +190,9 @@ void Vector2::Normalize()
     }
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *                  -- Getters --                       *
+ ********************************************************/
 
 Vector2 Vector2::GetNormalized() const
 {
@@ -175,7 +201,7 @@ Vector2 Vector2::GetNormalized() const
     if ((double)magnitude > EPSILON_DOUBLE)
         return *this / magnitude;
 
-    return Vector2::CreateVecZero();
+    return Vector2::VecZero();
 }
 
 float Vector2::GetMagnitude() const
@@ -194,45 +220,61 @@ float Vector2::GetSqrMagnitude() const
     return (float)(xx + yy);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *              -- Static functions --                  *
+ ********************************************************/
 
-float Vector2::Dot(const Vector2 & lhs, const Vector2 & rhs)
+float Vector2::Dot(const Vector2 & v1, const Vector2 & v2)
 {
-    return (float)((double)lhs.x * (double)rhs.x + (double)lhs.y * (double)rhs.y);
+    return (float)((double)v1.x * (double)v2.x + (double)v1.y * (double)v2.y);
 }
 
-float Vector2::Angle(const Vector2 & from, const Vector2 & to)
+float Vector2::Angle(const Vector2 & p_from, const Vector2 & p_to)
 {
-    float dot_product         = Vector2::Dot(from.GetNormalized(), to.GetNormalized());
+    Vector2 from = p_from.GetNormalized();
+    Vector2 to   = p_to.GetNormalized();
+
+    if (from == Vector2::VecZero() || to == Vector2::VecZero())
+    {
+        std::cout << "[Warning][Vector2::Angle] Cannot calculate the angle between FROM and TO, because FROM or TO is "
+                     "Vector2(0, 0) or too small to be normalized."
+                  << std::endl;
+        return 0;
+    }
+
+    float dot_product         = Vector2::Dot(from, to);
     float dot_product_clamped = clamp(dot_product, -1.0f, 1.0f);
-    float result              = acos(dot_product_clamped);
+
+    float result = acos(dot_product_clamped);
 
     return to_degrees(result);
 }
 
-float Vector2::Distance(const Vector2 & vec_a, const Vector2 & vec_b)
+float Vector2::Distance(const Vector2 & v1, const Vector2 & v2)
 {
-    Vector2 vector2 = vec_a - vec_b;
+    Vector2 vector2 = v1 - v2;
 
     return vector2.GetMagnitude();
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector2 Vector2::Lerp(const Vector2 & v1, const Vector2 & v2, float t)
+{
+    t = clamp(t, 0.0f, 1.0f);
+    return Vector2(v1.x + (v2.x - v1.x) * t, v1.y + (v2.y - v1.y) * t);
+}
 
-// static Vector2 Lerp(Vector2 a, Vector2 b, float t)
+inline bool VDEngine::isnan(const Vector2 & vec)
+{
+    return std::isnan(vec.x) || std::isnan(vec.y);
+}
+
+/********************************************************
+ *                    -- TODO --                        *
+ ********************************************************/
+
+// Vector2 Vector2::Reflect(const Vector2 & in_direction, const Vector2 & normal)
 // {
-//   t = Mathf.Clamp01(t);
-//   return new Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+//     return -2f * Vector2.Dot(normal, in_direction) * normal + in_direction;
 // }
 
-// static Vector2 LerpUnclamped(Vector2 a, Vector2 b, float t)
-// {
-//   return new Vector2(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
-// }
-
-// Vector2 Vector2::Reflect(Vector2 inDirection, Vector2 inNormal)
-// {
-//     return -2f * Vector2.Dot(inNormal, inDirection) * inNormal + inDirection;
-// }
+// Vector2 Vector2::ProjectOnVector(const Vector2 & v1, const Vector2 & v2);

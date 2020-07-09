@@ -33,6 +33,7 @@ SRC			=	sources/glad/glad.cpp \
 				sources/Vector3.cpp \
 				sources/Vector4.cpp \
 				sources/Quaternion.cpp \
+				sources/Matrix4.cpp \
 				resources/scripts/FPSCameraController.cpp
 
 OBJ			=	$(SRC:.cpp=.o)

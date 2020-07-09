@@ -1,8 +1,9 @@
 #ifndef VDENGINE_VECTOR3_H_
 #define VDENGINE_VECTOR3_H_
 
-// // External libs
-// #include "glm/glm.hpp"
+// Standard c++ libs
+#include <iostream>
+#include <iomanip>
 
 // Internal headers
 #include "VDEngine/Math/Core.hpp"
@@ -18,27 +19,74 @@ struct Vector3
     float y;
     float z;
 
-    // -- constructors --
+    /********************************************************
+     *               -- Constructors --                     *
+     ********************************************************/
 
+    /**
+     * @brief     Create `Vector3(0, 0, 0)`
+     */
     Vector3();
+
+    /**
+     * @brief     Create `Vector3(x, y, z)`
+     */
     Vector3(float x, float y, float z);
 
     // -- static constructors --
 
-    static Vector3 CreateVecZero();
-    static Vector3 CreateVecOne();
+    /**
+     * @brief     Return `Vector3(0, 0, 0)`.
+     */
+    static Vector3 VecZero();
 
-    static Vector3 CreateVecForward();
-    static Vector3 CreateVecBack();
-    static Vector3 CreateVecUp();
-    static Vector3 CreateVecDown();
-    static Vector3 CreateVecLeft();
-    static Vector3 CreateVecRight();
+    /**
+     * @brief     Return `Vector3(1, 1, 1)`.
+     */
+    static Vector3 VecOne();
 
-    // -- convertion operators --
+    /**
+     * @brief     Return `Vector3(0, 0, 1)`.
+     */
+    static Vector3 VecForward();
 
-    // operator Vector4() const;
-    // operator Vector2() const;
+    /**
+     * @brief     Return `Vector3(0, 0, -1)`.
+     */
+    static Vector3 VecBack();
+
+    /**
+     * @brief     Return `Vector3(0, 1, 0)`.
+     */
+    static Vector3 VecUp();
+
+    /**
+     * @brief     Return `Vector3(0, -1, 0)`.
+     */
+    static Vector3 VecDown();
+
+    /**
+     * @brief     Return `Vector3(-1, 0, 0)`.
+     */
+    static Vector3 VecLeft();
+
+    /**
+     * @brief     Return `Vector3(1, 0, 0)`.
+     */
+    static Vector3 VecRight();
+
+    /**
+     * @brief     Return `Vector3(NAN_FLOAT, NAN_FLOAT, NAN_FLOAT)`. It can be used to handle vectors math errors.
+     */
+    static Vector3 VecNan();
+
+    /********************************************************
+     *                 -- Operators --                      *
+     ********************************************************/
+
+    // -- unary minus operator --
+
+    Vector3 operator-() const;
 
     // -- arithmetic operators --
 
@@ -47,61 +95,124 @@ struct Vector3
     Vector3 operator*(float rhs) const;
     Vector3 operator/(float rhs) const;
 
+    // -- compound assignment --
+
+    Vector3 & operator+=(const Vector3 & rhs);
+    Vector3 & operator-=(const Vector3 & rhs);
+    Vector3 & operator*=(float rhs);
+    Vector3 & operator/=(float rhs);
+
     // -- comparison operators --
 
     bool operator==(const Vector3 & rhs) const;
     bool operator!=(const Vector3 & rhs) const;
 
-    // -- glm compatibility --
+    // -- insertion operators --
 
-    // glm::vec3 glm_vec3() const;
-    // void      Set(const glm::vec3 & vec3);
+    friend std::ostream & operator<<(std::ostream & os, const Vector3 & v);
 
-    // -- Setters --
+    /********************************************************
+     *                  -- Setters --                       *
+     ********************************************************/
 
-    void Set(float new_x, float new_y, float new_z);
+    /**
+     * @brief     Set `x`, `y` and `z` components of this vector.
+     */
+    void Set(float x, float y, float z);
 
-    void Scale(const Vector3 & scale);
+    /**
+     * @brief     Multiplies this vector by `v1` component-wise.
+     */
+    void Scale(const Vector3 & v1);
 
+    /**
+     * @brief     Normalize this vector.
+     *
+     * @exception `if (vector.GetMagnitude == 0)` return Vector3(0, 0, 0).
+     */
     void Normalize();
 
-    // -- Getters --
+    /********************************************************
+     *                  -- Getters --                       *
+     ********************************************************/
 
+    /**
+     * @brief     Get the magnitude (length) of the vector.
+     */
     float GetMagnitude() const;
+
+    /**
+     * @brief     Get the square magnitude (length) of the vector.
+     */
     float GetSqrMagnitude() const;
 
+    /**
+     * @brief     Get a normalized copy of this vector.
+     *
+     * @exception `if (vector.GetMagnitude == 0)` return Vector3(0, 0, 0).
+     */
     Vector3 GetNormalized() const;
 
-    // -- Static functions --
+    /********************************************************
+     *              -- Static functions --                  *
+     ********************************************************/
 
-    static float Distance(const Vector3 & vec_a, const Vector3 & vec_b);
+    /**
+     * @brief     Get the distance between `v1` and `v2`.
+     */
+    static float Distance(const Vector3 & v1, const Vector3 & v2);
 
-    static Vector3 Cross(const Vector3 & lhs, const Vector3 & rhs);
+    /**
+     * @brief     Get the cross product of `v1` and `v2`.
+     */
+    static Vector3 Cross(const Vector3 & v1, const Vector3 & v2);
 
-    static float Dot(const Vector3 & lhs, const Vector3 & rhs);
+    /**
+     * @brief     Get the dot product of `v1` and `v2`.
+     */
+    static float Dot(const Vector3 & v1, const Vector3 & v2);
 
+    /**
+     * @brief       Get the angle between `from` and `to`.
+     *
+     * @param from  (doesn't need to be normalized).
+     * @param to    (doesn't need to be normalized).
+     *
+     * @return      Angle (in degrees).
+     *
+     * @exception   `if (from.GetMagnitude == 0)` return 0.
+     * @exception   `if (to.GetMagnitude == 0)` return 0.
+     */
     static float Angle(const Vector3 & from, const Vector3 & to);
 
-    // -- TODO --
+    /**
+     * @brief       Linear interpolation between `v1` and `v2` by the interpolant `t`.
+     *
+     * @param v1    a vector.
+     * @param v2    a vector.
+     * @param t     interpolation factor (it will be clamped to the range [0, 1]).
+     */
+    static Vector3 Lerp(const Vector3 & v1, const Vector3 & v2, float t);
 
-    // static Vector3 Reflect(Vector3 inDirection, Vector3 inNormal);
+    /********************************************************
+     *                    -- TODO --                        *
+     ********************************************************/
 
-    // static Vector3 Project(Vector3 vector, Vector3 onNormal);
-    // static Vector3 ProjectOnPlane(Vector3 vector, Vector3 planeNormal);
+    // static Vector3 Reflect(const Vector3 & in_direction, const Vector3 & in_normal);
 
-    // static Vector3 Lerp(Vector3 a, Vector3 b, float t);
-    // static Vector3 LerpUnclamped(Vector3 a, Vector3 b, float t);
-    // static Vector3 Slerp(Vector3 a, Vector3 b, float t);
-    // static Vector3 SlerpUnclamped(Vector3 a, Vector3 b, float t);
+    // static Vector3 ProjectOnVector(const Vector3 & v1, const Vector3 & v2);
+    // static Vector3 ProjectOnPlane(const Vector3 & vector, const Vector3 & plane_normal);
 
-    // static void OrthoNormalize(Vector3 & normal, Vector3 & tangent);
-    // static void OrthoNormalize(Vector3 & normal, Vector3 & tangent, Vector3 & binormal);
+    // static Vector3 Slerp(const Vector3 & v1, const Vector3 & v2, float t);
+
+    // static void OrthoNormalize(Vector3 & v1, Vector3 & v2);
+    // static void OrthoNormalize(Vector3 & v1, Vector3 & v2, Vector3 & v3);
 };
 
 Vector3 operator*(float lhs, const Vector3 & rhs);
-// Vector3 operator*(const Vector3 & vector, float scalar);
 Vector3 operator/(float lhs, const Vector3 & rhs);
-// Vector3 operator/(const Vector3 & vector, float scalar);
+
+inline bool isnan(const Vector3 & vec);
 
 } // namespace VDEngine
 

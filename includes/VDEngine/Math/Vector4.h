@@ -1,8 +1,9 @@
 #ifndef VDENGINE_VECTOR4_H_
 #define VDENGINE_VECTOR4_H_
 
-// // External libs
-// #include "glm/glm.hpp"
+// Standard c++ libs
+#include <iostream>
+#include <iomanip>
 
 // Internal headers
 #include "VDEngine/Math/Core.hpp"
@@ -19,20 +20,45 @@ struct Vector4
     float z;
     float w;
 
-    // -- constructors --
+    /********************************************************
+     *               -- Constructors --                     *
+     ********************************************************/
 
+    /**
+     * @brief     Create `Vector4(0, 0, 0, 0)`
+     */
     Vector4();
+
+    /**
+     * @brief     Create `Vector4(x, y, z, w)`
+     */
     Vector4(float x, float y, float z, float w);
 
     // -- static constructors --
 
-    static Vector4 CreateVecZero();
-    static Vector4 CreateVecOne();
+    /**
+     * @brief     Return `Vector4(1, 1, 1, 1)`
+     */
+    static Vector4 VecZero();
 
-    // -- convertion operators --
+    /**
+     * @brief     Return `Vector4(0, 0, 0, 0)`
+     */
+    static Vector4 VecOne();
 
-    // operator Vector3() const;
-    // operator Vector2() const;
+    /**
+     * @brief     Return `Vector4(NAN_FLOAT, NAN_FLOAT, NAN_FLOAT, NAN_FLOAT)`. It can be used to handle vectors math
+     * errors.
+     */
+    static Vector4 VecNan();
+
+    /********************************************************
+     *                 -- Operators --                      *
+     ********************************************************/
+
+    // -- unary minus operator --
+
+    Vector4 operator-() const;
 
     // -- arithmetic operators --
 
@@ -41,49 +67,98 @@ struct Vector4
     Vector4 operator*(float rhs) const;
     Vector4 operator/(float rhs) const;
 
+    // -- compound assignment --
+
+    Vector4 & operator+=(const Vector4 & rhs);
+    Vector4 & operator-=(const Vector4 & rhs);
+    Vector4 & operator*=(float rhs);
+    Vector4 & operator/=(float rhs);
+
     // -- comparison operators --
 
     bool operator==(const Vector4 & rhs) const;
     bool operator!=(const Vector4 & rhs) const;
 
-    // -- glm compatibility --
+    // -- insertion operators --
 
-    // glm::vec4 glm_vec4() const;
-    // void      Set(const glm::vec4 & vec4);
+    friend std::ostream & operator<<(std::ostream & os, const Vector4 & v);
 
-    // -- Setters --
+    /********************************************************
+     *                  -- Setters --                       *
+     ********************************************************/
 
-    void Set(float new_x, float new_y, float new_z, float new_w);
+    /**
+     * @brief     Set `x`, `y`, `z` and `w` components of this vector.
+     */
+    void Set(float x, float y, float z, float w);
 
-    void Scale(const Vector4 & scale);
+    /**
+     * @brief     Multiplies this vector by `v1` component-wise.
+     */
+    void Scale(const Vector4 & v1);
 
+    /**
+     * @brief     Normalize this vector.
+     *
+     * @exception `if (vector.GetMagnitude == 0)` return Vector4(0, 0, 0, 0).
+     */
     void Normalize();
 
-    // -- Getters --
+    /********************************************************
+     *                  -- Getters --                       *
+     ********************************************************/
 
-    Vector4 GetNormalized() const;
-
+    /**
+     * @brief     Get the magnitude (length) of the vector.
+     */
     float GetMagnitude() const;
+
+    /**
+     * @brief     Get the square magnitude (length) of the vector.
+     */
     float GetSqrMagnitude() const;
 
-    // -- Static functions --
+    /**
+     * @brief     Get a normalized copy of this vector.
+     *
+     * @exception `if (vector.GetMagnitude == 0)` return Vector4(0, 0, 0, 0).
+     */
+    Vector4 GetNormalized() const;
 
-    static float Dot(const Vector4 & lhs, const Vector4 & rhs);
+    /********************************************************
+     *              -- Static functions --                  *
+     ********************************************************/
 
-    static float Distance(const Vector4 & vec_a, const Vector4 & vec_b);
+    /**
+     * @brief     Get the dot product of `v1` and `v2`.
+     */
+    static float Dot(const Vector4 & v1, const Vector4 & v2);
 
-    // -- TODO --
+    /**
+     * @brief     Get the distance between `v1` and `v2`.
+     */
+    static float Distance(const Vector4 & v1, const Vector4 & v2);
 
-    // static Vector4 Lerp(Vector4 a, Vector4 b, float t);
-    // static Vector4 LerpUnclamped(Vector4 a, Vector4 b, float t);
+    /**
+     * @brief       Linear interpolation between `v1` and `v2` by the interpolant `t`.
+     *
+     * @param v1    a vector.
+     * @param v2    a vector.
+     * @param t     interpolation factor (it will be clamped to the range [0, 1]).
+     */
+    static Vector4 Lerp(const Vector4 & v1, const Vector4 & v2, float t);
 
-    // static Vector4 Project(Vector4 a, Vector4 b);
+    /********************************************************
+     *                    -- TODO --                        *
+     ********************************************************/
+
+    // static Vector4 ProjectOnVector(const Vector4 & v1, const Vector4 & v2);
 };
 
 Vector4 operator*(float lhs, const Vector4 & rhs);
-// Vector4 operator*(const Vector4 & lhs, float rhs);
 Vector4 operator/(float lhs, const Vector4 & rhs);
-// Vector4 operator/(const Vector4 & lhs, float rhs);
+
+inline bool isnan(const Vector4 & vec);
 
 } // namespace VDEngine
 

@@ -29,6 +29,8 @@
 #include "VDEngine/Serialization/JsonCast.h"
 #include "VDEngine/Math/Vectors.hpp"
 
+#include "glm/gtx/vector_angle.hpp"
+
 using namespace VDEngine;
 
 void framebuffer_size_callback(GLFWwindow * window, int width, int height)
@@ -285,4 +287,460 @@ int main(int argc, char * argv[])
     glfwTerminate();
 
     return 0;
+}
+
+void test_vector2()
+{
+    glm::vec2 vec2_1 = glm::vec2(-1, 0);
+    glm::vec2 vec2_2 = glm::vec2(2.0f, 4.0f);
+    glm::vec2 vec2_3 = glm::vec2(0, 0);
+
+    Vector2 vector2_1 = Vector2::VecLeft();
+    Vector2 vector2_2 = Vector2(2.0f, 4.0f);
+    Vector2 vector2_3 = Vector2::VecZero();
+
+    // Angle ----
+
+    std::cout << "** Angle ************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Angle(vector2_1, vector2_2) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec2_1), glm::normalize(vec2_2))) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Angle(vector2_2, vector2_3) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec2_2), glm::normalize(vec2_3))) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Angle(vector2_3, vector2_1) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec2_3), glm::normalize(vec2_1))) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Distance --
+
+    std::cout << "** Distance *********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Distance(vector2_3, vector2_2) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec2_3, vec2_2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Distance(vector2_2, vector2_1) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec2_2, vec2_1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Distance(vector2_1, vector2_3) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec2_1, vec2_3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Dot --
+
+    std::cout << "** Dot **************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Dot(vector2_2, vector2_1) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec2_2, vec2_1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Dot(vector2_3, vector2_2) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec2_3, vec2_2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Dot(vector2_1, vector2_3) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec2_1, vec2_3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- GetMagnitude --
+
+    std::cout << "** Magnitude ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2_2.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec2_2) << std::endl;
+
+    std::cout << "VDEngine: " << vector2_3.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec2_3) << std::endl;
+
+    std::cout << "VDEngine: " << vector2_1.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec2_1) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Normalize / GetNormalized --
+
+    std::cout << "** Get Normalized ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2_2.GetNormalized() << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::normalize(vec2_2)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2_2 << std::endl;
+    std::cout << "GLM:      " << to_vector2(vec2_2) << std::endl << std::endl;
+
+    std::cout << "** Normalize ********" << std::endl << std::endl;
+
+    vector2_2.Normalize();
+    vec2_2 = glm::normalize(vec2_2);
+    std::cout << "VDEngine: " << vector2_2 << std::endl;
+    std::cout << "GLM:      " << to_vector2(vec2_2) << std::endl;
+
+    vector2_3.Normalize();
+    vec2_3 = glm::normalize(vec2_3);
+    std::cout << "VDEngine: " << vector2_3 << std::endl;
+    std::cout << "GLM:      " << to_vector2(vec2_3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Normalize / GetNormalized --
+
+    std::cout << "** Lerp ********" << std::endl << std::endl;
+
+    vec2_3 = glm::vec2(0.0f, 0.0f);
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 0) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 0.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 0.2f) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 0.2f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 0.5f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 0.9f) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 0.9f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 1.0f) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 1.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, 23) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, 23.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector2::Lerp(vector2_3, vector2_2, -0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector2(glm::lerp(vec2_3, vec2_2, -0.5f)) << std::endl << std::endl;
+
+    // -- Operators --
+
+    // Vector2::operator==;
+    // Vector2::operator!=;
+
+    // Vector2::operator-;
+
+    // Vector2::operator*;
+    // Vector2::operator+;
+    // Vector2::operator-;
+    // Vector2::operator/;
+
+    // Vector2::operator*=;
+    // Vector2::operator+=;
+    // Vector2::operator-=;
+    // Vector2::operator/=;
+}
+
+void test_vector3()
+{
+    glm::vec3 vec1 = glm::vec3(-1.0f, 0.0f, 0.0f);
+    glm::vec3 vec2 = glm::vec3(2.0f, 4.0f, 8.0f);
+    glm::vec3 vec3 = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    Vector3 vector1 = Vector3::VecLeft();
+    Vector3 vector2 = Vector3(2.0f, 4.0f, 8.0f);
+    Vector3 vector3 = Vector3::VecZero();
+
+    // Angle ----
+
+    std::cout << "** Angle ************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Angle(vector1, vector2) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec1), glm::normalize(vec2))) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Angle(vector2, vector3) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec2), glm::normalize(vec3))) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Angle(vector3, vector1) << std::endl;
+    std::cout << "GLM: " << glm::degrees(glm::angle(glm::normalize(vec3), glm::normalize(vec1))) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Distance --
+
+    std::cout << "** Distance *********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Distance(vector3, vector2) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec3, vec2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Distance(vector2, vector1) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec2, vec1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Distance(vector1, vector3) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec1, vec3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Dot --
+
+    // dot (left, up) = 0
+    // dot (left, left) =  1 (ou +)
+    // dot (left, right) = -1 (ou -)
+    // dot (zero, one) = 0
+
+    std::cout << "** Dot **************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(vector2, vector1) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec2, vec1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(vector3, vector2) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec3, vec2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(vector1, vector3) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec1, vec3) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecUp()) << std::endl;
+    std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecLeft()) << std::endl;
+    std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecRight()) << std::endl;
+    std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecZero(), Vector3::VecOne()) << std::endl;
+    std::cout << "GLM:      " << glm::dot(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- cross --
+
+    // cross (left, right) = 0
+    // cross (right, right) = 0
+    // cross (zero, one) = 0
+
+    std::cout << "** Cross **************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(vector2, vector1) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(vec2, vec1)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(vector3, vector2) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(vec3, vec2)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(vector1, vector3) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(vec1, vec3)) << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecLeft(), Vector3::VecRight()) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)))
+              << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecRight(), Vector3::VecRight()) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)))
+              << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecZero(), Vector3::VecOne()) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::cross(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)))
+              << std::endl;
+
+    std::cout << std::endl;
+
+    // -- GetMagnitude --
+
+    std::cout << "** Magnitude ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec2) << std::endl;
+
+    std::cout << "VDEngine: " << vector3.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec3) << std::endl;
+
+    std::cout << "VDEngine: " << vector1.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec1) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Normalize / GetNormalized --
+
+    std::cout << "** Get Normalized ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2.GetNormalized() << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::normalize(vec2)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2 << std::endl;
+    std::cout << "GLM:      " << to_vector3(vec2) << std::endl << std::endl;
+
+    std::cout << "** Normalize ********" << std::endl << std::endl;
+
+    vector2.Normalize();
+    vec2 = glm::normalize(vec2);
+    std::cout << "VDEngine: " << vector2 << std::endl;
+    std::cout << "GLM:      " << to_vector3(vec2) << std::endl;
+
+    vector3.Normalize();
+    vec3 = glm::normalize(vec3);
+    std::cout << "VDEngine: " << vector3 << std::endl;
+    std::cout << "GLM:      " << to_vector3(vec3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Lerp --
+
+    std::cout << "** Lerp ********" << std::endl << std::endl;
+
+    vec3 = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 0) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 0.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 0.2f) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 0.2f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 0.5f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 0.9f) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 0.9f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 1.0f) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 1.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, 23) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, 23.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector3::Lerp(vector3, vector2, -0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector3(glm::lerp(vec3, vec2, -0.5f)) << std::endl << std::endl;
+
+    // -- Operators --
+
+    // Vector3::operator==;
+    // Vector3::operator!=;
+
+    // Vector3::operator-;
+
+    // Vector3::operator*;
+    // Vector3::operator+;
+    // Vector3::operator-;
+    // Vector3::operator/;
+
+    // Vector3::operator*=;
+    // Vector3::operator+=;
+    // Vector3::operator-=;
+    // Vector3::operator/=;
+}
+
+void test_vector4()
+{
+    glm::vec4 vec1 = glm::vec4(1.0f, -1.0f, 0.0f, 0.0f);
+    glm::vec4 vec2 = glm::vec4(2.0f, 4.0f, 8.0f, 16.0f);
+    glm::vec4 vec3 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    Vector4 vector1 = Vector4(1.0f, -1.0f, 0.0f, 0.0f);
+    Vector4 vector2 = Vector4(2.0f, 4.0f, 8.0f, 16.0f);
+    Vector4 vector3 = Vector4::VecZero();
+
+    // -- Distance --
+
+    std::cout << "** Distance *********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Distance(vector3, vector2) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec3, vec2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Distance(vector2, vector1) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec2, vec1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Distance(vector1, vector3) << std::endl;
+    std::cout << "GLM:      " << glm::distance(vec1, vec3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Dot --
+
+    // dot (zero, one) = 0
+
+    std::cout << "** Dot **************" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Dot(vector2, vector1) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec2, vec1) << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Dot(vector3, vector2) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec3, vec2) << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Dot(vector1, vector3) << std::endl;
+    std::cout << "GLM:      " << glm::dot(vec1, vec3) << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Dot(Vector4::VecZero(), Vector4::VecOne()) << std::endl;
+    std::cout << "GLM:      " << glm::dot(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f), glm::vec4(1.0f, 1.0f, 1.0f, 0.0f))
+              << std::endl;
+
+    std::cout << std::endl;
+
+    // -- GetMagnitude --
+
+    std::cout << "** Magnitude ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec2) << std::endl;
+
+    std::cout << "VDEngine: " << vector3.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec3) << std::endl;
+
+    std::cout << "VDEngine: " << vector1.GetMagnitude() << std::endl;
+    std::cout << "GLM:      " << glm::length(vec1) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Normalize / GetNormalized --
+
+    std::cout << "** Get Normalized ********" << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2.GetNormalized() << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::normalize(vec2)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << vector2 << std::endl;
+    std::cout << "GLM:      " << to_vector4(vec2) << std::endl << std::endl;
+
+    std::cout << "** Normalize ********" << std::endl << std::endl;
+
+    vector2.Normalize();
+    vec2 = glm::normalize(vec2);
+    std::cout << "VDEngine: " << vector2 << std::endl;
+    std::cout << "GLM:      " << to_vector4(vec2) << std::endl;
+
+    vector3.Normalize();
+    vec3 = glm::normalize(vec3);
+    std::cout << "VDEngine: " << vector3 << std::endl;
+    std::cout << "GLM:      " << to_vector4(vec3) << std::endl;
+
+    std::cout << std::endl;
+
+    // -- Lerp --
+
+    std::cout << "** Lerp ********" << std::endl << std::endl;
+
+    vec3 = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 0) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 0.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 0.2f) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 0.2f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 0.5f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 0.9f) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 0.9f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 1.0f) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 1.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, 23) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, 23.0f)) << std::endl << std::endl;
+
+    std::cout << "VDEngine: " << Vector4::Lerp(vector3, vector2, -0.5f) << std::endl;
+    std::cout << "GLM:      " << to_vector4(glm::lerp(vec3, vec2, -0.5f)) << std::endl << std::endl;
+
+    // -- Operators --
+
+    // Vector4::operator==;
+    // Vector4::operator!=;
+
+    // Vector4::operator-;
+
+    // Vector4::operator*;
+    // Vector4::operator+;
+    // Vector4::operator-;
+    // Vector4::operator/;
+
+    // Vector4::operator*=;
+    // Vector4::operator+=;
+    // Vector4::operator-=;
+    // Vector4::operator/=;
 }

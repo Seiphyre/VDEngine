@@ -2,6 +2,10 @@
 
 using namespace VDEngine;
 
+/********************************************************
+ *               -- Constructors --                     *
+ ********************************************************/
+
 Vector4::Vector4()
 {
     x = 0.0f;
@@ -10,41 +14,43 @@ Vector4::Vector4()
     w = 0.0f;
 }
 
-Vector4::Vector4(float x, float y, float z, float w)
+Vector4::Vector4(float p_x, float p_y, float p_z, float p_w)
 {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-    this->w = w;
+    x = p_x;
+    y = p_y;
+    z = p_z;
+    w = p_w;
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- static constructors --------------------------------
 
-Vector4 Vector4::CreateVecZero()
+Vector4 Vector4::VecZero()
 {
     return Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-Vector4 Vector4::CreateVecOne()
+Vector4 Vector4::VecOne()
 {
     return Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector4 Vector4::VecNan()
+{
+    return Vector4(NAN_FLOAT, NAN_FLOAT, NAN_FLOAT, NAN_FLOAT);
+}
 
-// Vector4::operator Vector3() const
-// {
-//      return Vector3(x, y, z);
-// }
-// Vector4::operator Vector2() const
-// {
-//      return Vector2(x, y);
-// }
+/********************************************************
+ *                 -- Operators --                      *
+ ********************************************************/
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- unary minus operator ------------------------------
+
+Vector4 Vector4::operator-() const
+{
+    return (*this * -1.0f);
+}
+
+// -- arithmetic operators ------------------------------
 
 Vector4 Vector4::operator+(const Vector4 & rhs) const
 {
@@ -61,19 +67,14 @@ Vector4 Vector4::operator*(float rhs) const
     return Vector4(x * rhs, y * rhs, z * rhs, w * rhs);
 }
 
-Vector4 VDEngine::operator*(float lhs, const Vector4 & rhs)
-{
-    return Vector4(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs, rhs.w * lhs);
-}
-
-// Vector4 operator*(const Vector4 & lhs, float rhs)
-// {
-//     return Vector4(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs, lhs.w * rhs);
-// }
-
 Vector4 Vector4::operator/(float rhs) const
 {
     return Vector4(x / rhs, y / rhs, z / rhs, w / rhs);
+}
+
+Vector4 VDEngine::operator*(float lhs, const Vector4 & rhs)
+{
+    return Vector4(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs, rhs.w * lhs);
 }
 
 Vector4 VDEngine::operator/(float lhs, const Vector4 & rhs)
@@ -81,17 +82,53 @@ Vector4 VDEngine::operator/(float lhs, const Vector4 & rhs)
     return Vector4(rhs.x / lhs, rhs.y / lhs, rhs.z / lhs, rhs.w / lhs);
 }
 
-// Vector4 operator/(const Vector4 & lhs, float rhs)
-// {
-//     return Vector4(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
-// }
+// -- compound assignment --------------------------------
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector4 & Vector4::operator+=(const Vector4 & rhs)
+{
+    x += rhs.x;
+    y += rhs.y;
+    z += rhs.z;
+    w += rhs.w;
+
+    return *this;
+}
+
+Vector4 & Vector4::operator-=(const Vector4 & rhs)
+{
+    x -= rhs.x;
+    y -= rhs.y;
+    z -= rhs.z;
+    w -= rhs.w;
+
+    return *this;
+}
+
+Vector4 & Vector4::operator*=(float rhs)
+{
+    x *= rhs;
+    y *= rhs;
+    z *= rhs;
+    w *= rhs;
+
+    return *this;
+}
+
+Vector4 & Vector4::operator/=(float rhs)
+{
+    x /= rhs;
+    y /= rhs;
+    z /= rhs;
+    w /= rhs;
+
+    return *this;
+}
+
+// -- comparison operators --------------------------------
 
 bool Vector4::operator==(const Vector4 & rhs) const
 {
-    return (double)Vector4::Distance(*this, rhs) < EPSILON_DOUBLE;
+    return ((double)Vector4::Distance(*this, rhs)) < EPSILON_DOUBLE;
 }
 
 bool Vector4::operator!=(const Vector4 & rhs) const
@@ -99,39 +136,36 @@ bool Vector4::operator!=(const Vector4 & rhs) const
     return !(*this == rhs);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- insertion operators -----------------------------------
 
-// glm::vec4 Vector4::glm_vec4() const
-// {
-//     return glm::vec4(x, y, z, w);
-// }
-
-// void Vector4::Set(const glm::vec4 & vec4)
-// {
-//     x = vec4.x;
-//     y = vec4.y;
-//     z = vec4.z;
-//     w = vec4.w;
-// }
-
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-
-void Vector4::Set(float new_x, float new_y, float new_z, float new_w)
+std::ostream & VDEngine::operator<<(std::ostream & os, const Vector4 & v)
 {
-    x = new_x;
-    y = new_y;
-    z = new_z;
-    w = new_w;
+    os << std::fixed << std::setprecision(5);
+
+    os << "Vec4( " << v.x << "  " << v.y << "  " << v.z << "  " << v.w << " )";
+
+    os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+    return os;
 }
 
-void Vector4::Scale(const Vector4 & scale)
+/********************************************************
+ *                  -- Setters --                       *
+ ********************************************************/
+
+void Vector4::Set(float p_x, float p_y, float p_z, float p_w)
 {
-    x *= scale.x;
-    y *= scale.y;
-    z *= scale.z;
-    w *= scale.w;
+    x = p_x;
+    y = p_y;
+    z = p_z;
+    w = p_w;
+}
+
+void Vector4::Scale(const Vector4 & v1)
+{
+    x *= v1.x;
+    y *= v1.y;
+    z *= v1.z;
+    w *= v1.w;
 }
 
 void Vector4::Normalize()
@@ -147,15 +181,16 @@ void Vector4::Normalize()
     }
     else
     {
-        x /= 0.0f;
-        y /= 0.0f;
-        z /= 0.0f;
-        w /= 0.0f;
+        x = 0.0f;
+        y = 0.0f;
+        z = 0.0f;
+        w = 0.0f;
     }
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *                  -- Getters --                       *
+ ********************************************************/
 
 Vector4 Vector4::GetNormalized() const
 {
@@ -164,7 +199,7 @@ Vector4 Vector4::GetNormalized() const
     if ((double)magnitude > EPSILON_DOUBLE)
         return *this / magnitude;
 
-    return Vector4::CreateVecZero();
+    return Vector4::VecZero();
 }
 
 float Vector4::GetMagnitude() const
@@ -187,37 +222,41 @@ float Vector4::GetSqrMagnitude() const
     return (float)(xx + yy + zz + ww);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *              -- Static functions --                  *
+ ********************************************************/
 
-float Vector4::Dot(const Vector4 & lhs, const Vector4 & rhs)
+float Vector4::Dot(const Vector4 & v1, const Vector4 & v2)
 {
-    return (float)((double)lhs.x * (double)rhs.x + (double)lhs.y * (double)rhs.y + (double)lhs.z * (double)rhs.z +
-                   (double)lhs.w * (double)rhs.w);
+    return (float)((double)v1.x * (double)v2.x + (double)v1.y * (double)v2.y + (double)v1.z * (double)v2.z +
+                   (double)v1.w * (double)v2.w);
 }
 
-float Vector4::Distance(const Vector4 & vec_a, const Vector4 & vec_b)
+float Vector4::Distance(const Vector4 & v1, const Vector4 & v2)
 {
-    Vector4 vector = vec_a - vec_b;
+    Vector4 vector = v1 - v2;
 
     return vector.GetMagnitude();
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector4 Vector4::Lerp(const Vector4 & v1, const Vector4 & v2, float t)
+{
+    t = clamp(t, 0.0f, 1.0f);
 
-// Vector4 Vector4::Lerp(Vector4 a, Vector4 b, float t)
-// {
-//     t = clamp(t, 0.0f, 1.0f);
-//     return Vector4(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t);
-// }
+    return Vector4(v1.x + (v2.x - v1.x) * t, v1.y + (v2.y - v1.y) * t, v1.z + (v2.z - v1.z) * t,
+                   v1.w + (v2.w - v1.w) * t);
+}
 
-// Vector4 Vector4::LerpUnclamped(Vector4 a, Vector4 b, float t)
-// {
-//     return Vector4(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t, a.w + (b.w - a.w) * t);
-// }
+inline bool VDEngine::isnan(const Vector4 & vec)
+{
+    return std::isnan(vec.x) || std::isnan(vec.y) || std::isnan(vec.z) || std::isnan(vec.w);
+}
 
-// Vector4 Vector4::Project(Vector4 a, Vector4 b)
+/********************************************************
+ *                    -- TODO --                        *
+ ********************************************************/
+
+// Vector4 Vector4::ProjectOnVector(const Vector4 & v1, const Vector4 & v2)
 // {
-//     return b * Vector4::Dot(a, b) / Vector4::Dot(b, b);
+//     return v2 * Vector4::Dot(v1, v2) / Vector4::Dot(v2, v2);
 // }

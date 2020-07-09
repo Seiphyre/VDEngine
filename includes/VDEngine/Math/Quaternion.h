@@ -30,7 +30,9 @@
 #ifndef VDENGINE_QUATERNION_H_
 #define VDENGINE_QUATERNION_H_
 
+// Standard c++ libs
 #include <iostream>
+#include <iomanip>
 
 #include "VDEngine/Math/Core.hpp"
 #include "VDEngine/Math/Vector3.h"
@@ -59,7 +61,7 @@ class Quaternion
 
     static Quaternion CreateFromAngleAxis(const Vector3 & axis, const float & angle);
 
-    static Quaternion LookRotation(const Vector3 & forward, const Vector3 & up = Vector3::CreateVecUp());
+    static Quaternion LookRotation(const Vector3 & forward, const Vector3 & up = Vector3::VecUp());
     static Quaternion FromTo(const Vector3 & from, const Vector3 & to);
 
     // -- Setters --
@@ -140,9 +142,16 @@ class Quaternion
     // -- operators --
 
     Quaternion operator=(const Quaternion & q);
+
+    friend std::ostream & operator<<(std::ostream & os, const Quaternion & q);
 };
 
 Vector3 operator*(const Vector3 & v, const Quaternion & q);
+
+inline bool isnan(const Quaternion & quat)
+{
+    return std::isnan(quat.x) || std::isnan(quat.y) || std::isnan(quat.z) || std::isnan(quat.w);
+}
 
 } // namespace VDEngine
 

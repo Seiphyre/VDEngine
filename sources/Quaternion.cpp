@@ -272,7 +272,7 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     // Calculate final orientation forward
     Quaternion rot_forward;
 
-    rot_forward = Quaternion::FromTo(Vector3::CreateVecForward(), look_forward);
+    rot_forward = Quaternion::FromTo(Vector3::VecForward(), look_forward);
 
     // Calculate final orientation up
     Quaternion rot_up;
@@ -280,7 +280,7 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     Vector3 look_right = Vector3::Cross(look_up, look_forward);
     look_up            = Vector3::Cross(look_forward, look_right);
 
-    Vector3 newUp = Vector3::CreateVecUp() * rot_forward;
+    Vector3 newUp = Vector3::VecUp() * rot_forward;
     rot_up        = Quaternion::FromTo(newUp, look_up);
 
     // result
@@ -304,12 +304,12 @@ Quaternion Quaternion::FromTo(const Vector3 & p_from, const Vector3 & p_to)
     else if (from == (to * -1.0f))
     {
         // Find the closest orthogonal vector (world_forward, world_right, world_up)
-        Vector3 ortho = Vector3::CreateVecRight();
+        Vector3 ortho = Vector3::VecRight();
 
         if (fabsf(from.y) < fabsf(from.x))
-            ortho = Vector3::CreateVecUp();
+            ortho = Vector3::VecUp();
         if ((fabsf(from.z) < fabsf(from.y)) && (fabsf(from.z) < fabsf(from.x)))
-            ortho = Vector3::CreateVecForward();
+            ortho = Vector3::VecForward();
 
         // Find axis
         Vector3 axis = Vector3::Cross(from, ortho).GetNormalized();
@@ -485,4 +485,14 @@ Quaternion Quaternion::operator=(const Quaternion & rhs)
     w = rhs.w;
 
     return (*this);
+}
+
+inline std::ostream & operator<<(std::ostream & os, const Quaternion & q)
+{
+    os << std::fixed << std::setprecision(5);
+
+    os << "[x:" << q.x << " y:" << q.y << " z:" << q.z << " w:" << q.w << "]";
+
+    os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+    return os;
 }

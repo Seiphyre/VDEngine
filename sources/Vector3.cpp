@@ -2,6 +2,10 @@
 
 using namespace VDEngine;
 
+/********************************************************
+ *               -- Constructors --                     *
+ ********************************************************/
+
 Vector3::Vector3()
 {
     x = 0.0f;
@@ -9,71 +13,72 @@ Vector3::Vector3()
     z = 0.0f;
 }
 
-Vector3::Vector3(float x, float y, float z)
+Vector3::Vector3(float p_x, float p_y, float p_z)
 {
-    this->x = x;
-    this->y = y;
-    this->z = z;
+    x = p_x;
+    y = p_y;
+    z = p_z;
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- static constructors --------------------------------
 
-Vector3 Vector3::CreateVecZero()
+Vector3 Vector3::VecZero()
 {
     return Vector3(0.0f, 0.0f, 0.0f);
 }
 
-Vector3 Vector3::CreateVecOne()
+Vector3 Vector3::VecOne()
 {
     return Vector3(1.0f, 1.0f, 1.0f);
 }
 
-Vector3 Vector3::CreateVecForward()
+Vector3 Vector3::VecForward()
 {
     return Vector3(0.0f, 0.0f, 1.0f);
 }
 
-Vector3 Vector3::CreateVecBack()
+Vector3 Vector3::VecBack()
 {
     return Vector3(0.0f, 0.0f, -1.0f);
 }
 
-Vector3 Vector3::CreateVecUp()
+Vector3 Vector3::VecUp()
 {
     return Vector3(0.0f, 1.0f, 0.0f);
 }
 
-Vector3 Vector3::CreateVecDown()
+Vector3 Vector3::VecDown()
 {
     return Vector3(0.0f, -1.0f, 0.0f);
 }
 
-Vector3 Vector3::CreateVecLeft()
+Vector3 Vector3::VecLeft()
 {
     return Vector3(-1.0f, 0.0f, 0.0f);
 }
 
-Vector3 Vector3::CreateVecRight()
+Vector3 Vector3::VecRight()
 {
     return Vector3(1.0f, 0.0f, 0.0f);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector3 Vector3::VecNan()
+{
+    return Vector3(NAN_FLOAT, NAN_FLOAT, NAN_FLOAT);
+}
 
-// Vector3::operator Vector4() const
-// {
-//     return Vector4(x, y, z, 0.0f);
-// }
+/********************************************************
+ *                 -- Operators --                      *
+ ********************************************************/
 
-// Vector3::operator Vector2() const
-// {
-//     return Vector2(x, y);
-// }
+// -- unary minus operator ------------------------------
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector3 Vector3::operator-() const
+{
+    return (*this * -1.0f);
+}
+
+// -- arithmetic operators ------------------------------
 
 Vector3 Vector3::operator+(const Vector3 & rhs) const
 {
@@ -83,7 +88,7 @@ Vector3 Vector3::operator+(const Vector3 & rhs) const
 
 Vector3 Vector3::operator-(const Vector3 & rhs) const
 {
-    Vector3 res(x + rhs.x, y + rhs.y, z + rhs.z);
+    Vector3 res(x - rhs.x, y - rhs.y, z - rhs.z);
     return res;
 }
 
@@ -93,11 +98,11 @@ Vector3 Vector3::operator*(float rhs) const
     return res;
 }
 
-// Vector3 operator*(const Vector3 & vector, float scalar)
-// {
-//     Vector3 res(vector.x * scalar, vector.y * scalar, vector.z * scalar);
-//     return res;
-// }
+Vector3 Vector3::operator/(float rhs) const
+{
+    Vector3 res(x / rhs, y / rhs, z / rhs);
+    return res;
+}
 
 Vector3 VDEngine::operator*(float lhs, const Vector3 & rhs)
 {
@@ -105,30 +110,55 @@ Vector3 VDEngine::operator*(float lhs, const Vector3 & rhs)
     return res;
 }
 
-Vector3 Vector3::operator/(float rhs) const
-{
-    Vector3 res(x / rhs, y / rhs, z / rhs);
-    return res;
-}
-
-// Vector3 operator/(const Vector3 & vector, float scalar)
-// {
-//     Vector3 res(vector.x * scalar, vector.y * scalar, vector.z * scalar);
-//     return res;
-// }
-
 Vector3 VDEngine::operator/(float lhs, const Vector3 & rhs)
 {
-    Vector3 res(rhs.x * lhs, rhs.y * lhs, rhs.z * lhs);
+    Vector3 res(rhs.x / lhs, rhs.y / lhs, rhs.z / lhs);
     return res;
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- compound assignment --------------------------------
+
+Vector3 & Vector3::operator+=(const Vector3 & rhs)
+{
+    x += rhs.x;
+    y += rhs.y;
+    z += rhs.z;
+
+    return *this;
+}
+
+Vector3 & Vector3::operator-=(const Vector3 & rhs)
+{
+    x -= rhs.x;
+    y -= rhs.y;
+    z -= rhs.z;
+
+    return *this;
+}
+
+Vector3 & Vector3::operator*=(float rhs)
+{
+    x *= rhs;
+    y *= rhs;
+    z *= rhs;
+
+    return *this;
+}
+
+Vector3 & Vector3::operator/=(float rhs)
+{
+    x /= rhs;
+    y /= rhs;
+    z /= rhs;
+
+    return *this;
+}
+
+// -- comparison operators --------------------------------
 
 bool Vector3::operator==(const Vector3 & rhs) const
 {
-    return (double)Vector3::Distance(*this, rhs) < EPSILON_DOUBLE;
+    return ((double)Vector3::Distance(*this, rhs)) < EPSILON_DOUBLE;
 }
 
 bool Vector3::operator!=(const Vector3 & rhs) const
@@ -136,23 +166,21 @@ bool Vector3::operator!=(const Vector3 & rhs) const
     return !(*this == rhs);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+// -- insertion operators ---------------------------------
 
-// glm::vec3 Vector3::glm_vec3() const
-// {
-//     return glm::vec3(x, y, z);
-// }
+std::ostream & VDEngine::operator<<(std::ostream & os, const Vector3 & v)
+{
+    os << std::fixed << std::setprecision(5);
 
-// void Vector3::Set(const glm::vec3 & vec3)
-// {
-//     x = vec3.x;
-//     y = vec3.y;
-//     z = vec3.z;
-// }
+    os << "Vec3( " << v.x << "  " << v.y << "  " << v.z << " )";
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+    os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
+    return os;
+}
+
+/********************************************************
+ *                  -- Setters --                       *
+ ********************************************************/
 
 void Vector3::Set(float new_x, float new_y, float new_z)
 {
@@ -186,8 +214,9 @@ void Vector3::Normalize()
     }
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *                  -- Getters --                       *
+ ********************************************************/
 
 float Vector3::GetMagnitude() const
 {
@@ -195,7 +224,7 @@ float Vector3::GetMagnitude() const
     double yy = (double)y * (double)y;
     double zz = (double)z * (double)z;
 
-    return sqrt((float)(xx + yy + zz));
+    return sqrt(xx + yy + zz);
 }
 
 float Vector3::GetSqrMagnitude() const
@@ -214,33 +243,45 @@ Vector3 Vector3::GetNormalized() const
     if ((double)magnitude > EPSILON_DOUBLE)
         return *this / magnitude;
 
-    return Vector3::CreateVecZero();
+    return Vector3::VecZero();
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+/********************************************************
+ *              -- Static functions --                  *
+ ********************************************************/
 
-Vector3 Vector3::Cross(const Vector3 & lhs, const Vector3 & rhs)
+Vector3 Vector3::Cross(const Vector3 & v1, const Vector3 & v2)
 {
-    return Vector3((float)((double)lhs.y * (double)rhs.z - (double)lhs.z * (double)rhs.y),
-                   (float)((double)lhs.z * (double)rhs.x - (double)lhs.x * (double)rhs.z),
-                   (float)((double)lhs.x * (double)rhs.y - (double)lhs.y * (double)rhs.x));
+    return Vector3((float)((double)v1.y * (double)v2.z - (double)v1.z * (double)v2.y),
+                   (float)((double)v1.z * (double)v2.x - (double)v1.x * (double)v2.z),
+                   (float)((double)v1.x * (double)v2.y - (double)v1.y * (double)v2.x));
 }
 
-float Vector3::Dot(const Vector3 & lhs, const Vector3 & rhs)
+float Vector3::Dot(const Vector3 & v1, const Vector3 & v2)
 {
-    return (float)((double)lhs.x * (double)rhs.x + (double)lhs.y * (double)rhs.y + (double)lhs.z * (double)rhs.z);
+    return (float)((double)v1.x * (double)v2.x + (double)v1.y * (double)v2.y + (double)v1.z * (double)v2.z);
 }
 
-float Vector3::Distance(const Vector3 & vec_a, const Vector3 & vec_b)
+float Vector3::Distance(const Vector3 & v1, const Vector3 & v2)
 {
-    Vector3 vector3 = vec_a - vec_b;
+    Vector3 vector3 = v2 - v1;
 
     return vector3.GetMagnitude();
 }
 
-float Vector3::Angle(const Vector3 & from, const Vector3 & to)
+float Vector3::Angle(const Vector3 & p_from, const Vector3 & p_to)
 {
+    Vector3 from = p_from.GetNormalized();
+    Vector3 to   = p_to.GetNormalized();
+
+    if (from == Vector3::VecZero() || to == Vector3::VecZero())
+    {
+        std::cout << "[Warning][Vector3::Angle] Cannot calculate the angle between FROM and TO, because FROM or TO is "
+                     "Vector3(0, 0, 0) or too small to be normalized."
+                  << std::endl;
+        return 0;
+    }
+
     float dot_product         = Vector3::Dot(from.GetNormalized(), to.GetNormalized());
     float dot_product_clamped = clamp(dot_product, -1.0f, 1.0f);
     float result              = acos(dot_product_clamped);
@@ -248,41 +289,59 @@ float Vector3::Angle(const Vector3 & from, const Vector3 & to)
     return to_degrees(result);
 }
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
+Vector3 Vector3::Lerp(const Vector3 & v1, const Vector3 & v2, float t)
+{
+    t = clamp(t, 0.0f, 1.0f);
 
-// Vector3 Vector3::Reflect(Vector3 inDirection, Vector3 inNormal)
+    return Vector3(v1.x + (v2.x - v1.x) * t, v1.y + (v2.y - v1.y) * t, v1.z + (v2.z - v1.z) * t);
+}
+
+inline bool VDEngine::isnan(const Vector3 & vec)
+{
+    return std::isnan(vec.x) || std::isnan(vec.y) || std::isnan(vec.z);
+}
+
+/********************************************************
+ *                    -- TODO --                        *
+ ********************************************************/
+
+// Vector3 Vector3::Reflect(const Vector3 & in_direction, const Vector3 & normal)
 // {
-//     return -2.0f * Vector3::Dot(inNormal, inDirection) * inNormal + inDirection;
+//     return -2.0f * Vector3::Dot(normal, in_direction) * normal + in_direction;
 // }
 
-// Vector3 Vector3::Project(Vector3 vector, Vector3 onNormal)
+// Vector3 Vector3::ProjectOnVector(const Vector3 & v1, const Vector3 & v2)
 // {
-//     float num = Vector3::Dot(onNormal, onNormal);
+//     float num = Vector3::Dot(v2, v2);
 
 //     if ((double)num < EPSILON_DOUBLE)
 //         return Vector3::CreateVecZero();
 
-//     return onNormal * Vector3::Dot(vector, onNormal) / num;
+//     return v2 * Vector3::Dot(v1, v2) / num;
 // }
 
-// Vector3 Vector3::ProjectOnPlane(Vector3 vector, Vector3 planeNormal)
+// Vector3 Vector3::ProjectOnPlane(Vector3 vector, Vector3 plane_normal)
 // {
-//     return vector - Vector3::Project(vector, planeNormal);
+//     return vector - Vector3::Project(vector, plane_normal);
 // }
 
-// static Vector3 Lerp(Vector3 a, Vector3 b, float t)
+// static Vector3 Slerp(const Vector3 & v1, const Vector3 & v2, float t)
 // {
-//   t = Mathf.Clamp01(t);
-//   return Vector3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
+//     // https://gabormakesgames.com/blog_vectors_interpolate.html
+
+//     Vector3 from = v1.GetNormalized();
+//     Vector3 to   = v2.GetNormalized();
+
+//     t = clamp(t, 0.0f, 1.0);
+
+//     float theta     = to_radians(Vector3::Angle(from, to));
+//     float sin_theta = sin(theta);
+
+//     float a = sin((1.0 - t) * theta) / sin_theta;
+//     float b = sin(t * theta) / sin_theta;
+
+//     return (from * a) + (to * b);
 // }
 
-// static Vector3 LerpUnclamped(Vector3 a, Vector3 b, float t)
-// {
-//   return Vector3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
-// }
-
-// static Vector3 Slerp(Vector3 a, Vector3 b, float t)
-// static Vector3 SlerpUnclamped(Vector3 a, Vector3 b, float t)
-// static void OrthoNormalize(Vector3 & normal, Vector3 & tangent)
-// static void OrthoNormalize(Vector3 & normal, Vector3 & tangent, Vector3 & binormal)
+// static void OrthoNormalize(Vector3 & v1, Vector3 & v2)
+// static void OrthoNormalize(Vector3 & v1, Vector3 & v2, Vector3 & v3)

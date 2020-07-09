@@ -22,9 +22,9 @@ inline Matrix4::Matrix4(float m00, float m01, float m02, float m03, float m04, f
 
 Matrix4 Matrix4::CreateRotationMatrix(const Quaternion & quat)
 {
-    Vector3 right   = Vector3::CreateVecRight() * quat;   // Right basis vector
-    Vector3 up      = Vector3::CreateVecUp() * quat;      // Up basis vector
-    Vector3 forward = Vector3::CreateVecForward() * quat; // Forward basis vector
+    Vector3 right   = Vector3::VecRight() * quat;   // Right basis vector
+    Vector3 up      = Vector3::VecUp() * quat;      // Up basis vector
+    Vector3 forward = Vector3::VecForward() * quat; // Forward basis vector
 
     Matrix4 mat;
 

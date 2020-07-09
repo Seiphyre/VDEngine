@@ -2,6 +2,7 @@
 #define VDENGINE_CORE_H_
 
 // Standard C++ libs
+#include <cmath>
 #include <math.h>
 #include <limits>
 
@@ -10,6 +11,9 @@ namespace VDEngine
 
 #define EPSILON_DOUBLE std::numeric_limits<double>::epsilon()
 #define EPSILON_FLOAT std::numeric_limits<float>::epsilon()
+
+#define NAN_FLOAT std::numeric_limits<float>::quiet_NaN()
+#define NAN_DOUBLE std::numeric_limits<double>::quiet_NaN()
 
 inline float min(float x, float y)
 {
