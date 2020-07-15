@@ -27,8 +27,13 @@
 #include "metaStuff/Meta.h"
 #include "nlohmann/json.hpp"
 #include "VDEngine/Serialization/JsonCast.h"
-#include "VDEngine/Math/Vectors.hpp"
 
+#include "VDEngine/Math/Vectors.hpp"
+#include "VDEngine/Math/Quaternion.h"
+#include "VDEngine/Math/Matrix4.h"
+#include "VDEngine/Math/GLMConverter.hpp"
+
+#include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/vector_angle.hpp"
 
 using namespace VDEngine;
@@ -205,7 +210,8 @@ int main(int argc, char * argv[])
     // GameObject * go = new GameObject();
 
     // std::cout << "Members of class GameObject:\n";
-    // meta::doForAllMembers<GameObject>([](const auto & member) { std::cout << "* " << member.getName() << '\n'; });
+    // meta::doForAllMembers<GameObject>([](const auto & member) { std::cout << "* " << member.getName() << '\n';
+    // });
 
     // // if (meta::hasMember<GameObject>("name"))
     // // {
@@ -221,7 +227,8 @@ int main(int argc, char * argv[])
     //     // if (dynamic_cast<Transform *>(meta::getMemberValue<MemberT>(light2_go, member.getName())))
     //     //     std::cout << "Transform" << std::endl;
 
-    //     std::cout << "* " << member.getName() << &(member.get(*go)) << ", type = " << typeid(MemberT).name() << '\n';
+    //     std::cout << "* " << member.getName() << &(member.get(*go)) << ", type = " << typeid(MemberT).name() <<
+    //     '\n';
     // });
 
     // auto name = meta::getMemberValue<std::string>(light2_go, "name");
@@ -268,7 +275,8 @@ int main(int argc, char * argv[])
             // std::cout << "Draw [" << i << "]." << std::endl;
             // // std::cout << "name :" << backpack_renderers[i]->GetGameObject()->name << "." << std::endl;
             // // if (backpack_renderers[i]->GetGameObject()->GetParent() != nullptr)
-            // //     std::cout << "Parent_name :" << backpack_renderers[i]->GetGameObject()->GetParent()->name << "."
+            // //     std::cout << "Parent_name :" << backpack_renderers[i]->GetGameObject()->GetParent()->name <<
+            // "."
             // //               << std::endl;
             backpack_renderers[i]->Draw(camera, {light, light2});
         }
@@ -743,4 +751,442 @@ void test_vector4()
     // Vector4::operator+=;
     // Vector4::operator-=;
     // Vector4::operator/=;
+}
+
+/*void test_quaternion()
+{
+    Quaternion vde_q1 = Quaternion();
+    Quaternion vde_q2 = Quaternion(1, 0, 0, 0);
+
+    Quaternion vde_q3 = Quaternion::CreateFromEuler(Vector3(0, 0, 0)); // zero
+    Quaternion vde_q4 = Quaternion::CreateFromEuler(Vector3(0, 90, 90));
+    Quaternion vde_q5 = Quaternion::CreateFromEuler(Vector3(260, 185, -270)); // singularité x
+    Quaternion vde_q6 = Quaternion::CreateFromEuler(Vector3(36, 720, 192));   // y > 360
+    Quaternion vde_q7 = Quaternion::CreateFromEuler(Vector3(-36, -720, 192)); // x negative + y < -360
+
+    Quaternion vde_q8  = Quaternion::CreateFromAxisAngle(Vector3(90, 0, 45), 45);
+    Quaternion vde_q9  = Quaternion::CreateFromAxisAngle(Vector3(0, 0, 0), 90);
+    Quaternion vde_q10 = Quaternion::CreateFromAxisAngle(Vector3(0.5, 0, 0.5), 20);
+    Quaternion vde_q11 = Quaternion::CreateFromAxisAngle(Vector3(1, 0, 0), 2000);
+
+    Quaternion vde_q12 = Quaternion(vde_q4);
+
+    Vector3 axis_8, axis_9, axis_10, axis_11;
+    float   angle_8, angle_9, angle_10, angle_11;
+
+    vde_q8.GetAxisAngle(axis_8, angle_8);
+    vde_q9.GetAxisAngle(axis_9, angle_9);
+    vde_q10.GetAxisAngle(axis_10, angle_10);
+    vde_q11.GetAxisAngle(axis_11, angle_11);
+
+    std::cout << "-- FromTo --" << std::endl << std::endl;
+
+    Vector3 target1(1, 1, 1);
+    Vector3 target2(1, 34, 4);
+    Vector3 target3(-11, 0, -40);
+
+    target1.Normalize();
+    target2.Normalize();
+    target3.Normalize();
+
+    glm::quat q1 = glm::quatLookAt(to_glm_vec3(target1), glm::vec3(0, 1, 0));
+    glm::quat q2 = glm::quatLookAt(to_glm_vec3(target2), glm::vec3(0, 1, 0));
+    glm::quat q3 = glm::quatLookAt(to_glm_vec3(target3), glm::vec3(0, 1, 0));
+
+    // target1.Scale(Vector3(1, 1, -1));
+    // target2.Scale(Vector3(1, 1, -1));
+    // target3.Scale(Vector3(1, 1, -1));
+
+    std::cout << "vde_q1: " << Quaternion::LookRotation(target1) << std::endl;
+    std::cout << "glm:    " << q1.x << "  " << q1.y << "  " << q1.z << "  " << q1.w << std::endl << std::endl;
+
+    std::cout << "vde_q2: " << Quaternion::LookRotation(target2) << std::endl;
+    std::cout << "glm:    " << q2.x << "  " << q2.y << "  " << q2.z << "  " << q2.w << std::endl << std::endl;
+
+    std::cout << "vde_q3: " << Quaternion::LookRotation(target3) << std::endl;
+    std::cout << "glm:    " << q3.x << "  " << q3.y << "  " << q3.z << "  " << q3.w << std::endl << std::endl;
+
+    std::cout << "vde_q3: " << Quaternion::LookRotation(target1).GetEuler() << std::endl;
+    Quaternion q4(q1.x, q1.y, q1.z, q1.w);
+    std::cout << "glm:    " << q4.GetEuler() << std::endl << std::endl;
+
+    // std::cout << vde_q4.GetInversed() * Vector3::VecForward() << std::endl; // <===== PROBLEM ?
+    // std::cout << to_vector3(glm::vec3(0, 0, 1) * glm::quat(vde_q4.w, vde_q4.x, vde_q4.y, vde_q4.z))
+    //           << std::endl; // <===== PROBLEM ?
+
+    // std::cout << "vde_q1:     " << Quaternion::FromTo(Vector3::VecForward(), vde_q4.GetForward()) << std::endl;
+    // std::cout << "validation: " << Quaternion::FromTo(Vector3::VecForward(), vde_q4.GetForward()).GetEuler()
+    //           << std::endl
+    //           << std::endl;
+
+    // std::cout << "-- Look Rotation --" << std::endl << std::endl;
+
+    Vector3 q_forward = Vector3(1, 1, 1);
+    // q_forward.Scale(Vector3(-1, 1, 1));
+    Quaternion qq = Quaternion(-0.3, 0.4, 0.1, 0.9); // Quaternion::LookRotation(q_forward);
+
+    glm::quat qq1 = glm::quat();
+    qq1.x         = -0.32506;
+    qq1.y         = 0.32506;
+    qq1.z         = 0;
+    qq1.w         = 0.88807;
+
+    glm::quat qq2 = glm::quat();
+    qq2.x         = 0.07536;
+    qq2.y         = 0.07536;
+    qq2.z         = 0.07536;
+    qq2.w         = 0.99144;
+
+    glm::quat qq3 = qq2 * qq1;
+
+    std::cout << "vde_q1:     " << qq.GetEuler() << std::endl;
+    std::cout << "glm:    " << qq3.x << "  " << qq3.y << "  " << qq3.z << "  " << qq3.w << std::endl << std::endl;
+
+    // std::cout << "vde_q1:     " << Vector3::Cross(Vector3(2, 4, 8), Vector3(20, 30, 40)) << std::endl;
+    // std::cout << "vde_q1:     " << Vector3::Cross(Vector3(20, 30, 40), Vector3(2, 4, 8)) << std::endl;
+
+    // std::cout << "-- Basic constructors --" << std::endl << std::endl;
+
+    // std::cout << "vde_q1:     " << vde_q1 << std::endl;
+    // std::cout << "validation: " << std::endl << std::endl;
+
+    // std::cout << "vde_q2:     " << vde_q2 << std::endl;
+    // std::cout << "validation: " << std::endl << std::endl;
+
+    // std::cout << "vde_q12:    " << vde_q12 << std::endl;
+    // std::cout << "validation: " << std::endl << std::endl;
+
+    // std::cout << "-- Euler constructors --" << std::endl << std::endl;
+
+    // std::cout << "vde_q3:     " << vde_q3 << std::endl;
+    // std::cout << "validation: Quat( 0.00000  0.00000  0.00000  1.00000 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q4:     " << vde_q4 << std::endl;
+    // std::cout << "validation: Quat( -0.50000  0.50000  0.50000  0.50000 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q5:     " << vde_q5 << std::endl;
+    // std::cout << "validation: Quat( -0.43046  0.47771  -0.56099  0.52133 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q6:     " << vde_q6 << std::endl;
+    // std::cout << "validation: Quat( -0.03230  0.30732  0.94585  -0.09941 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q7:     " << vde_q7 << std::endl;
+    // std::cout << "validation: Quat( 0.03230  -0.30732  0.94585  -0.09941 )" << std::endl << std::endl;
+
+    // std::cout << "-- Euler Getters --" << std::endl << std::endl;
+
+    // std::cout << "euler_q3:   " << vde_q3.GetEuler() << std::endl;
+    // std::cout << "validation: Vec3( 0.00000  0.00000  0.00000 )" << std::endl << std::endl;
+
+    // std::cout << "euler_q4:   " << vde_q4.GetEuler() << std::endl;
+    // std::cout << "validation: Vec3( 0.00000  90.00000  90.00000 )" << std::endl << std::endl;
+
+    // std::cout << "euler_q5:   " << vde_q5.GetEuler() << std::endl;
+    // std::cout << "validation: Vec3( 280.00000  5.00000  270.00000 )" << std::endl << std::endl;
+
+    // std::cout << "euler_q6:   " << vde_q6.GetEuler() << std::endl;
+    // std::cout << "validation: Vec3( 36.00000  0.00003  192.00002 )" << std::endl << std::endl;
+
+    // std::cout << "euler_q7:   " << vde_q7.GetEuler() << std::endl;
+    // std::cout << "validation: Vec3( 324.00000  360.00000  192.00000 )" << std::endl << std::endl;
+
+    // std::cout << "-- Axis angle constructors --" << std::endl << std::endl;
+
+    // std::cout << "vde_q8:     " << vde_q8 << std::endl;
+    // std::cout << "validation: Quat( 0.34228  0.00000  0.17114  0.92388 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q9:     " << vde_q9 << std::endl;
+    // std::cout << "validation: Quat( 0.00000  0.00000  0.00000  1.00000 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q10:    " << vde_q10 << std::endl;
+    // std::cout << "validation: Quat( 0.12279  0.00000  0.12279  0.98481 )" << std::endl << std::endl;
+
+    // std::cout << "vde_q11:    " << vde_q11 << std::endl;
+    // std::cout << "validation: Quat( -0.98481  0.00000  0.00000  0.17365 )" << std::endl << std::endl;
+
+    // std::cout << "-- Axis angle getters --" << std::endl << std::endl;
+
+    // std::cout << "axis_8:     " << axis_8 << std::endl;
+    // std::cout << "validation: Vec3( 0.89443  0.00000  0.44721 )" << std::endl << std::endl;
+
+    // std::cout << "angle_8:    " << angle_8 << std::endl;
+    // std::cout << "validation: 45" << std::endl << std::endl;
+
+    // std::cout << "axis_9:     " << axis_9 << std::endl;
+    // std::cout << "validation: Vec3( 0.00000  0.00000  0.00000 )" << std::endl << std::endl;
+
+    // std::cout << "angle_9:    " << angle_9 << std::endl;
+    // std::cout << "validation: 0" << std::endl << std::endl;
+
+    // std::cout << "axis_10:    " << axis_10 << std::endl;
+    // std::cout << "validation: Vec3( 0.70711  0.00000  0.70711 )" << std::endl << std::endl;
+
+    // std::cout << "angle_10:   " << angle_10 << std::endl;
+    // std::cout << "validation: 20" << std::endl << std::endl;
+
+    // std::cout << "axis_11:    " << axis_11 << std::endl;
+    // std::cout << "validation: Vec3( -1.00000  0.00000  0.00000 )" << std::endl << std::endl;
+
+    // std::cout << "angle_11:   " << angle_11 << std::endl;
+    // std::cout << "validation: 160" << std::endl << std::endl;
+}*/
+
+void test_matrix()
+{
+    // --------------------------------------
+
+    // Vector3 t1 = Vector3(1, 1, 1);
+    // Vector3 t2 = Vector3(10, 0, 42);
+    // Vector3 t3 = Vector3(5, -20, 42);
+    // Vector3 t4;
+    // Vector3 t5;
+    // Vector3 t6;
+
+    // Quaternion r0 = Quaternion::CreateFromEuler(Vector3(-300, -200, -100)); // mat to quat : case 0
+    // Quaternion r1 = Quaternion::CreateFromEuler(Vector3(0, 90, 90));        // mat to quat : case 1
+    // Quaternion r2 = Quaternion::CreateFromEuler(Vector3(-10, 205, 50));     // mat to quat : case 3
+    // Quaternion r3 = Quaternion::CreateFromEuler(Vector3(-100, -200, -300)); // mat to quat : case 4
+    // Quaternion r4;
+    // Quaternion r5;
+    // Quaternion r6;
+
+    // Vector3 s1 = Vector3(1, 1, 1);
+    // Vector3 s2 = Vector3(5, 5, 5);
+    // Vector3 s3 = Vector3(20, 3, 47);
+    // Vector3 s4;
+    // Vector3 s5;
+    // Vector3 s6;
+
+    // -------------------------------------
+
+    // -- Compose / Decompose -------
+
+    // Matrix4 m0 = Matrix4::ComposeTRS(t1, r0, s1);
+    // Matrix4 m1 = Matrix4::ComposeTRS(t1, r1, s1);
+    // Matrix4 m2 = Matrix4::ComposeTRS(t2, r2, s2);
+    // Matrix4 m3 = Matrix4::ComposeTRS(t3, r3, s3);
+
+    // std::cout << "-- ComposeTRS ---" << std::endl << std::endl;
+
+    // std::cout << "m0 : " << std::endl << m0 << std::endl << std::endl;
+    // std::cout << "m1 : " << std::endl << m1 << std::endl << std::endl;
+    // std::cout << "m2 : " << std::endl << m2 << std::endl << std::endl;
+    // std::cout << "m3 : " << std::endl << m3 << std::endl << std::endl;
+
+    // std::cout << "-- AffineDecompose ---" << std::endl << std::endl;
+
+    // Matrix4::AffineDecompose(m0, t4, r4, s4);
+    // std::cout << "m0 -> translation: " << t4 << std::endl;
+    // std::cout << "m2 -> rotation:    " << r0 << std::endl;
+    // std::cout << "m0 -> rotation:    " << r4 << std::endl;
+    // std::cout << "m0 -> scale:       " << s4 << std::endl << std::endl;
+
+    // Matrix4::AffineDecompose(m1, t4, r4, s4);
+    // std::cout << "m1 -> translation: " << t4 << std::endl;
+    // std::cout << "m2 -> rotation:    " << r1 << std::endl;
+    // std::cout << "m1 -> rotation:    " << r4 << std::endl;
+    // std::cout << "m1 -> scale:       " << s4 << std::endl << std::endl;
+
+    // Matrix4::AffineDecompose(m2, t5, r5, s5);
+    // std::cout << "m2 -> translation: " << t5 << std::endl;
+    // std::cout << "m2 -> rotation:    " << r2 << std::endl;
+    // std::cout << "m2 -> rotation:    " << r5 << std::endl;
+    // std::cout << "m2 -> scale:       " << s5 << std::endl << std::endl;
+
+    // Matrix4::AffineDecompose(m3, t6, r6, s6);
+    // std::cout << "m3 -> translation: " << t6 << std::endl;
+    // std::cout << "m3 -> rotation:    " << r3.GetEuler() << std::endl;
+    // std::cout << "m3 -> rotation:    " << r6.GetEuler() << std::endl;
+    // std::cout << "m3 -> scale:       " << s6 << std::endl << std::endl;
+
+    // -- END Compose / Decomponse --
+
+    // -- Transpose / Invert / GetDerminant ------------
+
+    // Matrix4   m0     = Matrix4::ComposeTRS(t1, r0, s1);
+    // glm::mat4 glm_m0 = to_glm_mat4(m0);
+    // Matrix4   m1     = Matrix4::ComposeTRS(t1, r1, s1);
+    // glm::mat4 glm_m1 = to_glm_mat4(m1);
+    // Matrix4   m2     = Matrix4::ComposeTRS(t2, r2, s2);
+    // glm::mat4 glm_m2 = to_glm_mat4(m2);
+    // Matrix4   m3     = Matrix4::ComposeTRS(t3, r3, s3);
+    // glm::mat4 glm_m3 = to_glm_mat4(m3);
+
+    // //
+
+    // std::cout << "-- Transpose ---" << std::endl << std::endl;
+
+    // std::cout << "m0:     " << std::endl << m0.GetTransposed() << std::endl;
+    // std::cout << "glm_m0: " << std::endl << to_matrix4(glm::transpose(glm_m0)) << std::endl << std::endl;
+
+    // std::cout << "m1:     " << std::endl << m1.GetTransposed() << std::endl;
+    // std::cout << "glm_m1: " << std::endl << to_matrix4(glm::transpose(glm_m1)) << std::endl << std::endl;
+
+    // std::cout << "m2:     " << std::endl << m2.GetTransposed() << std::endl;
+    // std::cout << "glm_m2: " << std::endl << to_matrix4(glm::transpose(glm_m2)) << std::endl << std::endl;
+
+    // std::cout << "m3:     " << std::endl << m3.GetTransposed() << std::endl;
+    // std::cout << "glm_m3: " << std::endl << to_matrix4(glm::transpose(glm_m3)) << std::endl << std::endl;
+
+    // //
+
+    // std::cout << "-- Invert ---" << std::endl << std::endl;
+
+    // std::cout << "m0:     " << std::endl << m0.GetInverted() << std::endl;
+    // std::cout << "glm_m0: " << std::endl << to_matrix4(glm::inverse(glm_m0)) << std::endl << std::endl;
+
+    // std::cout << "m1:     " << std::endl << m1.GetInverted() << std::endl;
+    // std::cout << "glm_m1: " << std::endl << to_matrix4(glm::inverse(glm_m1)) << std::endl << std::endl;
+
+    // std::cout << "m2:     " << std::endl << m2.GetInverted() << std::endl;
+    // std::cout << "glm_m2: " << std::endl << to_matrix4(glm::inverse(glm_m2)) << std::endl << std::endl;
+
+    // std::cout << "m3: " << std::endl << m3.GetInverted() << std::endl;
+    // std::cout << "glm_m3: " << std::endl << to_matrix4(glm::inverse(glm_m3)) << std::endl << std::endl;
+
+    // //
+
+    // std::cout << "-- GetDeterminant ---" << std::endl << std::endl;
+
+    // std::cout << "m0:     " << m0.GetDeterminant() << std::endl;
+    // std::cout << "glm_m0: " << glm::determinant(glm_m0) << std::endl << std::endl;
+
+    // std::cout << "m1:     " << m1.GetDeterminant() << std::endl;
+    // std::cout << "glm_m1: " << glm::determinant(glm_m1) << std::endl << std::endl;
+
+    // std::cout << "m2:     " << m2.GetDeterminant() << std::endl;
+    // std::cout << "glm_m2: " << glm::determinant(glm_m2) << std::endl << std::endl;
+
+    // std::cout << "m3:     " << m3.GetDeterminant() << std::endl;
+    // std::cout << "glm_m3: " << glm::determinant(glm_m3) << std::endl << std::endl;
+
+    // -- END Transpose / Invert / GetDerminant -------
+
+    // -- perspective / ortho -------------------------
+
+    // fov negative             V
+    // fov = 0 (exception)      V
+    // aspect = 0 (exception)   V
+    // aspect negative          V
+    // aspect [0, 1]            V
+    // aspect > 1               V
+    // near > far               V
+    // near negative            V
+    // far negative             V
+    // near = far (exception)   V
+
+    // Matrix4   m0     = Matrix4::CreatePerspective(90, -0.5f, 1, -100);
+    // glm::mat4 glm_m0 = glm::perspective(to_radians(90.0f), -0.5f, 1.0f, -100.0f);
+    // Matrix4   m1     = Matrix4::CreatePerspective(30.0f, 12.7f, 10.0f, 2000.0f);
+    // glm::mat4 glm_m1 = glm::perspective(to_radians(30.0f), 12.7f, 10.0f, 2000.0f);
+    // Matrix4   m2     = Matrix4::CreatePerspective(30.0f, 12.7f, -10.0f, 2000.0f);
+    // glm::mat4 glm_m2 = glm::perspective(to_radians(30.0f), 12.7f, -10.0f, 2000.0f);
+    // Matrix4   m3     = Matrix4::CreatePerspective(30.0f, 0.0f, 100.0f, 1.0f);
+    // glm::mat4 glm_m3 = glm::perspective(to_radians(30.0f), 0.0f, 100.0f, 1.0f);
+    // Matrix4   m4     = Matrix4::CreatePerspective(45.0f, 1.0f, 1.0f, 1.0f);
+    // glm::mat4 glm_m4 = glm::perspective(to_radians(45.0f), 1.0f, 1.0f, 1.0f);
+
+    // //
+
+    // std::cout << "-- perpective ---" << std::endl << std::endl;
+
+    // std::cout << "m0:     " << std::endl << m0 << std::endl;
+    // std::cout << "glm_m0: " << std::endl << to_matrix4(glm_m0) << std::endl << std::endl;
+
+    // std::cout << "m1:     " << std::endl << m1 << std::endl;
+    // std::cout << "glm_m1: " << std::endl << to_matrix4(glm_m1) << std::endl << std::endl;
+
+    // std::cout << "m2:     " << std::endl << m2 << std::endl;
+    // std::cout << "glm_m2: " << std::endl << to_matrix4(glm_m2) << std::endl << std::endl;
+
+    // std::cout << "m3:     " << std::endl << m3 << std::endl;
+    // std::cout << "glm_m3: " << std::endl << to_matrix4(glm_m3) << std::endl << std::endl;
+
+    // std::cout << "m4:     " << std::endl << m4 << std::endl;
+    // std::cout << "glm_m4: " << std::endl << to_matrix4(glm_m4) << std::endl << std::endl;
+
+    // ------------------------------------------
+
+    // near > far               V
+    // near negative            V
+    // far negative             V
+    // left > right             V
+    // left negative            V
+    // right negative           V
+    // bottom > top             V
+    // bottom negative          V
+    // top negative             V
+    // far = near (exception)   V
+    // right = left (exception) V
+    // top = bottom (exception) V
+
+    // Matrix4   m0     = Matrix4::CreateOrtho(5.0f, 100.0f, 1.0f, 10.0f, 100.0f, 1.0f);
+    // glm::mat4 glm_m0 = glm::ortho(5.0f, 100.0f, 1.0f, 10.0f, 100.0f, 1.0f);
+    // Matrix4   m1     = Matrix4::CreateOrtho(5.0f, 100.0f, 1.0f, 10.0f, -1.0f, 100.0f);
+    // glm::mat4 glm_m1 = glm::ortho(5.0f, 100.0f, 1.0f, 10.0f, -1.0f, 100.0f);
+    // Matrix4   m2     = Matrix4::CreateOrtho(5.0f, 100.0f, 1.0f, 10.0f, 1.0f, -100.0f);
+    // glm::mat4 glm_m2 = glm::ortho(5.0f, 100.0f, 1.0f, 10.0f, 1.0f, -100.0f);
+
+    // Matrix4   m3     = Matrix4::CreateOrtho(50.0f, 200.0f, 96.0f, 17.0f, 1.0f, 100.0f);
+    // glm::mat4 glm_m3 = glm::ortho(50.0f, 200.0f, 96.0f, 17.0f, 1.0f, 100.0f);
+    // Matrix4   m4     = Matrix4::CreateOrtho(50.0f, 200.0f, -17.0f, 96.0f, 1.0f, 100.0f);
+    // glm::mat4 glm_m4 = glm::ortho(50.0f, 200.0f, -17.0f, 96.0f, 1.0f, 100.0f);
+    // Matrix4   m5     = Matrix4::CreateOrtho(50.0f, 200.0f, 17.0f, -96.0f, 1.0f, 100.0f);
+    // glm::mat4 glm_m5 = glm::ortho(50.0f, 200.0f, 17.0f, -96.0f, 1.0f, 100.0f);
+
+    // Matrix4   m6     = Matrix4::CreateOrtho(307.0f, 42.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // glm::mat4 glm_m6 = glm::ortho(307.0f, 42.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // Matrix4   m7     = Matrix4::CreateOrtho(-42.0f, 307.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // glm::mat4 glm_m7 = glm::ortho(-42.0f, 307.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // Matrix4   m8     = Matrix4::CreateOrtho(42.0f, -307.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // glm::mat4 glm_m8 = glm::ortho(42.0f, -307.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+
+    // Matrix4   m9      = Matrix4::CreateOrtho(307.0f, 42.0f, 23.0f, 230.0f, 100.0f, 100.0f);
+    // glm::mat4 glm_m9  = glm::ortho(307.0f, 42.0f, 23.0f, 230.0f, 100.0f, 100.0f);
+    // Matrix4   m10     = Matrix4::CreateOrtho(-42.0f, 307.0f, 50.0f, 50.0f, 18.0f, 201.0f);
+    // glm::mat4 glm_m10 = glm::ortho(-42.0f, 307.0f, 50.0f, 50.0f, 18.0f, 201.0f);
+    // Matrix4   m11     = Matrix4::CreateOrtho(-7.0f, -7.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+    // glm::mat4 glm_m11 = glm::ortho(-7.0f, -7.0f, 23.0f, 230.0f, 18.0f, 201.0f);
+
+    // //
+
+    // std::cout << "-- ortho ---" << std::endl << std::endl;
+
+    // std::cout << "m0: " << std::endl << m0 << std::endl;
+    // std::cout << "glm_m0: " << std::endl << to_matrix4(glm_m0) << std::endl << std::endl;
+
+    // std::cout << "m1: " << std::endl << m1 << std::endl;
+    // std::cout << "glm_m1: " << std::endl << to_matrix4(glm_m1) << std::endl << std::endl;
+
+    // std::cout << "m2: " << std::endl << m2 << std::endl;
+    // std::cout << "glm_m2: " << std::endl << to_matrix4(glm_m2) << std::endl << std::endl;
+
+    // std::cout << "m3: " << std::endl << m3 << std::endl;
+    // std::cout << "glm_m3: " << std::endl << to_matrix4(glm_m3) << std::endl << std::endl;
+
+    // std::cout << "m4: " << std::endl << m4 << std::endl;
+    // std::cout << "glm_m4: " << std::endl << to_matrix4(glm_m4) << std::endl << std::endl;
+
+    // std::cout << "m5: " << std::endl << m5 << std::endl;
+    // std::cout << "glm_m5: " << std::endl << to_matrix4(glm_m5) << std::endl << std::endl;
+
+    // std::cout << "m6: " << std::endl << m6 << std::endl;
+    // std::cout << "glm_m6: " << std::endl << to_matrix4(glm_m6) << std::endl << std::endl;
+
+    // std::cout << "m7: " << std::endl << m7 << std::endl;
+    // std::cout << "glm_m7: " << std::endl << to_matrix4(glm_m7) << std::endl << std::endl;
+
+    // std::cout << "m8: " << std::endl << m8 << std::endl;
+    // std::cout << "glm_m8: " << std::endl << to_matrix4(glm_m8) << std::endl << std::endl;
+
+    // std::cout << "m9: " << std::endl << m9 << std::endl;
+    // std::cout << "glm_m9: " << std::endl << to_matrix4(glm_m9) << std::endl << std::endl;
+
+    // std::cout << "m10: " << std::endl << m10 << std::endl;
+    // std::cout << "glm_m10: " << std::endl << to_matrix4(glm_m10) << std::endl << std::endl;
+
+    // std::cout << "m11: " << std::endl << m11 << std::endl;
+    // std::cout << "glm_m11: " << std::endl << to_matrix4(glm_m11) << std::endl << std::endl;
+
+    //-- END perspective / ortho ----------------------
 }

@@ -158,7 +158,7 @@ struct Vector4
 Vector4 operator*(float lhs, const Vector4 & rhs);
 Vector4 operator/(float lhs, const Vector4 & rhs);
 
-inline bool isnan(const Vector4 & vec);
+bool isnan(const Vector4 & vec);
 
 } // namespace VDEngine
 

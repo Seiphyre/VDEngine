@@ -153,6 +153,12 @@ struct Vector3
      */
     Vector3 GetNormalized() const;
 
+    /**
+     * @brief      Return `true` if the vector is normalized, `false` if it's not.
+     * @exception  `if (vector.GetMagnitude == 0)` return false.
+     */
+    bool IsNormalized() const;
+
     /********************************************************
      *              -- Static functions --                  *
      ********************************************************/
@@ -212,7 +218,7 @@ struct Vector3
 Vector3 operator*(float lhs, const Vector3 & rhs);
 Vector3 operator/(float lhs, const Vector3 & rhs);
 
-inline bool isnan(const Vector3 & vec);
+bool isnan(const Vector3 & vec);
 
 } // namespace VDEngine
 

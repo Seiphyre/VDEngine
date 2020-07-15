@@ -246,6 +246,13 @@ Vector3 Vector3::GetNormalized() const
     return Vector3::VecZero();
 }
 
+bool Vector3::IsNormalized() const
+{
+    float magnitude = GetMagnitude();
+
+    return (abs(magnitude - 1.0f) < EPSILON_FLOAT);
+}
+
 /********************************************************
  *              -- Static functions --                  *
  ********************************************************/

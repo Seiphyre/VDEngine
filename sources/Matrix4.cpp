@@ -22,9 +22,11 @@ inline Matrix4::Matrix4(float m00, float m01, float m02, float m03, float m04, f
 
 Matrix4 Matrix4::CreateRotationMatrix(const Quaternion & quat)
 {
-    Vector3 right   = Vector3::VecRight() * quat;   // Right basis vector
-    Vector3 up      = Vector3::VecUp() * quat;      // Up basis vector
-    Vector3 forward = Vector3::VecForward() * quat; // Forward basis vector
+    // https://gabormakesgames.com/blog_quats_to_matrix.html
+
+    Vector3 right   = quat * Vector3::VecRight();   // Right basis vector
+    Vector3 up      = quat * Vector3::VecUp();      // Up basis vector
+    Vector3 forward = quat * Vector3::VecForward(); // Forward basis vector
 
     Matrix4 mat;
 
@@ -66,6 +68,27 @@ Matrix4 Matrix4::ComposeTRS(const Vector3 & translation, const Quaternion & rota
 
 Matrix4 Matrix4::CreateOrtho(float left, float right, float bottom, float top, float z_near, float z_far)
 {
+    if (left == right)
+    {
+        std::cout << "[Warning] [Matrix4::CreateOrtho] left cannot equal right. Otho will be set to identity."
+                  << std::endl;
+        return (Matrix4());
+    }
+
+    if (bottom == top)
+    {
+        std::cout << "[Warning] [Matrix4::CreateOrtho] bottom cannot equal top. Otho will be set to identity."
+                  << std::endl;
+        return (Matrix4());
+    }
+
+    if (z_near == z_far)
+    {
+        std::cout << "[Warning] [Matrix4::CreateOrtho] z_near cannot equal z_far. Otho will be set to identity."
+                  << std::endl;
+        return (Matrix4());
+    }
+
     // http://www.songho.ca/opengl/gl_projectionmatrix_mathml.html
     // http://learnwebgl.brown37.net/08_projections/projections_ortho.html
 
@@ -92,14 +115,36 @@ Matrix4 Matrix4::CreateOrtho(float left, float right, float bottom, float top, f
     return mat;
 }
 
-Matrix4 Matrix4::CreatePerspective(float fov, float aspect, float z_near, float z_far)
+Matrix4 Matrix4::CreatePerspective(float fov_y, float aspect, float z_near, float z_far)
 {
-    assert(abs(aspect - EPSILON_FLOAT) > 0);
+    // assert(abs(aspect) > EPSILON_FLOAT);
+
+    if (abs(aspect) <= EPSILON_FLOAT)
+    {
+        std::cout << "[Warning] [Matrix4::CreatePerspective] Aspect cannot be 0. Perspective will be set to identity."
+                  << std::endl;
+        return (Matrix4());
+    }
+
+    if (abs(fov_y) <= EPSILON_FLOAT)
+    {
+        std::cout << "[Warning] [Matrix4::CreatePerspective] fov_y cannot be 0. Perspective will be set to identity."
+                  << std::endl;
+        return (Matrix4());
+    }
+
+    if (z_near == z_far)
+    {
+        std::cout
+            << "[Warning] [Matrix4::CreatePerspective] z_near cannot equal z_far. Perspective will be set to identity."
+            << std::endl;
+        return (Matrix4());
+    }
 
     // http://www.songho.ca/opengl/gl_projectionmatrix_mathml.html
     // http://learnwebgl.brown37.net/08_projections/projections_perspective.html
 
-    float tan_half_fov = tan(to_radians(fov) / 2.0f);
+    float tan_half_fov = tan(to_radians(fov_y) / 2.0f);
 
     // Divide the angle by 2 to work with a right angle triangle
     // So: tan(angle) = opposite / adjacent
@@ -158,73 +203,65 @@ Matrix4 Matrix4::CreatePerspective(float fov, float aspect, float z_near, float 
 
 //
 
-void Matrix4::QRDecompose(const Matrix4 & input_mat, Matrix4 & orth_mat, Matrix4 & up_triang_mat)
-{
-    // Definition:
-    // A square matrix is called LOWER TRIANGULAR if all the entries above the main diagonal are zero.
-    // Similarly, a square matrix is called UPPER TRIANGULAR if all the entries below the main diagonal are zero.
-    // A TRIANGULAR MATRIX is one that is either lower triangular or upper triangular.
-    // A matrix that is both upper and lower triangular is called a DIAGONAL MATRIX.
-
-    // [A = Q.R] == [Qt.A = Q.Qt.R] == [Qt.A = I.R] == [R = Qt.A]
-    //
-    // where:
-    //          A -> Input matrix
-    //          Q -> Orthogonal matrix (can be found with Gram-Schimdt algorith)
-    //          R -> Upper Triangular matrix
-    //          Qt -> transpose of Q
-    //          I -> identity matrix
-
-    // https://gabormakesgames.com/blog_decomposition_qr.html
-
-    // Extract Orthogonal matrix
-    orth_mat = input_mat.GetOrthonormalized();
-
-    // Extract Upper Triangular matrix
-    up_triang_mat = Matrix4();
-
-    up_triang_mat = orth_mat.GetTransposed() * input_mat;
-}
-
 void Matrix4::AffineDecompose(const Matrix4 & p_mat, Vector3 & translation, Quaternion & rotation, Vector3 & scale)
 {
-    // Homogeneous matrix 4x4
-    // SRT affine decompose
-    // Create pure rotation matrix
+    // https://github.com/mrdoob/three.js/blob/master/src/math/Matrix4.js (l.740 : decompose)
+    // https://github.com/godotengine/godot/blob/master/core/math/basis.cpp (l.266 : get_scale + l.368 :
+    // get_rotation_quat)
+    // https://gabormakesgames.com/blog_decomposition_intro.html
 
     Matrix4 mat = p_mat;
 
     // Extract Translation ---------------------
+
+    // 1. get the translation
     translation.Set(mat[12], mat[13], mat[14]);
 
     // Extract Scale ---------------------------
+
+    // 1. get scale values
     float scale_x = Vector3(mat[0], mat[1], mat[2]).GetMagnitude();
     float scale_y = Vector3(mat[4], mat[5], mat[6]).GetMagnitude();
     float scale_z = Vector3(mat[8], mat[9], mat[10]).GetMagnitude();
-
+    std::cout << scale_y << std::endl;
     scale.Set(scale_x, scale_y, scale_z);
 
-    // Create Rotation matrix ------------------
-    mat.Orthonormalize();
+    // 2. find scale sign
     float determinant = mat.GetDeterminant();
 
-    // determinant of orthonormal matrix is always -1 OR 1;
-    // determinant of rotation matrix MUST BE 1, so we need to flip the rotation if the determinant is -1
-
     if (determinant < 0)
-    {
         scale = scale * -1.0f;
 
-        mat[0] *= -1.0f;
-        mat[1] *= -1.0f;
-        mat[2] *= -1.0f;
-        mat[4] *= -1.0f;
-        mat[5] *= -1.0f;
-        mat[6] *= -1.0f;
-        mat[8] *= -1.0f;
-        mat[9] *= -1.0f;
-        mat[10] *= -1.0f;
+    // Create pure rotation matrix ------------------
+
+    // 1. remove translation matrix from "mat"
+    mat[12] = 0;
+    mat[13] = 0;
+    mat[14] = 0;
+
+    // 2. remove scale matrix from "mat"
+    if (abs(scale_x) > EPSILON_FLOAT)
+    {
+        mat[0] *= (1 / scale.x);
+        mat[1] *= (1 / scale.x);
+        mat[2] *= (1 / scale.x);
     }
+
+    if (abs(scale_y) > EPSILON_FLOAT)
+    {
+        mat[4] *= (1 / scale.y);
+        mat[5] *= (1 / scale.y);
+        mat[6] *= (1 / scale.y);
+    }
+
+    if (abs(scale_z) > EPSILON_FLOAT)
+    {
+        mat[8] *= (1 / scale.z);
+        mat[9] *= (1 / scale.z);
+        mat[10] *= (1 / scale.z);
+    }
+    // 3. Make sur the matrix is ortho
+    mat.Orthonormalize();
 
     // Extract rotation -------------------------
     float trace = mat[0] + mat[5] + mat[10];
@@ -232,41 +269,46 @@ void Matrix4::AffineDecompose(const Matrix4 & p_mat, Vector3 & translation, Quat
 
     if (trace > 0.0f)
     {
-        float s = sqrtf(trace + 1.0f) * 2.0f;
-        quat_w  = (s * 0.25f);
-        quat_x  = (mat[9] - mat[6]) * s;
-        quat_y  = (mat[2] - mat[8]) * s;
-        quat_z  = (mat[4] - mat[1]) * s;
+        std::cout << "1" << std::endl;
+        float s = 0.5f / sqrtf(trace + 1.0f);
+
+        quat_w = (0.25f / s);
+        quat_x = (mat[6] - mat[9]) * s;
+        quat_y = (mat[8] - mat[2]) * s;
+        quat_z = (mat[1] - mat[4]) * s;
+    }
+    else if ((mat[0] > mat[5]) && (mat[0] > mat[10]))
+    {
+        std::cout << "2" << std::endl;
+        float s = sqrtf(1.0f + mat[0] - mat[5] - mat[10]) * 2.0f;
+
+        quat_w = (mat[6] - mat[9]) / s;
+        quat_x = (s * 0.25f);
+        quat_y = (mat[4] + mat[1]) / s;
+        quat_z = (mat[8] + mat[2]) / s;
+    }
+    else if (mat[5] > mat[10])
+    {
+        std::cout << "3" << std::endl;
+        float s = sqrtf(1.0f + mat[5] - mat[0] - mat[10]) * 2.0f;
+
+        quat_w = (mat[8] - mat[2]) / s;
+        quat_x = (mat[4] + mat[1]) / s;
+        quat_y = (s * 0.25f);
+        quat_z = (mat[9] + mat[6]) / s;
     }
     else
     {
-        if ((mat[0] > mat[5]) && (mat[0] > mat[10]))
-        {
-            float s = sqrtf(1.0f + mat[0] - mat[5] - mat[10]) * 2.0f;
-            quat_w  = (mat[9] - mat[6]) * s;
-            quat_x  = (s * 0.25f);
-            quat_y  = (mat[1] + mat[4]) * s;
-            quat_z  = (mat[2] + mat[8]) * s;
-        }
-        else if (mat[5] > mat[10])
-        {
-            float s = sqrtf(1.0f + mat[5] - mat[0] - mat[10]) * 2.0f;
-            quat_w  = (mat[2] - mat[8]) * s;
-            quat_x  = (mat[1] + mat[4]) * s;
-            quat_y  = (s * 0.25f);
-            quat_z  = (mat[6] + mat[9]) * s;
-        }
-        else
-        {
-            float s = sqrtf(1.0f + mat[10] - mat[0] - mat[5]) * 2.0f;
-            quat_w  = (mat[4] - mat[1]) * s;
-            quat_x  = (mat[2] + mat[8]) * s;
-            quat_y  = (mat[6] + mat[9]) * s;
-            quat_z  = (s * 0.25f);
-        }
+        std::cout << "4" << std::endl;
+        float s = sqrtf(1.0f + mat[10] - mat[0] - mat[5]) * 2.0f;
 
-        rotation.Set(quat_x, quat_y, quat_z, quat_w);
+        quat_w = (mat[1] - mat[4]) / s;
+        quat_x = (mat[8] + mat[2]) / s;
+        quat_y = (mat[9] + mat[6]) / s;
+        quat_z = (s * 0.25f);
     }
+
+    rotation.Set(quat_x, quat_y, quat_z, quat_w);
 }
 
 /////////////////////////////////////////////////
@@ -275,52 +317,52 @@ void Matrix4::AffineDecompose(const Matrix4 & p_mat, Vector3 & translation, Quat
 inline void Matrix4::Set(float m00, float m01, float m02, float m03, float m04, float m05, float m06, float m07,
                          float m08, float m09, float m10, float m11, float m12, float m13, float m14, float m15)
 {
-    m_matrix[0]  = m00;
-    m_matrix[1]  = m01;
-    m_matrix[2]  = m02;
-    m_matrix[3]  = m03;
-    m_matrix[4]  = m04;
-    m_matrix[5]  = m05;
-    m_matrix[6]  = m06;
-    m_matrix[7]  = m07;
-    m_matrix[8]  = m08;
-    m_matrix[9]  = m09;
-    m_matrix[10] = m10;
-    m_matrix[11] = m11;
-    m_matrix[12] = m12;
-    m_matrix[13] = m13;
-    m_matrix[14] = m14;
-    m_matrix[15] = m15;
+    m_data[0]  = m00;
+    m_data[1]  = m01;
+    m_data[2]  = m02;
+    m_data[3]  = m03;
+    m_data[4]  = m04;
+    m_data[5]  = m05;
+    m_data[6]  = m06;
+    m_data[7]  = m07;
+    m_data[8]  = m08;
+    m_data[9]  = m09;
+    m_data[10] = m10;
+    m_data[11] = m11;
+    m_data[12] = m12;
+    m_data[13] = m13;
+    m_data[14] = m14;
+    m_data[15] = m15;
 }
 
 inline void Matrix4::SetRow(int index, const Vector4 & v)
 {
-    m_matrix[index]      = v.x;
-    m_matrix[index + 4]  = v.y;
-    m_matrix[index + 8]  = v.z;
-    m_matrix[index + 12] = v.w;
+    m_data[index]      = v.x;
+    m_data[index + 4]  = v.y;
+    m_data[index + 8]  = v.z;
+    m_data[index + 12] = v.w;
 }
 
 inline void Matrix4::SetRow(int index, const Vector3 & v)
 {
-    m_matrix[index]     = v.x;
-    m_matrix[index + 4] = v.y;
-    m_matrix[index + 8] = v.z;
+    m_data[index]     = v.x;
+    m_data[index + 4] = v.y;
+    m_data[index + 8] = v.z;
 }
 
 inline void Matrix4::SetColumn(int index, const Vector4 & v)
 {
-    m_matrix[index * 4]     = v.x;
-    m_matrix[index * 4 + 1] = v.y;
-    m_matrix[index * 4 + 2] = v.z;
-    m_matrix[index * 4 + 3] = v.w;
+    m_data[index * 4]     = v.x;
+    m_data[index * 4 + 1] = v.y;
+    m_data[index * 4 + 2] = v.z;
+    m_data[index * 4 + 3] = v.w;
 }
 
 inline void Matrix4::SetColumn(int index, const Vector3 & v)
 {
-    m_matrix[index * 4]     = v.x;
-    m_matrix[index * 4 + 1] = v.y;
-    m_matrix[index * 4 + 2] = v.z;
+    m_data[index * 4]     = v.x;
+    m_data[index * 4 + 1] = v.y;
+    m_data[index * 4 + 2] = v.z;
 }
 
 /////////////////////////////////////////////////
@@ -328,55 +370,86 @@ inline void Matrix4::SetColumn(int index, const Vector3 & v)
 
 inline const float * Matrix4::Get() const
 {
-    return m_matrix;
+    return m_data;
 }
 
 inline Vector4 Matrix4::GetRow(int index) const
 {
-    return Vector4(m_matrix[index], m_matrix[index + 4], m_matrix[index + 8], m_matrix[index + 12]);
+    return Vector4(m_data[index], m_data[index + 4], m_data[index + 8], m_data[index + 12]);
 }
 
 inline Vector4 Matrix4::GetColumn(int index) const
 {
-    return Vector4(m_matrix[index * 4], m_matrix[index * 4 + 1], m_matrix[index * 4 + 2], m_matrix[index * 4 + 3]);
+    return Vector4(m_data[index * 4], m_data[index * 4 + 1], m_data[index * 4 + 2], m_data[index * 4 + 3]);
 }
 
 //
 
 inline Vector3 Matrix4::GetLeftAxis() const
 {
-    return Vector3(m_matrix[0], m_matrix[1], m_matrix[2]);
+    return Vector3(m_data[0], m_data[1], m_data[2]);
 }
 
 inline Vector3 Matrix4::GetUpAxis() const
 {
-    return Vector3(m_matrix[4], m_matrix[5], m_matrix[6]);
+    return Vector3(m_data[4], m_data[5], m_data[6]);
 }
 
 inline Vector3 Matrix4::GetForwardAxis() const
 {
-    return Vector3(m_matrix[8], m_matrix[9], m_matrix[10]);
+    return Vector3(m_data[8], m_data[9], m_data[10]);
 }
 
 //
 
 float Matrix4::GetDeterminant() const
 {
-    return m_matrix[0] * GetCofactor(m_matrix[5], m_matrix[6], m_matrix[7], m_matrix[9], m_matrix[10], m_matrix[11],
-                                     m_matrix[13], m_matrix[14], m_matrix[15]) -
-           m_matrix[1] * GetCofactor(m_matrix[4], m_matrix[6], m_matrix[7], m_matrix[8], m_matrix[10], m_matrix[11],
-                                     m_matrix[12], m_matrix[14], m_matrix[15]) +
-           m_matrix[2] * GetCofactor(m_matrix[4], m_matrix[5], m_matrix[7], m_matrix[8], m_matrix[9], m_matrix[11],
-                                     m_matrix[12], m_matrix[13], m_matrix[15]) -
-           m_matrix[3] * GetCofactor(m_matrix[4], m_matrix[5], m_matrix[6], m_matrix[8], m_matrix[9], m_matrix[10],
-                                     m_matrix[12], m_matrix[13], m_matrix[14]);
+    // https://www.geeksforgeeks.org/determinant-of-a-matrix/
+
+    float cofactor_0 = GetCofactor(m_data[5], m_data[6], m_data[7], m_data[9], m_data[10], m_data[11], m_data[13],
+                                   m_data[14], m_data[15]);
+    // +-------------+
+    // | 0  .  .  .  |
+    // | .  5  9  13 |
+    // | .  6  10 14 |
+    // | .  7  11 15 |
+    // +-------------+
+
+    float cofactor_1 = GetCofactor(m_data[4], m_data[6], m_data[7], m_data[8], m_data[10], m_data[11], m_data[12],
+                                   m_data[14], m_data[15]);
+    // +-------------+
+    // | .  4  8  12 |
+    // | 1  .  .  .  |
+    // | .  6  10 14 |
+    // | .  7  11 15 |
+    // +-------------+
+
+    float cofactor_2 = GetCofactor(m_data[4], m_data[5], m_data[7], m_data[8], m_data[9], m_data[11], m_data[12],
+                                   m_data[13], m_data[15]);
+    // +-------------+
+    // | .  4  8  12 |
+    // | .  5  9  13 |
+    // | 2  .  .  .  |
+    // | .  7  11 15 |
+    // +-------------+
+
+    float cofactor_3 = GetCofactor(m_data[4], m_data[5], m_data[6], m_data[8], m_data[9], m_data[10], m_data[12],
+                                   m_data[13], m_data[14]);
+    // +-------------+
+    // | .  4  8  12 |
+    // | .  5  9  13 |
+    // | .  6  10 14 |
+    // | 3  .  .  .  |
+    // +-------------+
+
+    return (m_data[0] * cofactor_0) - (m_data[1] * cofactor_1) + (m_data[2] * cofactor_2) - (m_data[3] * cofactor_3);
 }
 
 //
 
 Matrix4 Matrix4::GetInverted() const
 {
-    Matrix4 mat;
+    Matrix4 mat = *this;
 
     mat.Invert();
 
@@ -385,7 +458,7 @@ Matrix4 Matrix4::GetInverted() const
 
 Matrix4 Matrix4::GetTransposed() const
 {
-    Matrix4 mat;
+    Matrix4 mat = *this;
 
     mat.Transpose();
 
@@ -394,7 +467,7 @@ Matrix4 Matrix4::GetTransposed() const
 
 Matrix4 Matrix4::GetOrthonormalized() const
 {
-    Matrix4 mat;
+    Matrix4 mat = *this;
 
     mat.Orthonormalize();
 
@@ -406,133 +479,31 @@ Matrix4 Matrix4::GetOrthonormalized() const
 
 inline void Matrix4::Identity()
 {
-    m_matrix[0] = m_matrix[5] = m_matrix[10] = m_matrix[15] = 1.0f;
-    m_matrix[1] = m_matrix[2] = m_matrix[3] = m_matrix[4] = m_matrix[6] = m_matrix[7] = m_matrix[8] = m_matrix[9] =
-        m_matrix[11] = m_matrix[12] = m_matrix[13] = m_matrix[14] = 0.0f;
+    m_data[0] = m_data[5] = m_data[10] = m_data[15] = 1.0f;
+    m_data[1] = m_data[2] = m_data[3] = m_data[4] = m_data[6] = m_data[7] = m_data[8] = m_data[9] = m_data[11] =
+        m_data[12] = m_data[13] = m_data[14] = 0.0f;
 }
 
 void Matrix4::Transpose()
 {
-    std::swap(m_matrix[1], m_matrix[4]);
-    std::swap(m_matrix[2], m_matrix[8]);
-    std::swap(m_matrix[3], m_matrix[12]);
-    std::swap(m_matrix[6], m_matrix[9]);
-    std::swap(m_matrix[7], m_matrix[13]);
-    std::swap(m_matrix[11], m_matrix[14]);
+    std::swap(m_data[1], m_data[4]);
+    std::swap(m_data[2], m_data[8]);
+    std::swap(m_data[3], m_data[12]);
+    std::swap(m_data[6], m_data[9]);
+    std::swap(m_data[7], m_data[13]);
+    std::swap(m_data[11], m_data[14]);
 }
 
 void Matrix4::Invert()
 {
     // If the 4th row is [0,0,0,1] then it is affine matrix and
     // it has no projective transformation.
-    if (m_matrix[3] == 0 && m_matrix[7] == 0 && m_matrix[11] == 0 && m_matrix[15] == 1)
-        this->InvertAffine();
-    else
-    {
-        this->InvertGeneral();
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// compute the inverse of 4x4 Euclidean transformation matrix
-//
-// Euclidean transformation is translation, rotation, and reflection.
-// With Euclidean transform, only the position and orientation of the object
-// will be changed. Euclidean transform does not change the shape of an object
-// (no scaling). Length and angle are reserved.
-//
-// Use inverseAffine() if the matrix has scale and shear transformation.
-//
-// M = [ R | T ]
-//     [ --+-- ]    (R denotes 3x3 rotation/reflection matrix)
-//     [ 0 | 1 ]    (T denotes 1x3 translation matrix)
-//
-// y = M*x  ->  y = R*x + T  ->  x = R^-1*(y - T)  ->  x = R^T*y - R^T*T
-// (R is orthogonal,  R^-1 = R^T)
-//
-//  [ R | T ]-1    [ R^T | -R^T * T ]    (R denotes 3x3 rotation matrix)
-//  [ --+-- ]   =  [ ----+--------- ]    (T denotes 1x3 translation)
-//  [ 0 | 1 ]      [  0  |     1    ]    (R^T denotes R-transpose)
-///////////////////////////////////////////////////////////////////////////////
-void Matrix4::InvertEuclidean()
-{
-    // transpose 3x3 rotation matrix part
-    // | R^T | 0 |
-    // | ----+-- |
-    // |  0  | 1 |
-    float tmp;
-    tmp         = m_matrix[1];
-    m_matrix[1] = m_matrix[4];
-    m_matrix[4] = tmp;
-    tmp         = m_matrix[2];
-    m_matrix[2] = m_matrix[8];
-    m_matrix[8] = tmp;
-    tmp         = m_matrix[6];
-    m_matrix[6] = m_matrix[9];
-    m_matrix[9] = tmp;
-
-    // compute translation part -R^T * T
-    // | 0 | -R^T x |
-    // | --+------- |
-    // | 0 |   0    |
-    float x      = m_matrix[12];
-    float y      = m_matrix[13];
-    float z      = m_matrix[14];
-    m_matrix[12] = -(m_matrix[0] * x + m_matrix[4] * y + m_matrix[8] * z);
-    m_matrix[13] = -(m_matrix[1] * x + m_matrix[5] * y + m_matrix[9] * z);
-    m_matrix[14] = -(m_matrix[2] * x + m_matrix[6] * y + m_matrix[10] * z);
-
-    // last row should be unchanged (0,0,0,1)
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// compute the inverse of a 4x4 affine transformation matrix
-//
-// Affine transformations are generalizations of Euclidean transformations.
-// Affine transformation includes translation, rotation, reflection, scaling,
-// and shearing. Length and angle are NOT preserved.
-// M = [ R | T ]
-//     [ --+-- ]    (R denotes 3x3 rotation/scale/shear matrix)
-//     [ 0 | 1 ]    (T denotes 1x3 translation matrix)
-//
-// y = M*x  ->  y = R*x + T  ->  x = R^-1*(y - T)  ->  x = R^-1*y - R^-1*T
-//
-//  [ R | T ]-1   [ R^-1 | -R^-1 * T ]
-//  [ --+-- ]   = [ -----+---------- ]
-//  [ 0 | 1 ]     [  0   +     1     ]
-///////////////////////////////////////////////////////////////////////////////
-void Matrix4::InvertAffine()
-{
-    // R^-1
-    Matrix4 r(m_matrix[0], m_matrix[1], m_matrix[2], 0, m_matrix[4], m_matrix[5], m_matrix[6], 0, m_matrix[8],
-              m_matrix[9], m_matrix[10], 0, 0, 0, 0, 1);
-
-    r.InvertGeneral();
-
-    m_matrix[0] = r[0];
-    m_matrix[1] = r[1];
-    m_matrix[2] = r[2];
-
-    m_matrix[4] = r[4];
-    m_matrix[5] = r[5];
-    m_matrix[6] = r[6];
-
-    m_matrix[8]  = r[8];
-    m_matrix[9]  = r[9];
-    m_matrix[10] = r[10];
-
-    // -R^-1 * T
-    float x = m_matrix[12];
-    float y = m_matrix[13];
-    float z = m_matrix[14];
-
-    m_matrix[12] = -(r[0] * x + r[4] * y + r[8] * z);
-    m_matrix[13] = -(r[1] * x + r[5] * y + r[9] * z);
-    m_matrix[14] = -(r[2] * x + r[6] * y + r[10] * z);
-
-    // last row should be unchanged (0,0,0,1)
-    // m_matrix[3] = m_matrix[7] = m_matrix[11] = 0.0f;
-    // m_matrix[15] = 1.0f;
+    // if (m_matrix[3] == 0 && m_matrix[7] == 0 && m_matrix[11] == 0 && m_matrix[15] == 1)
+    //     this->InvertAffine();
+    // else
+    // {
+    this->InvertGeneral();
+    // }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -542,76 +513,80 @@ void Matrix4::InvertAffine()
 ///////////////////////////////////////////////////////////////////////////////
 void Matrix4::InvertGeneral()
 {
+    // https://www.geeksforgeeks.org/adjoint-inverse-matrix/
+
     // get cofactors of minor matrices
-    float cofactor0 = GetCofactor(m_matrix[5], m_matrix[6], m_matrix[7], m_matrix[9], m_matrix[10], m_matrix[11],
-                                  m_matrix[13], m_matrix[14], m_matrix[15]);
-    float cofactor1 = GetCofactor(m_matrix[4], m_matrix[6], m_matrix[7], m_matrix[8], m_matrix[10], m_matrix[11],
-                                  m_matrix[12], m_matrix[14], m_matrix[15]);
-    float cofactor2 = GetCofactor(m_matrix[4], m_matrix[5], m_matrix[7], m_matrix[8], m_matrix[9], m_matrix[11],
-                                  m_matrix[12], m_matrix[13], m_matrix[15]);
-    float cofactor3 = GetCofactor(m_matrix[4], m_matrix[5], m_matrix[6], m_matrix[8], m_matrix[9], m_matrix[10],
-                                  m_matrix[12], m_matrix[13], m_matrix[14]);
+    float cofactor0 = GetCofactor(m_data[5], m_data[6], m_data[7], m_data[9], m_data[10], m_data[11], m_data[13],
+                                  m_data[14], m_data[15]);
+    float cofactor1 = GetCofactor(m_data[4], m_data[6], m_data[7], m_data[8], m_data[10], m_data[11], m_data[12],
+                                  m_data[14], m_data[15]);
+    float cofactor2 = GetCofactor(m_data[4], m_data[5], m_data[7], m_data[8], m_data[9], m_data[11], m_data[12],
+                                  m_data[13], m_data[15]);
+    float cofactor3 = GetCofactor(m_data[4], m_data[5], m_data[6], m_data[8], m_data[9], m_data[10], m_data[12],
+                                  m_data[13], m_data[14]);
 
     // get determinant
-    float determinant =
-        m_matrix[0] * cofactor0 - m_matrix[1] * cofactor1 + m_matrix[2] * cofactor2 - m_matrix[3] * cofactor3;
+    float determinant = m_data[0] * cofactor0 - m_data[1] * cofactor1 + m_data[2] * cofactor2 - m_data[3] * cofactor3;
 
     if (fabs(determinant) <= EPSILON_FLOAT)
     {
+        std::cout << "[Warning] [Matrix4::InvertGeneral] Determinant is negative. Cannot invert the matrix. (Did you "
+                     "scale by zero ?)"
+                  << std::endl;
         Identity();
         return;
     }
 
     // get rest of cofactors for adj(M)
-    float cofactor4 = GetCofactor(m_matrix[1], m_matrix[2], m_matrix[3], m_matrix[9], m_matrix[10], m_matrix[11],
-                                  m_matrix[13], m_matrix[14], m_matrix[15]);
-    float cofactor5 = GetCofactor(m_matrix[0], m_matrix[2], m_matrix[3], m_matrix[8], m_matrix[10], m_matrix[11],
-                                  m_matrix[12], m_matrix[14], m_matrix[15]);
-    float cofactor6 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[3], m_matrix[8], m_matrix[9], m_matrix[11],
-                                  m_matrix[12], m_matrix[13], m_matrix[15]);
-    float cofactor7 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[2], m_matrix[8], m_matrix[9], m_matrix[10],
-                                  m_matrix[12], m_matrix[13], m_matrix[14]);
+    float cofactor4 = GetCofactor(m_data[1], m_data[2], m_data[3], m_data[9], m_data[10], m_data[11], m_data[13],
+                                  m_data[14], m_data[15]);
+    float cofactor5 = GetCofactor(m_data[0], m_data[2], m_data[3], m_data[8], m_data[10], m_data[11], m_data[12],
+                                  m_data[14], m_data[15]);
+    float cofactor6 = GetCofactor(m_data[0], m_data[1], m_data[3], m_data[8], m_data[9], m_data[11], m_data[12],
+                                  m_data[13], m_data[15]);
+    float cofactor7 = GetCofactor(m_data[0], m_data[1], m_data[2], m_data[8], m_data[9], m_data[10], m_data[12],
+                                  m_data[13], m_data[14]);
 
-    float cofactor8  = GetCofactor(m_matrix[1], m_matrix[2], m_matrix[3], m_matrix[5], m_matrix[6], m_matrix[7],
-                                  m_matrix[13], m_matrix[14], m_matrix[15]);
-    float cofactor9  = GetCofactor(m_matrix[0], m_matrix[2], m_matrix[3], m_matrix[4], m_matrix[6], m_matrix[7],
-                                  m_matrix[12], m_matrix[14], m_matrix[15]);
-    float cofactor10 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[3], m_matrix[4], m_matrix[5], m_matrix[7],
-                                   m_matrix[12], m_matrix[13], m_matrix[15]);
-    float cofactor11 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[2], m_matrix[4], m_matrix[5], m_matrix[6],
-                                   m_matrix[12], m_matrix[13], m_matrix[14]);
+    float cofactor8  = GetCofactor(m_data[1], m_data[2], m_data[3], m_data[5], m_data[6], m_data[7], m_data[13],
+                                  m_data[14], m_data[15]);
+    float cofactor9  = GetCofactor(m_data[0], m_data[2], m_data[3], m_data[4], m_data[6], m_data[7], m_data[12],
+                                  m_data[14], m_data[15]);
+    float cofactor10 = GetCofactor(m_data[0], m_data[1], m_data[3], m_data[4], m_data[5], m_data[7], m_data[12],
+                                   m_data[13], m_data[15]);
+    float cofactor11 = GetCofactor(m_data[0], m_data[1], m_data[2], m_data[4], m_data[5], m_data[6], m_data[12],
+                                   m_data[13], m_data[14]);
 
-    float cofactor12 = GetCofactor(m_matrix[1], m_matrix[2], m_matrix[3], m_matrix[5], m_matrix[6], m_matrix[7],
-                                   m_matrix[9], m_matrix[10], m_matrix[11]);
-    float cofactor13 = GetCofactor(m_matrix[0], m_matrix[2], m_matrix[3], m_matrix[4], m_matrix[6], m_matrix[7],
-                                   m_matrix[8], m_matrix[10], m_matrix[11]);
-    float cofactor14 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[3], m_matrix[4], m_matrix[5], m_matrix[7],
-                                   m_matrix[8], m_matrix[9], m_matrix[11]);
-    float cofactor15 = GetCofactor(m_matrix[0], m_matrix[1], m_matrix[2], m_matrix[4], m_matrix[5], m_matrix[6],
-                                   m_matrix[8], m_matrix[9], m_matrix[10]);
+    float cofactor12 = GetCofactor(m_data[1], m_data[2], m_data[3], m_data[5], m_data[6], m_data[7], m_data[9],
+                                   m_data[10], m_data[11]);
+    float cofactor13 = GetCofactor(m_data[0], m_data[2], m_data[3], m_data[4], m_data[6], m_data[7], m_data[8],
+                                   m_data[10], m_data[11]);
+    float cofactor14 =
+        GetCofactor(m_data[0], m_data[1], m_data[3], m_data[4], m_data[5], m_data[7], m_data[8], m_data[9], m_data[11]);
+    float cofactor15 =
+        GetCofactor(m_data[0], m_data[1], m_data[2], m_data[4], m_data[5], m_data[6], m_data[8], m_data[9], m_data[10]);
 
     // build inverse matrix = adj(M) / det(M)
     // adjugate of M is the transpose of the cofactor matrix of M
     float invDeterminant = 1.0f / determinant;
-    m_matrix[0]          = invDeterminant * cofactor0;
-    m_matrix[1]          = -invDeterminant * cofactor4;
-    m_matrix[2]          = invDeterminant * cofactor8;
-    m_matrix[3]          = -invDeterminant * cofactor12;
+    m_data[0]            = invDeterminant * cofactor0;
+    m_data[1]            = -invDeterminant * cofactor4;
+    m_data[2]            = invDeterminant * cofactor8;
+    m_data[3]            = -invDeterminant * cofactor12;
 
-    m_matrix[4] = -invDeterminant * cofactor1;
-    m_matrix[5] = invDeterminant * cofactor5;
-    m_matrix[6] = -invDeterminant * cofactor9;
-    m_matrix[7] = invDeterminant * cofactor13;
+    m_data[4] = -invDeterminant * cofactor1;
+    m_data[5] = invDeterminant * cofactor5;
+    m_data[6] = -invDeterminant * cofactor9;
+    m_data[7] = invDeterminant * cofactor13;
 
-    m_matrix[8]  = invDeterminant * cofactor2;
-    m_matrix[9]  = -invDeterminant * cofactor6;
-    m_matrix[10] = invDeterminant * cofactor10;
-    m_matrix[11] = -invDeterminant * cofactor14;
+    m_data[8]  = invDeterminant * cofactor2;
+    m_data[9]  = -invDeterminant * cofactor6;
+    m_data[10] = invDeterminant * cofactor10;
+    m_data[11] = -invDeterminant * cofactor14;
 
-    m_matrix[12] = -invDeterminant * cofactor3;
-    m_matrix[13] = invDeterminant * cofactor7;
-    m_matrix[14] = -invDeterminant * cofactor11;
-    m_matrix[15] = invDeterminant * cofactor15;
+    m_data[12] = -invDeterminant * cofactor3;
+    m_data[13] = invDeterminant * cofactor7;
+    m_data[14] = -invDeterminant * cofactor11;
+    m_data[15] = invDeterminant * cofactor15;
 }
 
 /////////////////////////////////////////////////
@@ -659,8 +634,8 @@ void Matrix4::Orthonormalize()
     // -- 3. Rebuild the matrix with the new vectors ----
 
     SetColumn(0, x);
-    SetColumn(0, y);
-    SetColumn(0, z);
+    SetColumn(1, y);
+    SetColumn(2, z);
 }
 
 ////////////////////////////////////////////////////////////
@@ -668,96 +643,96 @@ void Matrix4::Orthonormalize()
 
 inline Matrix4 Matrix4::operator+(const Matrix4 & rhs) const
 {
-    return Matrix4(m_matrix[0] + rhs[0], m_matrix[1] + rhs[1], m_matrix[2] + rhs[2], m_matrix[3] + rhs[3],
-                   m_matrix[4] + rhs[4], m_matrix[5] + rhs[5], m_matrix[6] + rhs[6], m_matrix[7] + rhs[7],
-                   m_matrix[8] + rhs[8], m_matrix[9] + rhs[9], m_matrix[10] + rhs[10], m_matrix[11] + rhs[11],
-                   m_matrix[12] + rhs[12], m_matrix[13] + rhs[13], m_matrix[14] + rhs[14], m_matrix[15] + rhs[15]);
+    return Matrix4(m_data[0] + rhs[0], m_data[1] + rhs[1], m_data[2] + rhs[2], m_data[3] + rhs[3], m_data[4] + rhs[4],
+                   m_data[5] + rhs[5], m_data[6] + rhs[6], m_data[7] + rhs[7], m_data[8] + rhs[8], m_data[9] + rhs[9],
+                   m_data[10] + rhs[10], m_data[11] + rhs[11], m_data[12] + rhs[12], m_data[13] + rhs[13],
+                   m_data[14] + rhs[14], m_data[15] + rhs[15]);
 }
 
 inline Matrix4 Matrix4::operator-(const Matrix4 & rhs) const
 {
-    return Matrix4(m_matrix[0] - rhs[0], m_matrix[1] - rhs[1], m_matrix[2] - rhs[2], m_matrix[3] - rhs[3],
-                   m_matrix[4] - rhs[4], m_matrix[5] - rhs[5], m_matrix[6] - rhs[6], m_matrix[7] - rhs[7],
-                   m_matrix[8] - rhs[8], m_matrix[9] - rhs[9], m_matrix[10] - rhs[10], m_matrix[11] - rhs[11],
-                   m_matrix[12] - rhs[12], m_matrix[13] - rhs[13], m_matrix[14] - rhs[14], m_matrix[15] - rhs[15]);
+    return Matrix4(m_data[0] - rhs[0], m_data[1] - rhs[1], m_data[2] - rhs[2], m_data[3] - rhs[3], m_data[4] - rhs[4],
+                   m_data[5] - rhs[5], m_data[6] - rhs[6], m_data[7] - rhs[7], m_data[8] - rhs[8], m_data[9] - rhs[9],
+                   m_data[10] - rhs[10], m_data[11] - rhs[11], m_data[12] - rhs[12], m_data[13] - rhs[13],
+                   m_data[14] - rhs[14], m_data[15] - rhs[15]);
 }
 
 inline Vector4 Matrix4::operator*(const Vector4 & rhs) const
 {
-    return Vector4(m_matrix[0] * rhs.x + m_matrix[4] * rhs.y + m_matrix[8] * rhs.z + m_matrix[12] * rhs.w,
-                   m_matrix[1] * rhs.x + m_matrix[5] * rhs.y + m_matrix[9] * rhs.z + m_matrix[13] * rhs.w,
-                   m_matrix[2] * rhs.x + m_matrix[6] * rhs.y + m_matrix[10] * rhs.z + m_matrix[14] * rhs.w,
-                   m_matrix[3] * rhs.x + m_matrix[7] * rhs.y + m_matrix[11] * rhs.z + m_matrix[15] * rhs.w);
+    return Vector4(m_data[0] * rhs.x + m_data[4] * rhs.y + m_data[8] * rhs.z + m_data[12] * rhs.w,
+                   m_data[1] * rhs.x + m_data[5] * rhs.y + m_data[9] * rhs.z + m_data[13] * rhs.w,
+                   m_data[2] * rhs.x + m_data[6] * rhs.y + m_data[10] * rhs.z + m_data[14] * rhs.w,
+                   m_data[3] * rhs.x + m_data[7] * rhs.y + m_data[11] * rhs.z + m_data[15] * rhs.w);
 }
 
 inline Vector3 Matrix4::operator*(const Vector3 & rhs) const
 {
-    return Vector3(m_matrix[0] * rhs.x + m_matrix[4] * rhs.y + m_matrix[8] * rhs.z + m_matrix[12],
-                   m_matrix[1] * rhs.x + m_matrix[5] * rhs.y + m_matrix[9] * rhs.z + m_matrix[13],
-                   m_matrix[2] * rhs.x + m_matrix[6] * rhs.y + m_matrix[10] * rhs.z + m_matrix[14]);
+    return Vector3(m_data[0] * rhs.x + m_data[4] * rhs.y + m_data[8] * rhs.z + m_data[12],
+                   m_data[1] * rhs.x + m_data[5] * rhs.y + m_data[9] * rhs.z + m_data[13],
+                   m_data[2] * rhs.x + m_data[6] * rhs.y + m_data[10] * rhs.z + m_data[14]);
 }
 
 inline Matrix4 Matrix4::operator*(const Matrix4 & n) const
 {
-    return Matrix4(m_matrix[0] * n[0] + m_matrix[4] * n[1] + m_matrix[8] * n[2] + m_matrix[12] * n[3],
-                   m_matrix[1] * n[0] + m_matrix[5] * n[1] + m_matrix[9] * n[2] + m_matrix[13] * n[3],
-                   m_matrix[2] * n[0] + m_matrix[6] * n[1] + m_matrix[10] * n[2] + m_matrix[14] * n[3],
-                   m_matrix[3] * n[0] + m_matrix[7] * n[1] + m_matrix[11] * n[2] + m_matrix[15] * n[3],
-                   m_matrix[0] * n[4] + m_matrix[4] * n[5] + m_matrix[8] * n[6] + m_matrix[12] * n[7],
-                   m_matrix[1] * n[4] + m_matrix[5] * n[5] + m_matrix[9] * n[6] + m_matrix[13] * n[7],
-                   m_matrix[2] * n[4] + m_matrix[6] * n[5] + m_matrix[10] * n[6] + m_matrix[14] * n[7],
-                   m_matrix[3] * n[4] + m_matrix[7] * n[5] + m_matrix[11] * n[6] + m_matrix[15] * n[7],
-                   m_matrix[0] * n[8] + m_matrix[4] * n[9] + m_matrix[8] * n[10] + m_matrix[12] * n[11],
-                   m_matrix[1] * n[8] + m_matrix[5] * n[9] + m_matrix[9] * n[10] + m_matrix[13] * n[11],
-                   m_matrix[2] * n[8] + m_matrix[6] * n[9] + m_matrix[10] * n[10] + m_matrix[14] * n[11],
-                   m_matrix[3] * n[8] + m_matrix[7] * n[9] + m_matrix[11] * n[10] + m_matrix[15] * n[11],
-                   m_matrix[0] * n[12] + m_matrix[4] * n[13] + m_matrix[8] * n[14] + m_matrix[12] * n[15],
-                   m_matrix[1] * n[12] + m_matrix[5] * n[13] + m_matrix[9] * n[14] + m_matrix[13] * n[15],
-                   m_matrix[2] * n[12] + m_matrix[6] * n[13] + m_matrix[10] * n[14] + m_matrix[14] * n[15],
-                   m_matrix[3] * n[12] + m_matrix[7] * n[13] + m_matrix[11] * n[14] + m_matrix[15] * n[15]);
+    return Matrix4(m_data[0] * n[0] + m_data[4] * n[1] + m_data[8] * n[2] + m_data[12] * n[3],
+                   m_data[1] * n[0] + m_data[5] * n[1] + m_data[9] * n[2] + m_data[13] * n[3],
+                   m_data[2] * n[0] + m_data[6] * n[1] + m_data[10] * n[2] + m_data[14] * n[3],
+                   m_data[3] * n[0] + m_data[7] * n[1] + m_data[11] * n[2] + m_data[15] * n[3],
+                   m_data[0] * n[4] + m_data[4] * n[5] + m_data[8] * n[6] + m_data[12] * n[7],
+                   m_data[1] * n[4] + m_data[5] * n[5] + m_data[9] * n[6] + m_data[13] * n[7],
+                   m_data[2] * n[4] + m_data[6] * n[5] + m_data[10] * n[6] + m_data[14] * n[7],
+                   m_data[3] * n[4] + m_data[7] * n[5] + m_data[11] * n[6] + m_data[15] * n[7],
+                   m_data[0] * n[8] + m_data[4] * n[9] + m_data[8] * n[10] + m_data[12] * n[11],
+                   m_data[1] * n[8] + m_data[5] * n[9] + m_data[9] * n[10] + m_data[13] * n[11],
+                   m_data[2] * n[8] + m_data[6] * n[9] + m_data[10] * n[10] + m_data[14] * n[11],
+                   m_data[3] * n[8] + m_data[7] * n[9] + m_data[11] * n[10] + m_data[15] * n[11],
+                   m_data[0] * n[12] + m_data[4] * n[13] + m_data[8] * n[14] + m_data[12] * n[15],
+                   m_data[1] * n[12] + m_data[5] * n[13] + m_data[9] * n[14] + m_data[13] * n[15],
+                   m_data[2] * n[12] + m_data[6] * n[13] + m_data[10] * n[14] + m_data[14] * n[15],
+                   m_data[3] * n[12] + m_data[7] * n[13] + m_data[11] * n[14] + m_data[15] * n[15]);
 }
 
 //
 
 inline Matrix4 & Matrix4::operator+=(const Matrix4 & rhs)
 {
-    m_matrix[0] += rhs[0];
-    m_matrix[1] += rhs[1];
-    m_matrix[2] += rhs[2];
-    m_matrix[3] += rhs[3];
-    m_matrix[4] += rhs[4];
-    m_matrix[5] += rhs[5];
-    m_matrix[6] += rhs[6];
-    m_matrix[7] += rhs[7];
-    m_matrix[8] += rhs[8];
-    m_matrix[9] += rhs[9];
-    m_matrix[10] += rhs[10];
-    m_matrix[11] += rhs[11];
-    m_matrix[12] += rhs[12];
-    m_matrix[13] += rhs[13];
-    m_matrix[14] += rhs[14];
-    m_matrix[15] += rhs[15];
+    m_data[0] += rhs[0];
+    m_data[1] += rhs[1];
+    m_data[2] += rhs[2];
+    m_data[3] += rhs[3];
+    m_data[4] += rhs[4];
+    m_data[5] += rhs[5];
+    m_data[6] += rhs[6];
+    m_data[7] += rhs[7];
+    m_data[8] += rhs[8];
+    m_data[9] += rhs[9];
+    m_data[10] += rhs[10];
+    m_data[11] += rhs[11];
+    m_data[12] += rhs[12];
+    m_data[13] += rhs[13];
+    m_data[14] += rhs[14];
+    m_data[15] += rhs[15];
     return *this;
 }
 
 inline Matrix4 & Matrix4::operator-=(const Matrix4 & rhs)
 {
-    m_matrix[0] -= rhs[0];
-    m_matrix[1] -= rhs[1];
-    m_matrix[2] -= rhs[2];
-    m_matrix[3] -= rhs[3];
-    m_matrix[4] -= rhs[4];
-    m_matrix[5] -= rhs[5];
-    m_matrix[6] -= rhs[6];
-    m_matrix[7] -= rhs[7];
-    m_matrix[8] -= rhs[8];
-    m_matrix[9] -= rhs[9];
-    m_matrix[10] -= rhs[10];
-    m_matrix[11] -= rhs[11];
-    m_matrix[12] -= rhs[12];
-    m_matrix[13] -= rhs[13];
-    m_matrix[14] -= rhs[14];
-    m_matrix[15] -= rhs[15];
+    m_data[0] -= rhs[0];
+    m_data[1] -= rhs[1];
+    m_data[2] -= rhs[2];
+    m_data[3] -= rhs[3];
+    m_data[4] -= rhs[4];
+    m_data[5] -= rhs[5];
+    m_data[6] -= rhs[6];
+    m_data[7] -= rhs[7];
+    m_data[8] -= rhs[8];
+    m_data[9] -= rhs[9];
+    m_data[10] -= rhs[10];
+    m_data[11] -= rhs[11];
+    m_data[12] -= rhs[12];
+    m_data[13] -= rhs[13];
+    m_data[14] -= rhs[14];
+    m_data[15] -= rhs[15];
     return *this;
 }
 
@@ -771,64 +746,64 @@ inline Matrix4 & Matrix4::operator*=(const Matrix4 & rhs)
 
 inline bool Matrix4::operator==(const Matrix4 & n) const
 {
-    return (m_matrix[0] == n[0]) && (m_matrix[1] == n[1]) && (m_matrix[2] == n[2]) && (m_matrix[3] == n[3]) &&
-           (m_matrix[4] == n[4]) && (m_matrix[5] == n[5]) && (m_matrix[6] == n[6]) && (m_matrix[7] == n[7]) &&
-           (m_matrix[8] == n[8]) && (m_matrix[9] == n[9]) && (m_matrix[10] == n[10]) && (m_matrix[11] == n[11]) &&
-           (m_matrix[12] == n[12]) && (m_matrix[13] == n[13]) && (m_matrix[14] == n[14]) && (m_matrix[15] == n[15]);
+    return (m_data[0] == n[0]) && (m_data[1] == n[1]) && (m_data[2] == n[2]) && (m_data[3] == n[3]) &&
+           (m_data[4] == n[4]) && (m_data[5] == n[5]) && (m_data[6] == n[6]) && (m_data[7] == n[7]) &&
+           (m_data[8] == n[8]) && (m_data[9] == n[9]) && (m_data[10] == n[10]) && (m_data[11] == n[11]) &&
+           (m_data[12] == n[12]) && (m_data[13] == n[13]) && (m_data[14] == n[14]) && (m_data[15] == n[15]);
 }
 
 inline bool Matrix4::operator!=(const Matrix4 & n) const
 {
-    return (m_matrix[0] != n[0]) || (m_matrix[1] != n[1]) || (m_matrix[2] != n[2]) || (m_matrix[3] != n[3]) ||
-           (m_matrix[4] != n[4]) || (m_matrix[5] != n[5]) || (m_matrix[6] != n[6]) || (m_matrix[7] != n[7]) ||
-           (m_matrix[8] != n[8]) || (m_matrix[9] != n[9]) || (m_matrix[10] != n[10]) || (m_matrix[11] != n[11]) ||
-           (m_matrix[12] != n[12]) || (m_matrix[13] != n[13]) || (m_matrix[14] != n[14]) || (m_matrix[15] != n[15]);
+    return (m_data[0] != n[0]) || (m_data[1] != n[1]) || (m_data[2] != n[2]) || (m_data[3] != n[3]) ||
+           (m_data[4] != n[4]) || (m_data[5] != n[5]) || (m_data[6] != n[6]) || (m_data[7] != n[7]) ||
+           (m_data[8] != n[8]) || (m_data[9] != n[9]) || (m_data[10] != n[10]) || (m_data[11] != n[11]) ||
+           (m_data[12] != n[12]) || (m_data[13] != n[13]) || (m_data[14] != n[14]) || (m_data[15] != n[15]);
 }
 
 //
 
 inline float Matrix4::operator[](int index) const
 {
-    return m_matrix[index];
+    return m_data[index];
 }
 
 inline float & Matrix4::operator[](int index)
 {
-    return m_matrix[index];
+    return m_data[index];
 }
 
-inline float & Matrix4::operator()(unsigned col, unsigned row)
+float & Matrix4::operator()(unsigned col, unsigned row)
 {
     // https: // isocpp.org/wiki/faq/operator-overloading#matrix-subscript-op
 
     assert(col < 4);
     assert(row < 4);
 
-    return m_matrix[4 * col + row];
+    return m_data[4 * col + row];
 }
 
-inline float Matrix4::operator()(unsigned col, unsigned row) const
+float Matrix4::operator()(unsigned col, unsigned row) const
 {
     // https://isocpp.org/wiki/faq/operator-overloading#matrix-subscript-op
 
     assert(col < 4);
     assert(row < 4);
 
-    return m_matrix[4 * col + row];
+    return m_data[4 * col + row];
 }
 
-inline std::ostream & operator<<(std::ostream & os, const Matrix4 & m)
+std::ostream & VDEngine::operator<<(std::ostream & os, const Matrix4 & m)
 {
     os << std::fixed << std::setprecision(5);
 
-    os << "[" << std::setw(10) << m[0] << " " << std::setw(10) << m[4] << " " << std::setw(10) << m[8] << " "
-       << std::setw(10) << m[12] << "]\n"
-       << "[" << std::setw(10) << m[1] << " " << std::setw(10) << m[5] << " " << std::setw(10) << m[9] << " "
-       << std::setw(10) << m[13] << "]\n"
-       << "[" << std::setw(10) << m[2] << " " << std::setw(10) << m[6] << " " << std::setw(10) << m[10] << " "
-       << std::setw(10) << m[14] << "]\n"
-       << "[" << std::setw(10) << m[3] << " " << std::setw(10) << m[7] << " " << std::setw(10) << m[11] << " "
-       << std::setw(10) << m[15] << "]\n";
+    os << "[" << std::setw(10) << m(0, 0) << " " << std::setw(10) << m(1, 0) << " " << std::setw(10) << m(2, 0) << " "
+       << std::setw(10) << m(3, 0) << "]\n"
+       << "[" << std::setw(10) << m(0, 1) << " " << std::setw(10) << m(1, 1) << " " << std::setw(10) << m(2, 1) << " "
+       << std::setw(10) << m(3, 1) << "]\n"
+       << "[" << std::setw(10) << m(0, 2) << " " << std::setw(10) << m(1, 2) << " " << std::setw(10) << m(2, 2) << " "
+       << std::setw(10) << m(3, 2) << "]\n"
+       << "[" << std::setw(10) << m(0, 3) << " " << std::setw(10) << m(1, 3) << " " << std::setw(10) << m(2, 3) << " "
+       << std::setw(10) << m(3, 3) << "]\n";
 
     os << std::resetiosflags(std::ios_base::fixed | std::ios_base::floatfield);
     return os;
@@ -844,6 +819,112 @@ float Matrix4::GetCofactor(float m0, float m1, float m2, float m3, float m4, flo
 {
     return m0 * (m4 * m8 - m5 * m7) - m1 * (m3 * m8 - m5 * m6) + m2 * (m3 * m7 - m4 * m6);
 }
+
+// void Matrix4::QRDecompose(const Matrix4 & input_mat, Matrix4 & orth_mat, Matrix4 & up_triang_mat)
+// {
+//     // Definition:
+//     // A square matrix is called LOWER TRIANGULAR if all the entries above the main diagonal are zero.
+//     // Similarly, a square matrix is called UPPER TRIANGULAR if all the entries below the main diagonal are zero.
+//     // A TRIANGULAR MATRIX is one that is either lower triangular or upper triangular.
+//     // A matrix that is both upper and lower triangular is called a DIAGONAL MATRIX.
+
+//     // [A = Q.R] == [Qt.A = Q.Qt.R] == [Qt.A = I.R] == [R = Qt.A]
+//     //
+//     // where:
+//     //          A -> Input matrix
+//     //          Q -> Orthogonal matrix (can be found with Gram-Schimdt algorith)
+//     //          R -> Upper Triangular matrix
+//     //          Qt -> transpose of Q
+//     //          I -> identity matrix
+
+//     // https://gabormakesgames.com/blog_decomposition_qr.html
+
+//     // Extract Orthogonal matrix
+//     orth_mat = input_mat.GetOrthonormalized();
+
+//     // Extract Upper Triangular matrix
+//     up_triang_mat = Matrix4();
+
+//     up_triang_mat = orth_mat.GetTransposed() * input_mat;
+// }
+
+///////////////////////////////////////////////////////////////////////////////
+// compute the inverse of 4x4 Euclidean transformation matrix
+//
+// Euclidean transformation is translation, rotation, and reflection.
+// With Euclidean transform, only the position and orientation of the object
+// will be changed. Euclidean transform does not change the shape of an object
+// (no scaling). Length and angle are reserved.
+//
+// Use inverseAffine() if the matrix has scale and shear transformation.
+//
+///////////////////////////////////////////////////////////////////////////////
+// void Matrix4::InvertEuclidean()
+// {
+//     // transpose 3x3 rotation matrix part
+//     float tmp;
+//     tmp         = m_matrix[1];
+//     m_matrix[1] = m_matrix[4];
+//     m_matrix[4] = tmp;
+//     tmp         = m_matrix[2];
+//     m_matrix[2] = m_matrix[8];
+//     m_matrix[8] = tmp;
+//     tmp         = m_matrix[6];
+//     m_matrix[6] = m_matrix[9];
+//     m_matrix[9] = tmp;
+
+//     // compute translation part -R^T * T
+//     float x      = m_matrix[12];
+//     float y      = m_matrix[13];
+//     float z      = m_matrix[14];
+//     m_matrix[12] = -(m_matrix[0] * x + m_matrix[4] * y + m_matrix[8] * z);
+//     m_matrix[13] = -(m_matrix[1] * x + m_matrix[5] * y + m_matrix[9] * z);
+//     m_matrix[14] = -(m_matrix[2] * x + m_matrix[6] * y + m_matrix[10] * z);
+
+//     // last row should be unchanged (0,0,0,1)
+// }
+
+///////////////////////////////////////////////////////////////////////////////
+// compute the inverse of a 4x4 affine transformation matrix
+//
+// Affine transformations are generalizations of Euclidean transformations.
+// Affine transformation includes translation, rotation, reflection, scaling,
+// and shearing. Length and angle are NOT preserved.
+//
+///////////////////////////////////////////////////////////////////////////////
+// void Matrix4::InvertAffine()
+// {
+//     // R^-1
+//     Matrix4 r(m_matrix[0], m_matrix[1], m_matrix[2], 0, m_matrix[4], m_matrix[5], m_matrix[6], 0, m_matrix[8],
+//               m_matrix[9], m_matrix[10], 0, 0, 0, 0, 1);
+
+//     r.InvertGeneral();
+
+//     m_matrix[0] = r[0];
+//     m_matrix[1] = r[1];
+//     m_matrix[2] = r[2];
+
+//     m_matrix[4] = r[4];
+//     m_matrix[5] = r[5];
+//     m_matrix[6] = r[6];
+
+//     m_matrix[8]  = r[8];
+//     m_matrix[9]  = r[9];
+//     m_matrix[10] = r[10];
+
+//     // -R^-1 * T
+//     float x = m_matrix[12];
+//     float y = m_matrix[13];
+//     float z = m_matrix[14];
+
+//     m_matrix[12] = -(r[0] * x + r[4] * y + r[8] * z);
+//     m_matrix[13] = -(r[1] * x + r[5] * y + r[9] * z);
+//     m_matrix[14] = -(r[2] * x + r[6] * y + r[10] * z);
+
+//     // last row should be unchanged (0,0,0,1)
+//     // m_matrix[3] = m_matrix[7] = m_matrix[11] = 0.0f;
+//     // m_matrix[15] = 1.0f;
+// }
 
 // ///////////////////////////////////////////////////////////////////////////////
 // // retrieve angles in degree from rotation matrix, M = Rx*Ry*Rz
@@ -898,29 +979,20 @@ float Matrix4::GetCofactor(float m0, float m1, float m2, float m3, float m4, flo
 //     return Vector3(pitch, yaw, roll);
 // }
 
-// ///////////////////////////////////////////////////////////////////////////////
-// // translate this matrix by (x, y, z)
-// ///////////////////////////////////////////////////////////////////////////////
-
 // Matrix4 & Matrix4::Translate(const Vector3 & v)
 // {
-//     return Translate(v.x, v.y, v.z);
-// }
-
-// Matrix4 & Matrix4::Translate(float x, float y, float z)
-// {
-//     m_matrix[0] += m_matrix[3] * x;
-//     m_matrix[4] += m_matrix[7] * x;
-//     m_matrix[8] += m_matrix[11] * x;
-//     m_matrix[12] += m_matrix[15] * x;
-//     m_matrix[1] += m_matrix[3] * y;
-//     m_matrix[5] += m_matrix[7] * y;
-//     m_matrix[9] += m_matrix[11] * y;
-//     m_matrix[13] += m_matrix[15] * y;
-//     m_matrix[2] += m_matrix[3] * z;
-//     m_matrix[6] += m_matrix[7] * z;
-//     m_matrix[10] += m_matrix[11] * z;
-//     m_matrix[14] += m_matrix[15] * z;
+//     m_matrix[0] += m_matrix[3] * v.x;
+//     m_matrix[4] += m_matrix[7] * v.x;
+//     m_matrix[8] += m_matrix[11] * v.x;
+//     m_matrix[12] += m_matrix[15] * v.x;
+//     m_matrix[1] += m_matrix[3] * v.y;
+//     m_matrix[5] += m_matrix[7] * v.y;
+//     m_matrix[9] += m_matrix[11] * v.y;
+//     m_matrix[13] += m_matrix[15] * v.y;
+//     m_matrix[2] += m_matrix[3] * v.z;
+//     m_matrix[6] += m_matrix[7] * v.z;
+//     m_matrix[10] += m_matrix[11] * v.z;
+//     m_matrix[14] += m_matrix[15] * v.z;
 
 //     return *this;
 // }
@@ -1042,7 +1114,8 @@ float Matrix4::GetCofactor(float m0, float m1, float m2, float m3, float m4, flo
 // {
 //     float c  = cosf(to_radians(angle));
 //     float s  = sinf(to_radians(angle));
-//     float m0 = m_matrix[0], m1 = m_matrix[1], m4 = m_matrix[4], m5 = m_matrix[5], m8 = m_matrix[8], m9 = m_matrix[9],
+//     float m0 = m_matrix[0], m1 = m_matrix[1], m4 = m_matrix[4], m5 = m_matrix[5], m8 = m_matrix[8], m9 =
+//     m_matrix[9],
 //           m12 = m_matrix[12], m13 = m_matrix[13];
 
 //     m_matrix[0]  = m0 * c + m1 * -s;
@@ -1129,16 +1202,6 @@ float Matrix4::GetCofactor(float m0, float m1, float m2, float m3, float m4, flo
 //     this->SetColumn(2, forward);
 
 //     return *this;
-// }
-
-// Matrix4 & Matrix4::LookAt(float tx, float ty, float tz)
-// {
-//     return LookAt(Vector3(tx, ty, tz));
-// }
-
-// Matrix4 & Matrix4::LookAt(float tx, float ty, float tz, float ux, float uy, float uz)
-// {
-//     return LookAt(Vector3(tx, ty, tz), Vector3(ux, uy, uz));
 // }
 
 /////////////////////////////////////////////////
