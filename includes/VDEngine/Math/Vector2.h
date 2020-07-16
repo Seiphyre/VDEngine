@@ -81,6 +81,7 @@ struct Vector2
 
     Vector2 operator+(const Vector2 & rhs) const;
     Vector2 operator-(const Vector2 & rhs) const;
+    Vector2 operator*(const Vector2 & rhs) const;
     Vector2 operator*(float rhs) const;
     Vector2 operator/(float rhs) const;
 
@@ -95,6 +96,11 @@ struct Vector2
 
     bool operator==(const Vector2 & rhs) const;
     bool operator!=(const Vector2 & rhs) const;
+
+    // -- member access, subscrip operators --
+
+    float &       operator[](int index);
+    const float & operator[](int index) const;
 
     // -- insertion operators --
 

@@ -50,13 +50,10 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     Vector3 forward = p_forward.GetNormalized();
     Vector3 up      = p_up.GetNormalized();
 
-    std::cout << up << std::endl;
-
     // Calculate final orientation forward
     Quaternion rot1;
 
     rot1 = Quaternion::FromTo(Vector3::VecForward(), forward);
-    std::cout << rot1 << std::endl;
 
     // Calculate final orientation up
     Quaternion rot2;
@@ -67,12 +64,9 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     Vector3 new_up = rot1 * Vector3::VecUp();
     rot2           = Quaternion::FromTo(new_up, up);
 
-    std::cout << rot2 << std::endl;
-
     // result
     Quaternion targetOrientation = rot2 * rot1;
 
-    std::cout << targetOrientation << std::endl;
     targetOrientation.Normalize();
 
     return (targetOrientation);
@@ -736,6 +730,43 @@ inline bool Quaternion::operator!=(const Quaternion & rhs) const
     // return x != rhs.x || y != rhs.y || z != rhs.z || w != rhs.w;
 
     return (!(*this == rhs));
+}
+
+// -- member access, subscrip operators --
+
+float & Quaternion::operator[](int index)
+{
+    assert(index >= 0 && index < 4);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        case 3:
+            return w;
+    }
+}
+float Quaternion::operator[](int index) const
+{
+    assert(index >= 0 && index < 4);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        case 3:
+            return w;
+    }
 }
 
 // -- insertion operators -------------------------------

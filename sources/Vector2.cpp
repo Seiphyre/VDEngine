@@ -78,6 +78,12 @@ Vector2 Vector2::operator-(const Vector2 & rhs) const
     return Vector2(x - rhs.x, y - rhs.y);
 }
 
+Vector2 Vector2::operator*(const Vector2 & rhs) const
+{
+    Vector2 res(x * rhs.x, y * rhs.y);
+    return res;
+}
+
 Vector2 Vector2::operator*(float rhs) const
 {
     return Vector2(x * rhs, y * rhs);
@@ -144,6 +150,35 @@ bool Vector2::operator==(const Vector2 & rhs) const
 bool Vector2::operator!=(const Vector2 & rhs) const
 {
     return !(*this == rhs);
+}
+
+// -- member access, subscrip operators --
+
+float & Vector2::operator[](int index)
+{
+    assert(index >= 0 && index < 2);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+    }
+}
+const float & Vector2::operator[](int index) const
+{
+    assert(index >= 0 && index < 2);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+    }
 }
 
 // -- insertion operators ---------------------------------

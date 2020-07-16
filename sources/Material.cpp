@@ -7,10 +7,10 @@ Material::Material()
     m_uuid = uuids::uuid_system_generator{}();
     shader = ShaderManager::getInstance()->GetShader();
 
-    diffuse_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    diffuse_color = Vector3::VecOne();
     diffuse_map   = nullptr;
 
-    specular_color = glm::vec3(1.0f, 1.0f, 1.0f);
+    specular_color = Vector3::VecOne();
     specular_map   = nullptr;
 
     shininess = 64.0f;

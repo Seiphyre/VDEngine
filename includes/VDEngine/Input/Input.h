@@ -3,10 +3,11 @@
 
 // External libs
 #include "GLFW/glfw3.h"
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 // Internal headers
 #include "VDEngine/Core/Singleton.h"
+#include "VDEngine/Math/Vector2.h"
 
 namespace VDEngine
 {
@@ -35,17 +36,17 @@ class Input : public Singleton<Input>
     bool GetScrollUp() const;
     bool GetScrollDown() const;
 
-    glm::vec2 GetScroll() const;
+    Vector2 GetScroll() const;
 
-    glm::vec2 GetMousePosition() const;
-    glm::vec2 GetMouseDeltaPosition() const;
+    Vector2 GetMousePosition() const;
+    Vector2 GetMouseDeltaPosition() const;
 
   private:
     Input();
 
-    glm::vec2 m_mouse_position;
-    glm::vec2 m_mouse_delta_position;
-    glm::vec2 m_scroll_offset;
+    Vector2 m_mouse_position;
+    Vector2 m_mouse_delta_position;
+    Vector2 m_scroll_offset;
 };
 
 } // namespace VDEngine

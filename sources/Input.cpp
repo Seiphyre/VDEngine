@@ -1,6 +1,8 @@
 #include "VDEngine/Input/Input.h"
 
-VDEngine::Input::Input()
+using namespace VDEngine;
+
+Input::Input()
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
 
@@ -16,9 +18,9 @@ VDEngine::Input::Input()
     int height;
     glfwGetWindowSize(current_context, &width, &height);
 
-    m_mouse_position       = glm::vec2((float)width / 2.0f, (float)height / 2.0f);
-    m_mouse_delta_position = glm::vec2((float)width / 2.0f, (float)height / 2.0f);
-    m_scroll_offset        = glm::vec2(0.0f, 0.0f);
+    m_mouse_position       = Vector2((float)width / 2.0f, (float)height / 2.0f);
+    m_mouse_delta_position = Vector2((float)width / 2.0f, (float)height / 2.0f);
+    m_scroll_offset        = Vector2(0.0f, 0.0f);
 
     // Scroll -------------------------
     auto callback = [](GLFWwindow * window, double xoffset, double yoffset) -> void {
@@ -52,9 +54,11 @@ VDEngine::Input::Input()
     glfwSetScrollCallback(current_context, callback);
 }
 
-VDEngine::Input::~Input() {}
+Input::~Input()
+{
+}
 
-void VDEngine::Input::Update()
+void Input::Update()
 {
     glfwPollEvents();
 
@@ -65,8 +69,8 @@ void VDEngine::Input::Update()
 
     glfwGetCursorPos(current_context, &xpos, &ypos);
 
-    m_mouse_delta_position = glm::vec2(xpos - m_mouse_position.x, ypos - m_mouse_position.y);
-    m_mouse_position       = glm::vec2(xpos, ypos);
+    m_mouse_delta_position = Vector2(xpos - m_mouse_position.x, ypos - m_mouse_position.y);
+    m_mouse_position       = Vector2(xpos, ypos);
 
     // Update Scroll event --------------
     void * data = glfwGetWindowUserPointer(current_context);
@@ -77,7 +81,7 @@ void VDEngine::Input::Update()
         ScrollData * scrollData = static_cast<ScrollData *>(data);
         if (scrollData)
         {
-            m_scroll_offset = glm::vec2(scrollData->xoffset, scrollData->yoffset);
+            m_scroll_offset = Vector2(scrollData->xoffset, scrollData->yoffset);
         }
 
         // Free ptr
@@ -86,11 +90,11 @@ void VDEngine::Input::Update()
     }
     else
     {
-        m_scroll_offset = glm::vec2(0.0f, 0.0f);
+        m_scroll_offset = Vector2(0.0f, 0.0f);
     }
 }
 
-bool VDEngine::Input::GetKeyUp(int key_code) const
+bool Input::GetKeyUp(int key_code) const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
 
@@ -100,7 +104,7 @@ bool VDEngine::Input::GetKeyUp(int key_code) const
     return false;
 }
 
-bool VDEngine::Input::GetKeyDown(int key_code) const
+bool Input::GetKeyDown(int key_code) const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
 
@@ -110,7 +114,7 @@ bool VDEngine::Input::GetKeyDown(int key_code) const
     return false;
 }
 
-bool VDEngine::Input::GetMouseButtonUp(int button_code) const
+bool Input::GetMouseButtonUp(int button_code) const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
 
@@ -119,7 +123,7 @@ bool VDEngine::Input::GetMouseButtonUp(int button_code) const
 
     return false;
 }
-bool VDEngine::Input::GetMouseButtonDown(int button_code) const
+bool Input::GetMouseButtonDown(int button_code) const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
 
@@ -129,7 +133,7 @@ bool VDEngine::Input::GetMouseButtonDown(int button_code) const
     return false;
 }
 
-bool VDEngine::Input::GetScrollUp() const
+bool Input::GetScrollUp() const
 {
     if (m_scroll_offset.y > 0)
         return true;
@@ -137,7 +141,7 @@ bool VDEngine::Input::GetScrollUp() const
     return false;
 }
 
-bool VDEngine::Input::GetScrollDown() const
+bool Input::GetScrollDown() const
 {
     if (m_scroll_offset.y < 0)
         return true;
@@ -145,16 +149,16 @@ bool VDEngine::Input::GetScrollDown() const
     return false;
 }
 
-glm::vec2 VDEngine::Input::GetScroll() const
+Vector2 Input::GetScroll() const
 {
     return m_scroll_offset;
 }
 
-glm::vec2 VDEngine::Input::GetMousePosition() const
+Vector2 Input::GetMousePosition() const
 {
     return m_mouse_position;
 }
-glm::vec2 VDEngine::Input::GetMouseDeltaPosition() const
+Vector2 Input::GetMouseDeltaPosition() const
 {
     return m_mouse_delta_position;
 }

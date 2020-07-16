@@ -18,16 +18,37 @@ float Camera::GetFOV() const
     return (m_fov);
 }
 
-glm::mat4 Camera::GetViewMatrix() const
+Matrix4 Camera::GetViewMatrix() const
 {
     glm::mat4 view;
-    view = glm::lookAt(m_transform->position,
-                       m_transform->position + (m_transform->GetForwardDir() * glm::vec3(1.0f, 1.0f, -1.0f)), WORLD_UP);
+    view = glm::lookAt(to_glm_vec3(m_transform->position),
+                       to_glm_vec3(m_transform->position) +
+                           (to_glm_vec3(m_transform->GetForwardDir()) * glm::vec3(1.0f, 1.0f, -1.0f)),
+                       glm::vec3(0.0f, 1.0f, 0.0f));
 
-    return view;
+    return to_matrix4(view);
+
+    // ---------------
+
+    // // https://www.3dgep.com/understanding-the-view-matrix/#Look_At_Camera
+
+    // // OpenGL view is looking toward -Z
+    // // -- Flip Z --
+    // Quaternion view_orientation;
+    // Vector3    view_forward = m_transform->rotation.GetForward();
+
+    // view_forward.Scale(Vector3(1.0f, 1.0f, -1.0f));
+    // view_orientation = Quaternion::LookRotation(view_forward);
+
+    // // -- compose matrix --
+
+    // Matrix4 orientation_mat = Matrix4::CreateRotationMatrix(view_orientation);
+    // Matrix4 translation_mat = Matrix4::CreateTranslationMatrix(-m_transform->position);
+
+    // return orientation_mat * translation_mat;
 }
 
-glm::mat4 Camera::GetProjectionMatrix() const
+Matrix4 Camera::GetProjectionMatrix() const
 {
     GLFWwindow * current_context = glfwGetCurrentContext();
     int          width;
@@ -35,10 +56,7 @@ glm::mat4 Camera::GetProjectionMatrix() const
 
     glfwGetWindowSize(current_context, &width, &height);
 
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(m_fov), (float)width / (float)height, m_near, m_far);
-
-    return projection;
+    return Matrix4::CreatePerspective(m_fov, (float)width / (float)height, m_near, m_far);
 }
 
 void Camera::SetFOV(float fov)

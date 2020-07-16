@@ -22,6 +22,9 @@
 #include "VDEngine/Renderer/Material.h"
 #include "VDEngine/Renderer/Light.h"
 
+#include "VDEngine/Math/Vectors.hpp"
+#include "VDEngine/Math/Matrix4.h"
+
 namespace VDEngine
 {
 
@@ -55,8 +58,8 @@ class MeshRender : public Component
                                           std::string & param_name);
 
     // Set Vertex Attrib
-    void SetVertexAttribVec3(int layout_index, const glm::vec3 * data, int data_size);
-    void SetVertexAttribVec2(int layout_index, const glm::vec2 * data, int data_size);
+    void SetVertexAttribVec3(int layout_index, const Vector3 * data, int data_size);
+    void SetVertexAttribVec2(int layout_index, const Vector2 * data, int data_size);
 
     // Set Uniforms
     void SetBool(const std::string & name, bool value) const;
@@ -65,18 +68,18 @@ class MeshRender : public Component
 
     void SetFloat(const std::string & name, float value) const;
 
-    void SetVec2(const std::string & name, const glm::vec2 & value) const;
+    void SetVec2(const std::string & name, const Vector2 & value) const;
     void SetVec2(const std::string & name, float x, float y) const;
 
-    void SetVec3(const std::string & name, const glm::vec3 & value) const;
+    void SetVec3(const std::string & name, const Vector3 & value) const;
     void SetVec3(const std::string & name, float x, float y, float z) const;
 
-    void SetVec4(const std::string & name, const glm::vec4 & value) const;
+    void SetVec4(const std::string & name, const Vector4 & value) const;
     void SetVec4(const std::string & name, float x, float y, float z, float w);
 
-    void SetMat2(const std::string & name, const glm::mat2 & mat) const;
-    void SetMat3(const std::string & name, const glm::mat3 & mat) const;
-    void SetMat4(const std::string & name, const glm::mat4 & mat) const;
+    // void SetMat2(const std::string & name, const glm::mat2 & mat) const;
+    // void SetMat3(const std::string & name, const glm::mat3 & mat) const;
+    void SetMat4(const std::string & name, const Matrix4 & mat) const;
 
     unsigned int m_VAO;
 

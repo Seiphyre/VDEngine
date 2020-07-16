@@ -62,6 +62,12 @@ Vector4 Vector4::operator-(const Vector4 & rhs) const
     return Vector4(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w);
 }
 
+Vector4 Vector4::operator*(const Vector4 & rhs) const
+{
+    Vector4 res(x * rhs.x, y * rhs.y, z * rhs.z, w * rhs.w);
+    return res;
+}
+
 Vector4 Vector4::operator*(float rhs) const
 {
     return Vector4(x * rhs, y * rhs, z * rhs, w * rhs);
@@ -134,6 +140,43 @@ bool Vector4::operator==(const Vector4 & rhs) const
 bool Vector4::operator!=(const Vector4 & rhs) const
 {
     return !(*this == rhs);
+}
+
+// -- member access, subscrip operators --
+
+float & Vector4::operator[](int index)
+{
+    assert(index >= 0 && index < 4);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        case 3:
+            return w;
+    }
+}
+const float & Vector4::operator[](int index) const
+{
+    assert(index >= 0 && index < 4);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+        case 3:
+            return w;
+    }
 }
 
 // -- insertion operators -----------------------------------

@@ -64,6 +64,7 @@ struct Vector4
 
     Vector4 operator+(const Vector4 & rhs) const;
     Vector4 operator-(const Vector4 & rhs) const;
+    Vector4 operator*(const Vector4 & rhs) const;
     Vector4 operator*(float rhs) const;
     Vector4 operator/(float rhs) const;
 
@@ -78,6 +79,11 @@ struct Vector4
 
     bool operator==(const Vector4 & rhs) const;
     bool operator!=(const Vector4 & rhs) const;
+
+    // -- member access, subscrip operators --
+
+    float &       operator[](int index);
+    const float & operator[](int index) const;
 
     // -- insertion operators --
 

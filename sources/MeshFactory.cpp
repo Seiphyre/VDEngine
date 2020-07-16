@@ -12,186 +12,186 @@ MeshFactory::~MeshFactory()
 
 Mesh * MeshFactory::CreateCube()
 {
-    glm::vec3 verticesArray[] = {
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
-        glm::vec3(0.5f, -0.5f, -0.5f),  //
-        glm::vec3(0.5f, 0.5f, -0.5f),   //
-        glm::vec3(0.5f, 0.5f, -0.5f),   //
-        glm::vec3(-0.5f, 0.5f, -0.5f),  //
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
+    Vector3 verticesArray[] = {
+        Vector3(-0.5f, -0.5f, -0.5f), //
+        Vector3(0.5f, -0.5f, -0.5f),  //
+        Vector3(0.5f, 0.5f, -0.5f),   //
+        Vector3(0.5f, 0.5f, -0.5f),   //
+        Vector3(-0.5f, 0.5f, -0.5f),  //
+        Vector3(-0.5f, -0.5f, -0.5f), //
 
-        glm::vec3(-0.5f, -0.5f, 0.5f), //
-        glm::vec3(0.5f, -0.5f, 0.5f),  //
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
-        glm::vec3(-0.5f, 0.5f, 0.5f),  //
-        glm::vec3(-0.5f, -0.5f, 0.5f), //
+        Vector3(-0.5f, -0.5f, 0.5f), //
+        Vector3(0.5f, -0.5f, 0.5f),  //
+        Vector3(0.5f, 0.5f, 0.5f),   //
+        Vector3(0.5f, 0.5f, 0.5f),   //
+        Vector3(-0.5f, 0.5f, 0.5f),  //
+        Vector3(-0.5f, -0.5f, 0.5f), //
 
-        glm::vec3(-0.5f, 0.5f, 0.5f),   //
-        glm::vec3(-0.5f, 0.5f, -0.5f),  //
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
-        glm::vec3(-0.5f, -0.5f, 0.5f),  //
-        glm::vec3(-0.5f, 0.5f, 0.5f),   //
+        Vector3(-0.5f, 0.5f, 0.5f),   //
+        Vector3(-0.5f, 0.5f, -0.5f),  //
+        Vector3(-0.5f, -0.5f, -0.5f), //
+        Vector3(-0.5f, -0.5f, -0.5f), //
+        Vector3(-0.5f, -0.5f, 0.5f),  //
+        Vector3(-0.5f, 0.5f, 0.5f),   //
 
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
-        glm::vec3(0.5f, 0.5f, -0.5f),  //
-        glm::vec3(0.5f, -0.5f, -0.5f), //
-        glm::vec3(0.5f, -0.5f, -0.5f), //
-        glm::vec3(0.5f, -0.5f, 0.5f),  //
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
+        Vector3(0.5f, 0.5f, 0.5f),   //
+        Vector3(0.5f, 0.5f, -0.5f),  //
+        Vector3(0.5f, -0.5f, -0.5f), //
+        Vector3(0.5f, -0.5f, -0.5f), //
+        Vector3(0.5f, -0.5f, 0.5f),  //
+        Vector3(0.5f, 0.5f, 0.5f),   //
 
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
-        glm::vec3(0.5f, -0.5f, -0.5f),  //
-        glm::vec3(0.5f, -0.5f, 0.5f),   //
-        glm::vec3(0.5f, -0.5f, 0.5f),   //
-        glm::vec3(-0.5f, -0.5f, 0.5f),  //
-        glm::vec3(-0.5f, -0.5f, -0.5f), //
+        Vector3(-0.5f, -0.5f, -0.5f), //
+        Vector3(0.5f, -0.5f, -0.5f),  //
+        Vector3(0.5f, -0.5f, 0.5f),   //
+        Vector3(0.5f, -0.5f, 0.5f),   //
+        Vector3(-0.5f, -0.5f, 0.5f),  //
+        Vector3(-0.5f, -0.5f, -0.5f), //
 
-        glm::vec3(-0.5f, 0.5f, -0.5f), //
-        glm::vec3(0.5f, 0.5f, -0.5f),  //
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
-        glm::vec3(0.5f, 0.5f, 0.5f),   //
-        glm::vec3(-0.5f, 0.5f, 0.5f),  //
-        glm::vec3(-0.5f, 0.5f, -0.5f), //
+        Vector3(-0.5f, 0.5f, -0.5f), //
+        Vector3(0.5f, 0.5f, -0.5f),  //
+        Vector3(0.5f, 0.5f, 0.5f),   //
+        Vector3(0.5f, 0.5f, 0.5f),   //
+        Vector3(-0.5f, 0.5f, 0.5f),  //
+        Vector3(-0.5f, 0.5f, -0.5f), //
     };
 
-    glm::vec3 normalsArray[] = {
-        glm::vec3(0.0f, 0.0f, -1.0f), //
-        glm::vec3(0.0f, 0.0f, -1.0f), //
-        glm::vec3(0.0f, 0.0f, -1.0f), //
-        glm::vec3(0.0f, 0.0f, -1.0f), //
-        glm::vec3(0.0f, 0.0f, -1.0f), //
-        glm::vec3(0.0f, 0.0f, -1.0f), //
+    Vector3 normalsArray[] = {
+        Vector3(0.0f, 0.0f, -1.0f), //
+        Vector3(0.0f, 0.0f, -1.0f), //
+        Vector3(0.0f, 0.0f, -1.0f), //
+        Vector3(0.0f, 0.0f, -1.0f), //
+        Vector3(0.0f, 0.0f, -1.0f), //
+        Vector3(0.0f, 0.0f, -1.0f), //
 
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
 
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
-        glm::vec3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
+        Vector3(-1.0f, 0.0f, 0.0f), //
 
-        glm::vec3(1.0f, 0.0f, 0.0f), //
-        glm::vec3(1.0f, 0.0f, 0.0f), //
-        glm::vec3(1.0f, 0.0f, 0.0f), //
-        glm::vec3(1.0f, 0.0f, 0.0f), //
-        glm::vec3(1.0f, 0.0f, 0.0f), //
-        glm::vec3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
+        Vector3(1.0f, 0.0f, 0.0f), //
 
-        glm::vec3(0.0f, -1.0f, 0.0f), //
-        glm::vec3(0.0f, -1.0f, 0.0f), //
-        glm::vec3(0.0f, -1.0f, 0.0f), //
-        glm::vec3(0.0f, -1.0f, 0.0f), //
-        glm::vec3(0.0f, -1.0f, 0.0f), //
-        glm::vec3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
+        Vector3(0.0f, -1.0f, 0.0f), //
 
-        glm::vec3(0.0f, 1.0f, 0.0f), //
-        glm::vec3(0.0f, 1.0f, 0.0f), //
-        glm::vec3(0.0f, 1.0f, 0.0f), //
-        glm::vec3(0.0f, 1.0f, 0.0f), //
-        glm::vec3(0.0f, 1.0f, 0.0f), //
-        glm::vec3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
+        Vector3(0.0f, 1.0f, 0.0f), //
     };
 
-    glm::vec3 vColorsArray[] = {
+    Vector3 vColorsArray[] = {
         // Back
-        glm::vec3(0.0, 0.0, 1.0), //
-        glm::vec3(0.0, 0.0, 1.0), //
-        glm::vec3(0.0, 0.0, 1.0), //
-        glm::vec3(0.0, 0.0, 1.0), //
-        glm::vec3(0.0, 0.0, 1.0), //
-        glm::vec3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
+        Vector3(0.0, 0.0, 1.0), //
 
         // Front face
-        glm::vec3(0.5, 0.5, 1.0), //
-        glm::vec3(0.5, 0.5, 1.0), //
-        glm::vec3(0.5, 0.5, 1.0), //
-        glm::vec3(0.5, 0.5, 1.0), //
-        glm::vec3(0.5, 0.5, 1.0), //
-        glm::vec3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
+        Vector3(0.5, 0.5, 1.0), //
 
         // Left face
-        glm::vec3(1.0, 0.0, 0.0), //
-        glm::vec3(1.0, 0.0, 0.0), //
-        glm::vec3(1.0, 0.0, 0.0), //
-        glm::vec3(1.0, 0.0, 0.0), //
-        glm::vec3(1.0, 0.0, 0.0), //
-        glm::vec3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
+        Vector3(1.0, 0.0, 0.0), //
 
         // Right face
-        glm::vec3(1.0, 0.5, 0.5), //
-        glm::vec3(1.0, 0.5, 0.5), //
-        glm::vec3(1.0, 0.5, 0.5), //
-        glm::vec3(1.0, 0.5, 0.5), //
-        glm::vec3(1.0, 0.5, 0.5), //
-        glm::vec3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
+        Vector3(1.0, 0.5, 0.5), //
 
         // Bottom face
-        glm::vec3(0.0, 1.0, 0.0), //
-        glm::vec3(0.0, 1.0, 0.0), //
-        glm::vec3(0.0, 1.0, 0.0), //
-        glm::vec3(0.0, 1.0, 0.0), //
-        glm::vec3(0.0, 1.0, 0.0), //
-        glm::vec3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
+        Vector3(0.0, 1.0, 0.0), //
 
         // Top face
-        glm::vec3(0.5, 1.0, 0.5), //
-        glm::vec3(0.5, 1.0, 0.5), //
-        glm::vec3(0.5, 1.0, 0.5), //
-        glm::vec3(0.5, 1.0, 0.5), //
-        glm::vec3(0.5, 1.0, 0.5), //
-        glm::vec3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
+        Vector3(0.5, 1.0, 0.5), //
     };
 
-    glm::vec2 vTexCoordsArray[] = {
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 0.0f), //
+    Vector2 vTexCoordsArray[] = {
+        Vector2(0.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 0.0f), //
 
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 0.0f), //
+        Vector2(0.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 0.0f), //
 
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
 
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
 
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(0.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(0.0f, 0.0f), //
+        Vector2(0.0f, 1.0f), //
 
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(0.0f, 1.0f)  //
+        Vector2(0.0f, 1.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(0.0f, 0.0f), //
+        Vector2(0.0f, 1.0f)  //
     };
 
     Mesh * mesh = new Mesh();
@@ -206,40 +206,40 @@ Mesh * MeshFactory::CreateCube()
 
 Mesh * MeshFactory::CreatePlane()
 {
-    glm::vec3 verticesArray[] = {
-        glm::vec3(-0.5f, -0.5f, 0.0f), //
-        glm::vec3(0.5f, -0.5f, 0.0f),  //
-        glm::vec3(0.5f, 0.5f, 0.0f),   //
-        glm::vec3(0.5f, 0.5f, 0.0f),   //
-        glm::vec3(-0.5f, 0.5f, 0.0f),  //
-        glm::vec3(-0.5f, -0.5f, 0.0f), //
+    Vector3 verticesArray[] = {
+        Vector3(-0.5f, -0.5f, 0.0f), //
+        Vector3(0.5f, -0.5f, 0.0f),  //
+        Vector3(0.5f, 0.5f, 0.0f),   //
+        Vector3(0.5f, 0.5f, 0.0f),   //
+        Vector3(-0.5f, 0.5f, 0.0f),  //
+        Vector3(-0.5f, -0.5f, 0.0f), //
     };
 
-    glm::vec3 normalsArray[] = {
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
-        glm::vec3(0.0f, 0.0f, 1.0f), //
+    Vector3 normalsArray[] = {
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
+        Vector3(0.0f, 0.0f, 1.0f), //
     };
 
-    glm::vec3 vColorsArray[] = {
-        glm::vec3(1.0, 1.0, 1.0), //
-        glm::vec3(1.0, 1.0, 1.0), //
-        glm::vec3(1.0, 1.0, 1.0), //
-        glm::vec3(1.0, 1.0, 1.0), //
-        glm::vec3(1.0, 1.0, 1.0), //
-        glm::vec3(1.0, 1.0, 1.0), //
+    Vector3 vColorsArray[] = {
+        Vector3(1.0, 1.0, 1.0), //
+        Vector3(1.0, 1.0, 1.0), //
+        Vector3(1.0, 1.0, 1.0), //
+        Vector3(1.0, 1.0, 1.0), //
+        Vector3(1.0, 1.0, 1.0), //
+        Vector3(1.0, 1.0, 1.0), //
     };
 
-    glm::vec2 vTexCoordsArray[] = {
-        glm::vec2(0.0f, 0.0f), //
-        glm::vec2(1.0f, 0.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(1.0f, 1.0f), //
-        glm::vec2(0.0f, 1.0f), //
-        glm::vec2(0.0f, 0.0f), //
+    Vector2 vTexCoordsArray[] = {
+        Vector2(0.0f, 0.0f), //
+        Vector2(1.0f, 0.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(1.0f, 1.0f), //
+        Vector2(0.0f, 1.0f), //
+        Vector2(0.0f, 0.0f), //
     };
 
     Mesh * mesh = new Mesh();

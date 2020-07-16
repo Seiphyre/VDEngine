@@ -260,6 +260,11 @@ class Quaternion
     bool operator==(const Quaternion & rhs) const;
     bool operator!=(const Quaternion & rhs) const;
 
+    // -- member access, subscrip operators --
+
+    float & operator[](int index);
+    float   operator[](int index) const;
+
     // -- insertion operators --
 
     friend std::ostream & operator<<(std::ostream & os, const Quaternion & q);

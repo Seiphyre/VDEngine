@@ -257,8 +257,8 @@ struct Matrix4
 
     // -- member access, subscrip operators --
 
-    float & operator[](int index);       // subscript operator mat[0], mat[1]
-    float   operator[](int index) const; // subscript operator mat[0], mat[1]
+    float &       operator[](int index);       // subscript operator mat[0], mat[1]
+    const float & operator[](int index) const; // subscript operator mat[0], mat[1]
 
     // -- other, function call operators --
 

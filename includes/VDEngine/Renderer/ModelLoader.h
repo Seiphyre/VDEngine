@@ -8,13 +8,13 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <glm/glm.hpp>
 
 // Internal headers
 #include "VDEngine/Core/Singleton.h"
 #include "VDEngine/Renderer/Mesh.h"
 #include "VDEngine/Renderer/Model.h"
 #include "VDEngine/Renderer/MaterialManager.h"
+#include "VDEngine/Math/Vectors.hpp"
 
 namespace VDEngine
 {

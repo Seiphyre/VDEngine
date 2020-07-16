@@ -2,11 +2,12 @@
 #define VDENGINE_MESH_FACTORY_H_
 
 // External libs
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 // Internal headers
 #include "VDEngine/Core/Singleton.h"
 #include "VDEngine/Renderer/Mesh.h"
+#include "VDEngine/Math/Vectors.hpp"
 
 namespace VDEngine
 {

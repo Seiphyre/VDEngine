@@ -237,7 +237,7 @@ bool MeshRender::GetShaderParamStructNameAndIndex(const std::string & full_name,
     return (false);
 }
 
-void MeshRender::SetVertexAttribVec3(int layout_index, const glm::vec3 * data, int data_size)
+void MeshRender::SetVertexAttribVec3(int layout_index, const Vector3 * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -248,7 +248,7 @@ void MeshRender::SetVertexAttribVec3(int layout_index, const glm::vec3 * data, i
 
     // [0] Vertex Positions
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(glm::vec3), data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(Vector3), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(layout_index, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(layout_index);
@@ -259,7 +259,7 @@ void MeshRender::SetVertexAttribVec3(int layout_index, const glm::vec3 * data, i
 
     glDeleteBuffers(1, &VBO);
 }
-void MeshRender::SetVertexAttribVec2(int layout_index, const glm::vec2 * data, int data_size)
+void MeshRender::SetVertexAttribVec2(int layout_index, const Vector2 * data, int data_size)
 {
     // VAO - Save the config
     glBindVertexArray(m_VAO);
@@ -270,7 +270,7 @@ void MeshRender::SetVertexAttribVec2(int layout_index, const glm::vec2 * data, i
 
     // [2] Texels
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(glm::vec2), data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data_size * sizeof(Vector2), data, GL_STATIC_DRAW);
 
     glVertexAttribPointer(layout_index, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(layout_index);
@@ -302,7 +302,7 @@ void MeshRender::SetFloat(const std::string & name, float value) const
     // glUniform1f(location, value);
 }
 // ------------------------------------------------------------------------
-void MeshRender::SetVec2(const std::string & name, const glm::vec2 & value) const
+void MeshRender::SetVec2(const std::string & name, const Vector2 & value) const
 {
     glUniform2fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform2fv(location, 1, &value[0]);
@@ -313,7 +313,7 @@ void MeshRender::SetVec2(const std::string & name, float x, float y) const
     // glUniform2f(location, x, y);
 }
 // ------------------------------------------------------------------------
-void MeshRender::SetVec3(const std::string & name, const glm::vec3 & value) const
+void MeshRender::SetVec3(const std::string & name, const Vector3 & value) const
 {
     glUniform3fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform3fv(location, 1, &value[0]);
@@ -324,7 +324,7 @@ void MeshRender::SetVec3(const std::string & name, float x, float y, float z) co
     // glUniform3f(location, x, y, z);
 }
 // ------------------------------------------------------------------------
-void MeshRender::SetVec4(const std::string & name, const glm::vec4 & value) const
+void MeshRender::SetVec4(const std::string & name, const Vector4 & value) const
 {
     glUniform4fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, &value[0]);
     // glUniform4fv(location, 1, &value[0]);
@@ -335,24 +335,24 @@ void MeshRender::SetVec4(const std::string & name, float x, float y, float z, fl
     // glUniform4f(location, x, y, z, w);
 }
 // ------------------------------------------------------------------------
-void MeshRender::SetMat2(const std::string & name, const glm::mat2 & mat) const
-{
-    glUniformMatrix2fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
-                       &mat[0][0]);
-    // glUniformMatrix2fv(location, 1, GL_FALSE, &mat[0][0]);
-}
+// void MeshRender::SetMat2(const std::string & name, const glm::mat2 & mat) const
+// {
+//     glUniformMatrix2fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
+//                        &mat[0][0]);
+//     // glUniformMatrix2fv(location, 1, GL_FALSE, &mat[0][0]);
+// }
+// // ------------------------------------------------------------------------
+// void MeshRender::SetMat3(const std::string & name, const glm::mat3 & mat) const
+// {
+//     glUniformMatrix3fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
+//                        &mat[0][0]);
+//     // glUniformMatrix3fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
+// }
 // ------------------------------------------------------------------------
-void MeshRender::SetMat3(const std::string & name, const glm::mat3 & mat) const
-{
-    glUniformMatrix3fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
-                       &mat[0][0]);
-    // glUniformMatrix3fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
-}
-// ------------------------------------------------------------------------
-void MeshRender::SetMat4(const std::string & name, const glm::mat4 & mat) const
+void MeshRender::SetMat4(const std::string & name, const Matrix4 & mat) const
 {
     glUniformMatrix4fv(glGetUniformLocation(m_material->shader->GetShaderProgramId(), name.c_str()), 1, GL_FALSE,
-                       &mat[0][0]);
+                       &mat[0]);
     // glUniformMatrix4fv(const std::string & name, 1, GL_FALSE, &mat[0][0]);
 }
 

@@ -5,56 +5,53 @@
 #include <iostream>
 
 // External libs
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/matrix_decompose.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtc/type_ptr.hpp>
+// #include <glm/glm.hpp>
+// #include <glm/gtc/quaternion.hpp>
+// #include <glm/gtx/quaternion.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
+// #include <glm/gtx/matrix_decompose.hpp>
+// #include <glm/gtx/euler_angles.hpp>
+// #include <glm/gtc/type_ptr.hpp>
 
 // Internal headers
 #include "VDEngine/Core/GameObject.h"
+#include "VDEngine/Math/Vector3.h"
+#include "VDEngine/Math/Quaternion.h"
+#include "VDEngine/Math/Matrix4.h"
 
 namespace VDEngine
 {
 
-#define WORLD_RIGHT glm::vec3(1.0f, 0.0f, 0.0f)
-#define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
-#define WORLD_FORWARD glm::vec3(0.0f, 0.0f, 1.0f)
+// #define WORLD_RIGHT glm::vec3(1.0f, 0.0f, 0.0f)
+// #define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
+// #define WORLD_FORWARD glm::vec3(0.0f, 0.0f, 1.0f)
 
 class Transform : public Component
 {
   public:
+    Vector3    position;
+    Vector3    scale;
+    Quaternion rotation;
+
     Transform();
     ~Transform();
 
-    glm::mat4 GetMatrix() const;
-    glm::mat4 GetLocalMatrix() const;
-    glm::mat4 GetNormalMatrix() const;
+    Matrix4 GetMatrix() const;
+    Matrix4 GetLocalMatrix() const;
+    Matrix4 GetNormalMatrix() const;
 
-    glm::vec3 GetForwardDir() const;
-    glm::vec3 GetUpDir() const;
-    glm::vec3 GetRightDir() const;
+    Vector3 GetForwardDir() const;
+    Vector3 GetUpDir() const;
+    Vector3 GetRightDir() const;
 
-    glm::vec3 GetEulerRotation() const;
-    void      SetEulerRotation(const glm::vec3 & euler_rotation);
-
-    void Translate(const glm::vec3 & translation);
     void Translate(float x, float y, float z);
+    void Translate(const Vector3 & translation);
 
-    void Rotate(const glm::vec3 & eulers);
     void Rotate(float x, float y, float z);
-    void Rotate(float angle, const glm::vec3 & rotation_axis);
+    void Rotate(const Vector3 & eulers);
+    void Rotate(float angle, const Vector3 & rotation_axis);
 
-    void LookAt(const glm::vec3 & target);
-
-    glm::vec3 position;
-    glm::vec3 scale;
-
-    glm::quat rotation;
-    glm::vec3 euler_angle;
-    glm::mat4 rotation_matrix;
+    void LookAt(const Vector3 & target, const Vector3 & up = Vector3::VecUp());
 };
 
 } // namespace VDEngine

@@ -2,10 +2,11 @@
 #define VDENGINE_LIGHT_H_
 
 // External libs
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
 // Internal headers
 #include "VDEngine/Core/Component.h"
+#include "VDEngine/Math/Vectors.hpp"
 
 namespace VDEngine
 {
@@ -21,10 +22,10 @@ class Light : public Component
 {
   public:
     Light();
-    Light(e_LightType light_type, const glm::vec3 & light_color);
+    Light(e_LightType light_type, const Vector3 & light_color);
     ~Light();
 
-    glm::vec3 color;
+    Vector3 color;
 
     e_LightType type;
 

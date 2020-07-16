@@ -7,9 +7,8 @@ MaterialManager::MaterialManager()
     m_default_material = new Material();
 }
 
-Material * MaterialManager::LoadMaterial(Shader * shader, float shininess, const glm::vec3 & diffuse_color,
-                                         const glm::vec3 & specular_color, Texture * diffuse_map,
-                                         Texture * specular_map)
+Material * MaterialManager::LoadMaterial(Shader * shader, float shininess, const Vector3 & diffuse_color,
+                                         const Vector3 & specular_color, Texture * diffuse_map, Texture * specular_map)
 {
     Material * material = new Material();
 

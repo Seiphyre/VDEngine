@@ -762,7 +762,7 @@ inline bool Matrix4::operator!=(const Matrix4 & n) const
 
 //
 
-inline float Matrix4::operator[](int index) const
+inline const float & Matrix4::operator[](int index) const
 {
     return m_data[index];
 }

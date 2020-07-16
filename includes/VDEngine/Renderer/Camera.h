@@ -7,17 +7,14 @@
 // Internal headers
 #include "VDEngine/Core/Transform.h"
 #include "VDEngine/Core/Component.h"
+#include "VDEngine/Math/Matrix4.h"
+#include "VDEngine/Math/GLMConverter.hpp"
 
 namespace VDEngine
 {
 
 class Camera : public Component
 {
-  private:
-    float m_fov;
-    float m_near;
-    float m_far;
-
   public:
     Camera();
     Camera(const Camera &) = default;
@@ -27,10 +24,15 @@ class Camera : public Component
 
     float GetFOV() const;
 
-    glm::mat4 GetViewMatrix() const;
-    glm::mat4 GetProjectionMatrix() const;
+    Matrix4 GetViewMatrix() const;
+    Matrix4 GetProjectionMatrix() const;
 
     void SetFOV(float fov);
+
+  private:
+    float m_fov;
+    float m_near;
+    float m_far;
 };
 
 } // namespace VDEngine

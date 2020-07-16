@@ -92,6 +92,12 @@ Vector3 Vector3::operator-(const Vector3 & rhs) const
     return res;
 }
 
+Vector3 Vector3::operator*(const Vector3 & rhs) const
+{
+    Vector3 res(x * rhs.x, y * rhs.y, z * rhs.z);
+    return res;
+}
+
 Vector3 Vector3::operator*(float rhs) const
 {
     Vector3 res(x * rhs, y * rhs, z * rhs);
@@ -164,6 +170,39 @@ bool Vector3::operator==(const Vector3 & rhs) const
 bool Vector3::operator!=(const Vector3 & rhs) const
 {
     return !(*this == rhs);
+}
+
+// -- member access, subscrip operators --
+
+float & Vector3::operator[](int index)
+{
+    assert(index >= 0 && index < 3);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+    }
+}
+const float & Vector3::operator[](int index) const
+{
+    assert(index >= 0 && index < 3);
+
+    switch (index)
+    {
+        default:
+        case 0:
+            return x;
+        case 1:
+            return y;
+        case 2:
+            return z;
+    }
 }
 
 // -- insertion operators ---------------------------------

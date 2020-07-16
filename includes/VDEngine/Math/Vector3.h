@@ -92,6 +92,7 @@ struct Vector3
 
     Vector3 operator+(const Vector3 & rhs) const;
     Vector3 operator-(const Vector3 & rhs) const;
+    Vector3 operator*(const Vector3 & rhs) const; // scale the vector
     Vector3 operator*(float rhs) const;
     Vector3 operator/(float rhs) const;
 
@@ -106,6 +107,11 @@ struct Vector3
 
     bool operator==(const Vector3 & rhs) const;
     bool operator!=(const Vector3 & rhs) const;
+
+    // -- member access, subscrip operators --
+
+    float &       operator[](int index);
+    const float & operator[](int index) const;
 
     // -- insertion operators --
 

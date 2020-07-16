@@ -33,8 +33,16 @@
 #include "VDEngine/Math/Matrix4.h"
 #include "VDEngine/Math/GLMConverter.hpp"
 
+#include <glm/glm.hpp>
+#include "glm/gtx/compatibility.hpp"
 #include "glm/gtx/matrix_decompose.hpp"
 #include "glm/gtx/vector_angle.hpp"
+// #include <glm/gtc/quaternion.hpp>
+// #include <glm/gtx/quaternion.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
+// #include <glm/gtx/matrix_decompose.hpp>
+// #include <glm/gtx/euler_angles.hpp>
+// #include <glm/gtc/type_ptr.hpp>
 
 using namespace VDEngine;
 
@@ -120,10 +128,10 @@ int main(int argc, char * argv[])
     cube_mat->specular_map = wooden_container_spec;
 
     Material * light_mat     = material_manager->LoadMaterial(unlit_default_shader);
-    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
+    light_mat->diffuse_color = Vector3::VecOne();
 
     Material * light2_mat    = material_manager->LoadMaterial(unlit_default_shader);
-    light_mat->diffuse_color = glm::vec3(1.0, 1.0, 1.0);
+    light_mat->diffuse_color = Vector3::VecOne();
 
     // Models / Meshes --
 
@@ -145,11 +153,11 @@ int main(int argc, char * argv[])
     VDEngine::Camera * camera = new VDEngine::Camera();
 
     // Light -----------
-    VDEngine::Light * light = new Light(POINT, glm::vec3(1.0f, 1.0f, 1.0f));
+    VDEngine::Light * light = new Light(POINT, Vector3::VecOne());
     light->att_linear       = 0.045f;
     light->att_quadratic    = 0.0075f;
 
-    VDEngine::Light * light2 = new Light(SPOT, glm::vec3(1.0f, 1.0f, 1.0f));
+    VDEngine::Light * light2 = new Light(SPOT, Vector3::VecOne());
     light2->att_linear       = 0.045f;
     light2->att_quadratic    = 0.0075f;
     light2->inner_cutOff     = 15;
@@ -163,36 +171,36 @@ int main(int argc, char * argv[])
     // -- Game Objects ----------
 
     GameObject * backpack_go                         = backpack_model->CreateGameObjectFromModel();
-    backpack_go->GetComponent<Transform>()->position = glm::vec3(0.0, 1.0, 1.0);
-    backpack_go->GetTransform()->scale               = glm::vec3(0.5, 0.5, 0.5);
+    backpack_go->GetComponent<Transform>()->position = Vector3(0.0, 1.0, 1.0);
+    backpack_go->GetTransform()->scale               = Vector3(0.5, 0.5, 0.5);
     backpack_go->GetTransform()->Rotate(-30.0, 0.0, 0.0);
     backpack_go->name = "backpack_root";
 
     GameObject * floor_go = new GameObject({floor_renderer});
     floor_go->name        = "floor";
-    floor_go->GetTransform()->Rotate(-90.0f, WORLD_RIGHT);
-    floor_go->GetTransform()->scale = glm::vec3(10.0f, 10.0f, 1.0f);
+    floor_go->GetTransform()->Rotate(-90.0f, Vector3::VecRight());
+    floor_go->GetTransform()->scale = Vector3(10.0f, 10.0f, 1.0f);
 
     GameObject * cube_go = new GameObject({cube_renderer});
     cube_go->name        = "cube";
-    cube_go->GetTransform()->Translate(glm::vec3(0.0f, 0.5f, 0.0f));
+    cube_go->GetTransform()->Translate(Vector3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
     // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
 
     GameObject * Camera_go = new GameObject({camera});
     Camera_go->name        = "main_camera";
-    Camera_go->GetTransform()->Translate(glm::vec3(0.0f, 1.0f, 5.0f));
-    Camera_go->GetTransform()->Rotate(45.0f, WORLD_UP);
+    Camera_go->GetTransform()->Translate(Vector3(0.0f, 1.0f, 5.0f));
+    Camera_go->GetTransform()->Rotate(45.0f, Vector3::VecUp());
 
     GameObject * light_go           = new GameObject({light_gizmo_renderer, light});
     light_go->name                  = "light1";
-    light_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+    light_go->GetTransform()->scale = Vector3(0.5f, 0.5f, 0.5f);
 
     GameObject * light2_go = new GameObject({light2_gizmo_renderer, light2});
     light2_go->name        = "light2";
-    light2_go->GetTransform()->Translate(glm::vec3(0.0f, 5.0f, 0.0f));
-    light2_go->GetTransform()->Rotate(glm::vec3(90.0, 0.0, 0.0));
-    light2_go->GetTransform()->scale = glm::vec3(0.5f, 0.5f, 0.5f);
+    light2_go->GetTransform()->Translate(Vector3(0.0f, 5.0f, 0.0f));
+    light2_go->GetTransform()->Rotate(Vector3(90.0, 0.0, 0.0));
+    light2_go->GetTransform()->scale = Vector3(0.5f, 0.5f, 0.5f);
 
     // GameObject * empty_go = new GameObject();
     // cube_go->AttachParent(empty_go);
@@ -251,7 +259,7 @@ int main(int argc, char * argv[])
         if (VDEngine::Input::getInstance()->GetKeyDown(GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(s_window, true);
 
-        // User update ---------------------------
+        // // User update ---------------------------
 
         camera_controller->Update();
 
@@ -259,8 +267,8 @@ int main(int argc, char * argv[])
         float       camX   = sin((float)VDEngine::Time::GetTime() * 0.5f) * radius;
         float       camZ   = cos((float)VDEngine::Time::GetTime() * 0.5f) * radius;
 
-        light_go->GetTransform()->position = glm::vec3(camX, 2.5f, camZ);
-        light_go->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
+        light_go->GetTransform()->position = Vector3(camX, 2.5f, camZ);
+        light_go->GetTransform()->LookAt(Vector3(0.0f, 0.5f, 0.0f));
 
         // Renderer ------------------------------
 

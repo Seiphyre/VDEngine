@@ -4,7 +4,7 @@ using namespace VDEngine;
 
 Light::Light()
 {
-    color = glm::vec3(1.0f, 1.0f, 1.0f);
+    color = Vector3::VecOne();
 
     type = DIRECTIONAL;
 
@@ -17,7 +17,7 @@ Light::Light()
     outer_cutOff = 35.0f;
 }
 
-Light::Light(e_LightType light_type, const glm::vec3 & light_color)
+Light::Light(e_LightType light_type, const Vector3 & light_color)
 {
     color = light_color;
 

@@ -13,6 +13,8 @@
 #include "VDEngine/Renderer/TextureManager.h"
 #include "VDEngine/Renderer/Texture.h"
 
+#include "VDEngine/Math/Vectors.hpp"
+
 namespace VDEngine
 {
 
@@ -31,10 +33,10 @@ class Material
 
     Shader * shader;
 
-    glm::vec3 diffuse_color;
+    Vector3   diffuse_color;
     Texture * diffuse_map;
 
-    glm::vec3 specular_color;
+    Vector3   specular_color;
     Texture * specular_map;
 
     float shininess;

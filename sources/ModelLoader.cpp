@@ -69,37 +69,37 @@ Model * ModelLoader::ProcessNode(aiNode * node, const aiScene * scene, const std
 Mesh * ModelLoader::ProcessMesh(aiMesh * mesh, const aiScene * scene)
 {
     // std::cout << "ProcessMesh" << std::endl;
-    std::vector<glm::vec3> v_positions;
-    std::vector<glm::vec3> v_normals;
-    std::vector<glm::vec3> v_colors;
-    std::vector<glm::vec2> v_texCoords;
+    std::vector<Vector3> v_positions;
+    std::vector<Vector3> v_normals;
+    std::vector<Vector3> v_colors;
+    std::vector<Vector2> v_texCoords;
 
     std::vector<unsigned int> indices;
 
     // process vertex positions, normals and texture coordinates
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        glm::vec3 position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+        Vector3 position = Vector3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
         v_positions.push_back(position);
 
-        glm::vec3 normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+        Vector3 normal = Vector3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
         v_normals.push_back(normal);
 
         if (mesh->mColors[0]) // Up to 8 color per vertex allow
         {
-            glm::vec3 color = glm::vec3(mesh->mColors[0][i].r, mesh->mColors[0][i].g, mesh->mColors[0][i].b);
+            Vector3 color = Vector3(mesh->mColors[0][i].r, mesh->mColors[0][i].g, mesh->mColors[0][i].b);
             v_colors.push_back(color);
         }
         else
-            v_colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+            v_colors.push_back(Vector3::VecOne());
 
         if (mesh->mTextureCoords[0]) // Up to 8 textCoords per vertex allow
         {
-            glm::vec2 texCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+            Vector2 texCoord = Vector2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
             v_texCoords.push_back(texCoord);
         }
         else
-            v_texCoords.push_back(glm::vec2(0.0f, 0.0f));
+            v_texCoords.push_back(Vector2::VecZero());
     }
 
     // process indices
