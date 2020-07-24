@@ -24,9 +24,9 @@ Matrix4 Matrix4::CreateRotationMatrix(const Quaternion & quat)
 {
     // https://gabormakesgames.com/blog_quats_to_matrix.html
 
-    Vector3 right   = quat * Vector3::VecRight();   // Right basis vector
-    Vector3 up      = quat * Vector3::VecUp();      // Up basis vector
-    Vector3 forward = quat * Vector3::VecForward(); // Forward basis vector
+    Vector3 right   = quat * Vector3::VecPosX(); // Right basis vector
+    Vector3 up      = quat * Vector3::VecPosY(); // Up basis vector
+    Vector3 forward = quat * Vector3::VecPosZ(); // Forward basis vector
 
     Matrix4 mat;
 

@@ -51,7 +51,7 @@ class Transform : public Component
     void Rotate(const Vector3 & eulers);
     void Rotate(float angle, const Vector3 & rotation_axis);
 
-    void LookAt(const Vector3 & target, const Vector3 & up = Vector3::VecUp());
+    void LookAt(const Vector3 & target, const Vector3 & up = Vector3::VecPosY());
 };
 
 } // namespace VDEngine

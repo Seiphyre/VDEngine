@@ -20,32 +20,40 @@ float Camera::GetFOV() const
 
 Matrix4 Camera::GetViewMatrix() const
 {
-    glm::mat4 view;
-    view = glm::lookAt(to_glm_vec3(m_transform->position),
-                       to_glm_vec3(m_transform->position) +
-                           (to_glm_vec3(m_transform->GetForwardDir()) * glm::vec3(1.0f, 1.0f, -1.0f)),
-                       glm::vec3(0.0f, 1.0f, 0.0f));
+    Matrix4 view_mat;
 
-    return to_matrix4(view);
+    Vector3 eye = m_transform->position;
 
-    // ---------------
+    Vector3 forward = m_transform->GetForwardDir();
+    Vector3 right(Vector3::Cross(forward, /*Vector3::VecPosY()*/ m_transform->GetUpDir()).GetNormalized());
+    Vector3 up(Vector3::Cross(right, forward));
 
-    // // https://www.3dgep.com/understanding-the-view-matrix/#Look_At_Camera
+    // M = inverse(R) * -T
 
-    // // OpenGL view is looking toward -Z
-    // // -- Flip Z --
-    // Quaternion view_orientation;
-    // Vector3    view_forward = m_transform->rotation.GetForward();
+    view_mat(0, 0) = right.x;
+    view_mat(1, 0) = right.y;
+    view_mat(2, 0) = right.z;
+    view_mat(0, 1) = up.x;
+    view_mat(1, 1) = up.y;
+    view_mat(2, 1) = up.z;
+    view_mat(0, 2) = -forward.x; // Convert from fwd: +Z to fwd: -Z
+    view_mat(1, 2) = -forward.y; // Convert from fwd: +Z to fwd: -Z
+    view_mat(2, 2) = -forward.z; // Convert from fwd: +Z to fwd: -Z
 
-    // view_forward.Scale(Vector3(1.0f, 1.0f, -1.0f));
-    // view_orientation = Quaternion::LookRotation(view_forward);
+    view_mat(3, 0) = -Vector3::Dot(right, eye);
+    view_mat(3, 1) = -Vector3::Dot(up, eye);
+    view_mat(3, 2) = Vector3::Dot(forward, eye);
 
-    // // -- compose matrix --
+    return view_mat;
 
-    // Matrix4 orientation_mat = Matrix4::CreateRotationMatrix(view_orientation);
-    // Matrix4 translation_mat = Matrix4::CreateTranslationMatrix(-m_transform->position);
+    // ---------------------------------------------------
 
-    // return orientation_mat * translation_mat;
+    // glm::mat4 view;
+    // view = glm::lookAt(to_glm_vec3(m_transform->position),
+    //                    to_glm_vec3(m_transform->position) + to_glm_vec3(m_transform->GetForwardDir()),
+    //                    to_glm_vec3(m_transform->GetUpDir()));
+
+    // return to_matrix4(view);
 }
 
 Matrix4 Camera::GetProjectionMatrix() const

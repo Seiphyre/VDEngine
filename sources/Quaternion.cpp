@@ -53,7 +53,7 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     // Calculate final orientation forward
     Quaternion rot1;
 
-    rot1 = Quaternion::FromTo(Vector3::VecForward(), forward);
+    rot1 = Quaternion::FromTo(Vector3::VecPosZ(), forward);
 
     // Calculate final orientation up
     Quaternion rot2;
@@ -61,7 +61,7 @@ Quaternion Quaternion::LookRotation(const Vector3 & p_forward, const Vector3 & p
     Vector3 right = Vector3::Cross(up, forward);
     up            = Vector3::Cross(forward, right);
 
-    Vector3 new_up = rot1 * Vector3::VecUp();
+    Vector3 new_up = rot1 * Vector3::VecPosY();
     rot2           = Quaternion::FromTo(new_up, up);
 
     // result
@@ -172,12 +172,12 @@ Quaternion Quaternion::FromTo(const Vector3 & p_from, const Vector3 & p_to)
     else if (from == (to * -1.0f))
     {
         // Find the closest orthogonal vector (world_forward, world_right, world_up)
-        Vector3 ortho = Vector3::VecRight();
+        Vector3 ortho = Vector3::VecPosX();
 
         if (fabsf(from.y) < fabsf(from.x))
-            ortho = Vector3::VecUp();
+            ortho = Vector3::VecPosY();
         if ((fabsf(from.z) < fabsf(from.y)) && (fabsf(from.z) < fabsf(from.x)))
-            ortho = Vector3::VecForward();
+            ortho = Vector3::VecPosZ();
 
         // Find axis
         Vector3 axis = Vector3::Cross(from, ortho).GetNormalized();
@@ -238,7 +238,9 @@ void Quaternion::SetEuler(const Vector3 & p_euler)
 
     Vector3 euler = Vector3(to_radians(p_euler.x), to_radians(p_euler.y), to_radians(p_euler.z));
 
-    SetEulerZXY(euler);
+    SetEulerYXZ(euler);
+    // SetEulerZXY(euler);
+    // SetEulerXYZ(euler);
 };
 
 void Quaternion::SetEulerXYZ(const Vector3 & p_euler)
@@ -272,9 +274,12 @@ void Quaternion::SetEulerXYZ(const Vector3 & p_euler)
 
 void Quaternion::SetEulerZXY(const Vector3 & p_euler)
 {
-    float half_1 = p_euler.z * 0.5; // first rotation angle
-    float half_2 = p_euler.x * 0.5; // second rotation angle
-    float half_3 = p_euler.y * 0.5; // third rotation angle
+    // float half_1 = p_euler.z * 0.5; // first rotation angle
+    // float half_2 = p_euler.x * 0.5; // second rotation angle
+    // float half_3 = p_euler.y * 0.5; // third rotation angle
+    float half_1 = p_euler.x * 0.5;
+    float half_2 = p_euler.y * 0.5;
+    float half_3 = p_euler.z * 0.5;
 
     float c1 = cos(half_1);
     float s1 = sin(half_1);
@@ -283,10 +288,36 @@ void Quaternion::SetEulerZXY(const Vector3 & p_euler)
     float c3 = cos(half_3);
     float s3 = sin(half_3);
 
-    float new_x = -s1 * c2 * s3 + c1 * s2 * c3;
-    float new_y = s1 * s2 * c3 + c1 * c2 * s3;
-    float new_z = c1 * s2 * s3 + s1 * c2 * c3;
-    float new_w = -s1 * s2 * s3 + c1 * c2 * c3;
+    // float new_x = -s1 * c2 * s3 + c1 * s2 * c3;
+    // float new_y = s1 * s2 * c3 + c1 * c2 * s3;
+    // float new_z = c1 * s2 * s3 + s1 * c2 * c3;
+    // float new_w = -s1 * s2 * s3 + c1 * c2 * c3;
+
+    float new_x = s1 * c2 * c3 - c1 * s2 * s3;
+    float new_y = c1 * s2 * c3 + s1 * c2 * s3;
+    float new_z = c1 * c2 * s3 + s1 * s2 * c3;
+    float new_w = c1 * c2 * c3 - s1 * s2 * s3;
+
+    Set(new_x, new_y, new_z, new_w);
+}
+
+void Quaternion::SetEulerYXZ(const Vector3 & p_euler)
+{
+    float half_1 = p_euler.x * 0.5;
+    float half_2 = p_euler.y * 0.5;
+    float half_3 = p_euler.z * 0.5;
+
+    float c1 = cos(half_1);
+    float s1 = sin(half_1);
+    float c2 = cos(half_2);
+    float s2 = sin(half_2);
+    float c3 = cos(half_3);
+    float s3 = sin(half_3);
+
+    float new_x = s1 * c2 * c3 + c1 * s2 * s3;
+    float new_y = c1 * s2 * c3 - s1 * c2 * s3;
+    float new_z = c1 * c2 * s3 - s1 * s2 * c3;
+    float new_w = c1 * c2 * c3 + s1 * s2 * s3;
 
     Set(new_x, new_y, new_z, new_w);
 }
@@ -373,7 +404,9 @@ Vector3 Quaternion::GetEuler() const
     // https://www.mathworks.com/matlabcentral/fileexchange/20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors
     // (in "Functions" tab -> line "switch OUTPUT_TYPE" -> line "case 'EA' ")
 
-    return GetEulerZXY();
+    return GetEulerYXZ();
+    // return GetEulerZXY();
+    // return GetEulerXYZ();
 }
 
 Vector3 Quaternion::GetEulerZXY() const
@@ -398,6 +431,41 @@ Vector3 Quaternion::GetEulerZXY() const
     float z = atan2(-2.0f * (xy - wz), ww - xx + yy - zz);
     float x = asin(clamp(2.0f * (yz + wx), -1, 1)); // -1/1 are dangerous because of float precision
     float y = atan2(-2.0f * (xz - wy), ww - xx - yy + zz);
+
+    Vector3 result = Vector3(to_degrees(x), to_degrees(y), to_degrees(z));
+
+    result.x = fmod((fmod(result.x, 360.0f) + 360.0f), 360.0f);
+    result.y = fmod((fmod(result.y, 360.0f) + 360.0f), 360.0f);
+    result.z = fmod((fmod(result.z, 360.0f) + 360.0f), 360.0f);
+
+    // if (!result.IsNormalized())
+    //     result.Normalize();
+
+    return (result);
+}
+
+Vector3 Quaternion::GetEulerYXZ() const
+{
+    if (!IsNormalized())
+    {
+        std::cout << "[Warning] [Quaternion::GetEulerZXY] The quaternion must be normalized." << std::endl;
+    }
+
+    float xy = x * y;
+    float wz = w * z;
+    float yz = y * z;
+    float wx = w * x;
+    float xz = x * z;
+    float wy = w * y;
+
+    float ww = w * w;
+    float xx = x * x;
+    float yy = y * y;
+    float zz = z * z;
+
+    float y = atan2(-2.0f * (xz - wy), ww - xx - yy + zz);
+    float x = asin(clamp(2.0f * (yz + wx), -1, 1)); // -1/1 are dangerous because of float precision
+    float z = atan2(-2.0f * (xy - wz), ww - xx + yy - zz);
 
     Vector3 result = Vector3(to_degrees(x), to_degrees(y), to_degrees(z));
 
@@ -453,9 +521,9 @@ void Quaternion::GetAxisAngle(Vector3 & r_axis, float & r_angle) const
     r_axis.Normalize();
 }
 
-Vector3 Quaternion::GetForward() const
+Vector3 Quaternion::GetZAxis() const
 {
-    Vector3 forward = (*this) * Vector3::VecForward();
+    Vector3 forward = (*this) * Vector3::VecPosZ();
 
     if (!forward.IsNormalized())
         forward.Normalize();
@@ -463,9 +531,9 @@ Vector3 Quaternion::GetForward() const
     return (forward);
 }
 
-Vector3 Quaternion::GetRight() const
+Vector3 Quaternion::GetXAxis() const
 {
-    Vector3 right = (*this) * Vector3::VecRight();
+    Vector3 right = (*this) * Vector3::VecPosX();
 
     if (!right.IsNormalized())
         right.Normalize();
@@ -473,9 +541,9 @@ Vector3 Quaternion::GetRight() const
     return (right);
 }
 
-Vector3 Quaternion::GetUp() const
+Vector3 Quaternion::GetYAxis() const
 {
-    Vector3 up = (*this) * Vector3::VecUp();
+    Vector3 up = (*this) * Vector3::VecPosY();
 
     if (!up.IsNormalized())
         up.Normalize();

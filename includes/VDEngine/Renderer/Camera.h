@@ -9,6 +9,7 @@
 #include "VDEngine/Core/Component.h"
 #include "VDEngine/Math/Matrix4.h"
 #include "VDEngine/Math/GLMConverter.hpp"
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace VDEngine
 {

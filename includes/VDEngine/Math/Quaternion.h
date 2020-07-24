@@ -95,7 +95,7 @@ class Quaternion
      * @param up      (optional) Vector that defines in which direction up is (it will be normalized).
      * @return        (normalized) Rotation.
      */
-    static Quaternion LookRotation(const Vector3 & forward, const Vector3 & up = Vector3::VecUp());
+    static Quaternion LookRotation(const Vector3 & forward, const Vector3 & up = Vector3::VecPosY());
 
     /**
      * @brief         Creates a rotation which rotates from `from` to `to`.
@@ -163,19 +163,19 @@ class Quaternion
      * @brief     Get the forward direction of the rotation (normalized).
      *            WRONG VALUE IF Quaternion(0,0,0,1)
      */
-    Vector3 GetForward() const;
+    Vector3 GetZAxis() const;
 
     /**
      * @brief     Get the right direction of the rotation (normalized).
      * WRONG VALUE IF Quaternion(0,0,0,1)
      */
-    Vector3 GetRight() const;
+    Vector3 GetXAxis() const;
 
     /**
      * @brief     Get the up direction of the rotation (normalized).
      * WRONG VALUE IF Quaternion(0,0,0,1)
      */
-    Vector3 GetUp() const;
+    Vector3 GetYAxis() const;
 
     /**
      * @brief     Get the magnitude (length) of this quaternion.
@@ -279,6 +279,13 @@ class Quaternion
 
     /**
      * @brief         Set this quaternion with an euler angle. It will be normalized.
+     *                The rotation is performed around the Y axis, the X axis, and the the Z axis, in that order.
+     * @param euler   Euler angle (in radians).
+     */
+    void SetEulerYXZ(const Vector3 & euler);
+
+    /**
+     * @brief         Set this quaternion with an euler angle. It will be normalized.
      *                The rotation is performed around the X axis, the Y axis, and the the Z axis, in that order.
      * @param euler   Euler angle (in radians).
      */
@@ -291,6 +298,14 @@ class Quaternion
      * @exception     `if ( 90 <= euler.x <= 270 )` return wrong euler angle (singularity).
      */
     Vector3 GetEulerZXY() const;
+
+    /**
+     * @brief         Get the rotation as an euler angle.
+     *                The rotation is performed around the Y axis, the X axis, and the the Z axis, in that order.
+     * @return        Euler angles (in degrees) (range [0, 360]).
+     * @exception     `if ( 90 <= euler.x <= 270 )` return wrong euler angle (singularity).
+     */
+    Vector3 GetEulerYXZ() const;
 
     /**
      * @brief         Get the rotation as an euler angle.

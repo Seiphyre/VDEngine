@@ -40,15 +40,15 @@ Matrix4 Transform::GetNormalMatrix() const
 
 Vector3 Transform::GetForwardDir() const
 {
-    return (rotation.GetForward());
+    return (rotation.GetZAxis());
 }
 Vector3 Transform::GetUpDir() const
 {
-    return (rotation.GetUp());
+    return (rotation.GetYAxis());
 }
 Vector3 Transform::GetRightDir() const
 {
-    return (rotation.GetRight());
+    return (-rotation.GetXAxis());
 }
 
 // -------------------------------------

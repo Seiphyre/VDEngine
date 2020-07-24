@@ -165,9 +165,6 @@ int main(int argc, char * argv[])
 
     // VDEngine::Light * light3 = new Light(DIRECTIONAL, glm::vec3(1.0f, 1.0f, 1.0f));
 
-    // Behaviours ---
-    FPSCameraController * camera_controller = new FPSCameraController(camera);
-
     // -- Game Objects ----------
 
     GameObject * backpack_go                         = backpack_model->CreateGameObjectFromModel();
@@ -178,7 +175,7 @@ int main(int argc, char * argv[])
 
     GameObject * floor_go = new GameObject({floor_renderer});
     floor_go->name        = "floor";
-    floor_go->GetTransform()->Rotate(-90.0f, Vector3::VecRight());
+    floor_go->GetTransform()->Rotate(-90.0f, Vector3::VecPosX());
     floor_go->GetTransform()->scale = Vector3(10.0f, 10.0f, 1.0f);
 
     GameObject * cube_go = new GameObject({cube_renderer});
@@ -190,7 +187,7 @@ int main(int argc, char * argv[])
     GameObject * Camera_go = new GameObject({camera});
     Camera_go->name        = "main_camera";
     Camera_go->GetTransform()->Translate(Vector3(0.0f, 1.0f, 5.0f));
-    Camera_go->GetTransform()->Rotate(45.0f, Vector3::VecUp());
+    Camera_go->GetTransform()->Rotate(180.0f, Vector3::VecPosY());
 
     GameObject * light_go           = new GameObject({light_gizmo_renderer, light});
     light_go->name                  = "light1";
@@ -212,6 +209,9 @@ int main(int argc, char * argv[])
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
 
     std::vector<MeshRender *> backpack_renderers = backpack_go->GetComponentsInChildren<MeshRender>();
+
+    // Behaviours ---
+    FPSCameraController * camera_controller = new FPSCameraController(camera);
 
     // -- GAME LOOP ------------------------------------------------------
 
@@ -502,13 +502,13 @@ void test_vector3()
     std::cout << "VDEngine: " << Vector3::Dot(vector1, vector3) << std::endl;
     std::cout << "GLM:      " << glm::dot(vec1, vec3) << std::endl;
 
-    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecUp()) << std::endl;
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecPosY()) << std::endl;
     std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)) << std::endl;
 
     std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecLeft()) << std::endl;
     std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(-1.0f, 0.0f, 0.0f)) << std::endl;
 
-    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecRight()) << std::endl;
+    std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecLeft(), Vector3::VecPosX()) << std::endl;
     std::cout << "GLM:      " << glm::dot(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)) << std::endl;
 
     std::cout << "VDEngine: " << Vector3::Dot(Vector3::VecZero(), Vector3::VecOne()) << std::endl;
@@ -533,11 +533,11 @@ void test_vector3()
     std::cout << "VDEngine: " << Vector3::Cross(vector1, vector3) << std::endl;
     std::cout << "GLM:      " << to_vector3(glm::cross(vec1, vec3)) << std::endl;
 
-    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecLeft(), Vector3::VecRight()) << std::endl;
+    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecLeft(), Vector3::VecPosX()) << std::endl;
     std::cout << "GLM:      " << to_vector3(glm::cross(glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)))
               << std::endl;
 
-    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecRight(), Vector3::VecRight()) << std::endl;
+    std::cout << "VDEngine: " << Vector3::Cross(Vector3::VecPosX(), Vector3::VecPosX()) << std::endl;
     std::cout << "GLM:      " << to_vector3(glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)))
               << std::endl;
 

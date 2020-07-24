@@ -32,7 +32,7 @@ Vector3 Vector3::VecOne()
     return Vector3(1.0f, 1.0f, 1.0f);
 }
 
-Vector3 Vector3::VecForward()
+Vector3 Vector3::VecPosZ()
 {
     return Vector3(0.0f, 0.0f, 1.0f);
 }
@@ -42,7 +42,7 @@ Vector3 Vector3::VecBack()
     return Vector3(0.0f, 0.0f, -1.0f);
 }
 
-Vector3 Vector3::VecUp()
+Vector3 Vector3::VecPosY()
 {
     return Vector3(0.0f, 1.0f, 0.0f);
 }
@@ -57,7 +57,7 @@ Vector3 Vector3::VecLeft()
     return Vector3(-1.0f, 0.0f, 0.0f);
 }
 
-Vector3 Vector3::VecRight()
+Vector3 Vector3::VecPosX()
 {
     return Vector3(1.0f, 0.0f, 0.0f);
 }

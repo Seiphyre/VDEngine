@@ -48,7 +48,7 @@ struct Vector3
     /**
      * @brief     Return `Vector3(0, 0, 1)`.
      */
-    static Vector3 VecForward();
+    static Vector3 VecPosZ();
 
     /**
      * @brief     Return `Vector3(0, 0, -1)`.
@@ -58,7 +58,7 @@ struct Vector3
     /**
      * @brief     Return `Vector3(0, 1, 0)`.
      */
-    static Vector3 VecUp();
+    static Vector3 VecPosY();
 
     /**
      * @brief     Return `Vector3(0, -1, 0)`.
@@ -73,7 +73,7 @@ struct Vector3
     /**
      * @brief     Return `Vector3(1, 0, 0)`.
      */
-    static Vector3 VecRight();
+    static Vector3 VecPosX();
 
     /**
      * @brief     Return `Vector3(NAN_FLOAT, NAN_FLOAT, NAN_FLOAT)`. It can be used to handle vectors math errors.
