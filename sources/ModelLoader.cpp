@@ -126,7 +126,6 @@ Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene, co
             aiString texture_relative_path;
             aiMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &texture_relative_path);
             std::string full_path = model_path + texture_relative_path.C_Str();
-            std::cout << full_path << std::endl;
 
             Texture * texture = TextureManager::getInstance()->GetTextureByFileName(full_path);
             if (texture == nullptr)
@@ -140,7 +139,6 @@ Material * ModelLoader::ProcessMaterial(aiMesh * mesh, const aiScene * scene, co
             aiString texture_relative_path;
             aiMaterial->GetTexture(aiTextureType_SPECULAR, 0, &texture_relative_path);
             std::string full_path = model_path + texture_relative_path.C_Str();
-            std::cout << full_path << std::endl;
 
             Texture * texture = TextureManager::getInstance()->GetTextureByFileName(full_path);
 

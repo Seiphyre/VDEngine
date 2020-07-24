@@ -181,8 +181,7 @@ int main(int argc, char * argv[])
     GameObject * cube_go = new GameObject({cube_renderer});
     cube_go->name        = "cube";
     cube_go->GetTransform()->Translate(Vector3(0.0f, 0.5f, 0.0f));
-    // cube->GetTransform()->LookAt(glm::vec3(0.0f, 0.5f, 0.0f));
-    // cube->GetTransform()->Rotate(glm::vec3(0.0f, -45.0f, 0.0f));
+    // cube_go->GetTransform()->Rotate(Vector3(0.0, 90.0, 0.0));
 
     GameObject * Camera_go = new GameObject({camera});
     Camera_go->name        = "main_camera";
@@ -199,11 +198,13 @@ int main(int argc, char * argv[])
     light2_go->GetTransform()->Rotate(Vector3(90.0, 0.0, 0.0));
     light2_go->GetTransform()->scale = Vector3(0.5f, 0.5f, 0.5f);
 
-    // GameObject * empty_go = new GameObject();
-    // cube_go->AttachParent(empty_go);
-    // backpack_go->AttachParent(empty_go);
-    // empty_go->GetTransform()->position += glm::vec3(4.0, 0.0, 0.0);
-    // empty_go->GetTransform()->Rotate(glm::vec3(0.0, 0.0, 45.0));
+    GameObject * empty_go = new GameObject();
+    cube_go->AttachParent(empty_go);
+    backpack_go->AttachParent(empty_go);
+    empty_go->GetTransform()->position += Vector3(4.0, 0.0, 0.0);
+    empty_go->GetTransform()->Rotate(Vector3(0.0, 90.0, 0.0));
+
+    backpack_go->GetTransform()->Translate(Vector3(0, 0, -2));
 
     // GameObject * light3_go = new GameObject ({light3});
     // light->GetTransform()->Rotate(glm::vec3(45.0f, 0.0f, 45.0f));
@@ -277,6 +278,8 @@ int main(int argc, char * argv[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw
+
+        // backpack_go->GetTransform()->LookAt(camera->GetTransform()->position);
 
         for (int i = 0; i < backpack_renderers.size(); i++)
         {

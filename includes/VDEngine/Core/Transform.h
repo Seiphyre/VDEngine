@@ -22,6 +22,12 @@
 namespace VDEngine
 {
 
+enum Space
+{
+    LOCAL,
+    GLOBAL
+};
+
 // #define WORLD_RIGHT glm::vec3(1.0f, 0.0f, 0.0f)
 // #define WORLD_UP glm::vec3(0.0f, 1.0f, 0.0f)
 // #define WORLD_FORWARD glm::vec3(0.0f, 0.0f, 1.0f)
@@ -36,9 +42,8 @@ class Transform : public Component
     Transform();
     ~Transform();
 
-    Matrix4 GetMatrix() const;
-    Matrix4 GetLocalMatrix() const;
-    Matrix4 GetNormalMatrix() const;
+    Matrix4 GetModelMatrix(Space space = LOCAL) const;
+    Matrix4 GetNormalMatrix(Space space = LOCAL) const;
 
     Vector3 GetForwardDir() const;
     Vector3 GetUpDir() const;
@@ -52,6 +57,9 @@ class Transform : public Component
     void Rotate(float angle, const Vector3 & rotation_axis);
 
     void LookAt(const Vector3 & target, const Vector3 & up = Vector3::VecPosY());
+
+  private:
+    Matrix4 GetGlobalModelMatrix() const;
 };
 
 } // namespace VDEngine

@@ -15,25 +15,41 @@ Transform::~Transform()
 
 // -------------------------------------
 
-Matrix4 Transform::GetMatrix() const
+Matrix4 Transform::GetModelMatrix(Space space) const
 {
-    return Matrix4::ComposeTRS(position, rotation, scale);
+    Matrix4 model_matrix;
+
+    switch (space)
+    {
+        case LOCAL:
+            model_matrix = Matrix4::ComposeTRS(position, rotation, scale);
+            break;
+        case GLOBAL:
+            model_matrix = GetGlobalModelMatrix();
+            break;
+        default:
+            std::cout << "[Warning] [Transform::GetModelMatrix] unknown space. identity matrix will be returned."
+                      << std::endl;
+            break;
+    }
+
+    return model_matrix;
 }
 
-Matrix4 Transform::GetLocalMatrix() const
+Matrix4 Transform::GetGlobalModelMatrix() const
 {
     if (m_game_object->GetParent() != nullptr)
     {
-        Matrix4 parent_matrix = m_game_object->GetParent()->GetTransform()->GetLocalMatrix();
-        return (parent_matrix * GetMatrix());
+        Matrix4 parent_matrix = m_game_object->GetParent()->GetTransform()->GetGlobalModelMatrix();
+        return (parent_matrix * GetModelMatrix());
     }
 
-    return GetMatrix();
+    return GetModelMatrix();
 }
 
-Matrix4 Transform::GetNormalMatrix() const
+Matrix4 Transform::GetNormalMatrix(Space space) const
 {
-    return GetMatrix().GetInverted().GetTransposed();
+    return GetModelMatrix(space).GetInverted().GetTransposed();
 }
 
 // -------------------------------------

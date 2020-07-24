@@ -118,10 +118,7 @@ void FPSCameraController::Update()
             rot_x = 360 - rot_x;
 
         else if (rot_x >= 360.0f)
-        {
-            std::cout << rot_x << std::endl;
             rot_x = fmodf(rot_x, 360.0f);
-        }
 
         // Prevent singularity
         if (rot_x > 89.0f && rot_x <= 180.0f)
