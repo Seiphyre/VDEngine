@@ -11,3 +11,6 @@ bin/**
 *.dSYM
 
 .vscode
+
+// subdirectories
+reflection_gen
