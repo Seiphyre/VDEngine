@@ -1,3 +1,12 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_IMAGE_H_
 #define VDENGINE_IMAGE_H_
 
@@ -25,6 +34,8 @@ enum e_imgFormat : int
 
 class Image
 {
+    friend auto meta::registerMembers<VDEngine::Image>();
+    
   private:
     int                   m_width;
     int                   m_height;
@@ -49,3 +60,20 @@ class Image
 } // namespace VDEngine
 
 #endif /* VDENGINE_IMAGE_H_ */
+
+#ifndef META_REGISTER_VDENGINE_IMAGE
+#define META_REGISTER_VDENGINE_IMAGE
+
+template <>
+inline auto meta::registerMembers< VDEngine::Image >() 
+{
+    return meta::members( 
+meta::member("m_width", &VDEngine::Image::m_width),
+meta::member("m_height", &VDEngine::Image::m_height),
+meta::member("m_format", &VDEngine::Image::m_format),
+meta::member("m_data", &VDEngine::Image::m_data) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_IMAGE */
+

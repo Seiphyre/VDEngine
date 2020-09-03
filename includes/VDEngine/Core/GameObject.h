@@ -1,3 +1,10 @@
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_GAME_OBJECT_H_
 #define VDENGINE_GAME_OBJECT_H_
 
@@ -16,6 +23,8 @@ namespace VDEngine
 
 class GameObject
 {
+    friend auto meta::registerMembers<VDEngine::GameObject>();
+
   public:
     GameObject();
     GameObject(std::vector<Component *> components);
@@ -89,3 +98,20 @@ class GameObject
 } // namespace VDEngine
 
 #endif /* VDENGINE_GAME_OBJECT_H_ */
+
+#ifndef META_REGISTER_VDENGINE_GAMEOBJECT
+#define META_REGISTER_VDENGINE_GAMEOBJECT
+
+template <>
+inline auto meta::registerMembers< VDEngine::GameObject >() 
+{
+    return meta::members( 
+meta::member("name", &VDEngine::GameObject::name),
+meta::member("m_parent", &VDEngine::GameObject::m_parent),
+meta::member("m_transform", &VDEngine::GameObject::m_transform),
+meta::member("m_children", &VDEngine::GameObject::m_children),
+meta::member("m_components", &VDEngine::GameObject::m_components) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_GAMEOBJECT */

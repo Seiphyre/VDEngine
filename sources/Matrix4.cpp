@@ -370,7 +370,7 @@ inline void Matrix4::SetColumn(int index, const Vector3 & v)
 
 inline const float * Matrix4::Get() const
 {
-    return m_data;
+    return m_data.data();
 }
 
 inline Vector4 Matrix4::GetRow(int index) const

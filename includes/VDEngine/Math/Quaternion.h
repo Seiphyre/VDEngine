@@ -1,3 +1,12 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 //
 // -- Some useful links --
 //
@@ -46,6 +55,8 @@ namespace VDEngine
 
 class Quaternion
 {
+    friend auto meta::registerMembers<VDEngine::Quaternion>();
+    
 
   public:
     float x;
@@ -323,3 +334,20 @@ bool isnan(const Quaternion & quat);
 } // namespace VDEngine
 
 #endif /* VDENGINE_QUATERNION_H_ */
+
+#ifndef META_REGISTER_VDENGINE_QUATERNION
+#define META_REGISTER_VDENGINE_QUATERNION
+
+template <>
+inline auto meta::registerMembers< VDEngine::Quaternion >() 
+{
+    return meta::members( 
+meta::member("x", &VDEngine::Quaternion::x),
+meta::member("y", &VDEngine::Quaternion::y),
+meta::member("z", &VDEngine::Quaternion::z),
+meta::member("w", &VDEngine::Quaternion::w) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_QUATERNION */
+

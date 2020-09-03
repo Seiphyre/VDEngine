@@ -1,3 +1,12 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_INPUT_H_
 #define VDENGINE_INPUT_H_
 
@@ -14,6 +23,8 @@ namespace VDEngine
 
 struct ScrollData
 {
+    friend auto meta::registerMembers<VDEngine::ScrollData>();
+    
     double xoffset;
     double yoffset;
 };
@@ -52,3 +63,18 @@ class Input : public Singleton<Input>
 } // namespace VDEngine
 
 #endif /* VDENGINE_INPUT_H_ */
+
+#ifndef META_REGISTER_VDENGINE_SCROLLDATA
+#define META_REGISTER_VDENGINE_SCROLLDATA
+
+template <>
+inline auto meta::registerMembers< VDEngine::ScrollData >() 
+{
+    return meta::members( 
+meta::member("xoffset", &VDEngine::ScrollData::xoffset),
+meta::member("yoffset", &VDEngine::ScrollData::yoffset) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_SCROLLDATA */
+

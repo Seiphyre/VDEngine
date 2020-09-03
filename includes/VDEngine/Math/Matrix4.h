@@ -1,9 +1,19 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_MATRIX_4_H_
 #define VDENGINE_MATRIX_4_H_
 
 // Standard c++ libs
 #include <iostream>
 #include <iomanip>
+#include <array>
 
 // Internal headers
 #include "VDEngine/Math/Vectors.hpp"
@@ -27,6 +37,8 @@ namespace VDEngine
 
 struct Matrix4
 {
+    friend auto meta::registerMembers<VDEngine::Matrix4>();
+
   public:
     /********************************************************
      *               -- Constructors --                     *
@@ -293,7 +305,8 @@ struct Matrix4
     // Matrix4 & LookAt(const Vector3 & target, const Vector3 & up);
 
   private:
-    float m_data[16];
+    std::array<float, 4 * 4> m_data;
+    // float m_data[16];
 
     /**
      * @brief Cofactor of an element. Params are the elements of the 3x3 matrix you can get by removing row and column
@@ -310,3 +323,16 @@ struct Matrix4
 } // namespace VDEngine
 
 #endif /* VDENGINE_MATRIX_4_H_ */
+
+#ifndef META_REGISTER_VDENGINE_MATRIX4
+#define META_REGISTER_VDENGINE_MATRIX4
+
+template <>
+inline auto meta::registerMembers< VDEngine::Matrix4 >() 
+{
+    return meta::members( 
+meta::member("m_data", &VDEngine::Matrix4::m_data) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_MATRIX4 */

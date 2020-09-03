@@ -1,3 +1,12 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_VECTOR2_H_
 #define VDENGINE_VECTOR2_H_
 
@@ -13,6 +22,8 @@ namespace VDEngine
 
 struct Vector2
 {
+    friend auto meta::registerMembers<VDEngine::Vector2>();
+    
 
   public:
     float x;
@@ -201,3 +212,18 @@ bool isnan(const Vector2 & vec);
 } // namespace VDEngine
 
 #endif /* VDENGINE_VECTOR2_H_ */
+
+#ifndef META_REGISTER_VDENGINE_VECTOR2
+#define META_REGISTER_VDENGINE_VECTOR2
+
+template <>
+inline auto meta::registerMembers< VDEngine::Vector2 >() 
+{
+    return meta::members( 
+meta::member("x", &VDEngine::Vector2::x),
+meta::member("y", &VDEngine::Vector2::y) 
+    );
+}
+
+#endif /* META_REGISTER_VDENGINE_VECTOR2 */
+

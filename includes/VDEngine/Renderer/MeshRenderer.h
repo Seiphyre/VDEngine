@@ -1,3 +1,12 @@
+
+
+#ifndef VDENGINE_META_HEADER
+#define VDENGINE_META_HEADER
+
+#include "metaStuff/Meta.h"
+
+#endif /* VDENGINE_META_HEADER */
+
 #ifndef VDENGINE_MESH_RENDERER_H_
 #define VDENGINE_MESH_RENDERER_H_
 
@@ -30,6 +39,8 @@ namespace VDEngine
 
 class MeshRender : public Component
 {
+    friend auto meta::registerMembers<VDEngine::MeshRender>();
+    
   public:
     MeshRender(Mesh * mesh);
     MeshRender(Mesh * mesh, Material * material);
@@ -93,3 +104,21 @@ class MeshRender : public Component
 } // namespace VDEngine
 
 #endif /* VDENGINE_MESH_RENDERER_H_ */
+
+#ifndef META_REGISTER_VDENGINE_MESHRENDER
+#define META_REGISTER_VDENGINE_MESHRENDER
+
+template <>
+inline auto meta::registerMembers< VDEngine::MeshRender >() 
+{
+    return std::tuple_cat(
+        meta::getMembers< VDEngine::Component >(),
+        meta::members(
+meta::member("m_VAO", &VDEngine::MeshRender::m_VAO),
+meta::member("m_material", &VDEngine::MeshRender::m_material),
+meta::member("m_mesh", &VDEngine::MeshRender::m_mesh) 
+    ));
+}
+
+#endif /* META_REGISTER_VDENGINE_MESHRENDER */
+
