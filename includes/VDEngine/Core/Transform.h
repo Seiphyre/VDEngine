@@ -14,7 +14,7 @@
 // #include <glm/gtc/type_ptr.hpp>
 
 // Internal headers
-#include "VDEngine/Core/GameObject.h"
+#include "VDEngine/Core/Component.h"
 #include "VDEngine/Math/Vector3.h"
 #include "VDEngine/Math/Quaternion.h"
 #include "VDEngine/Math/Matrix4.h"

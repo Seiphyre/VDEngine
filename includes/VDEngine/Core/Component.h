@@ -9,7 +9,6 @@ class Transform;
 
 class Component
 {
-
     friend class GameObject;
 
   public:

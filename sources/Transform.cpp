@@ -1,4 +1,5 @@
 #include "VDEngine/Core/Transform.h"
+#include "VDEngine/Core/GameObject.h"
 
 using namespace VDEngine;
 
