@@ -38,7 +38,7 @@ SRC			=	sources/glad/glad.cpp \
 
 OBJ			=	$(SRC:.cpp=.o)
 
-LIBS		=	-Llibs -lglfw3 -lz -lIrrXML -lassimp -lrttr_core -framework Cocoa -framework IOKit -framework OpenGL
+LIBS		=	-Llibs -lglfw3 -lz -lIrrXML -lassimp -lrttr_core -lboost_wserialization -lboost_serialization -framework Cocoa -framework IOKit -framework OpenGL
 
 all:		$(NAME)
 
